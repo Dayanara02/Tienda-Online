@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="TiendaOnline.AccesoDatos/TiendaOnline.AccesoDatos.csproj" />
+  <Project Path="TiendaOnline.Dominio/TiendaOnline.Dominio.csproj" />
+  <Project Path="TiendaOnline.LogicaNegocio/TiendaOnline.LogicaNegocio.csproj" />
+  <Project Path="TiendaOnline/TiendaOnline.API.csproj" />
+</Solution>
