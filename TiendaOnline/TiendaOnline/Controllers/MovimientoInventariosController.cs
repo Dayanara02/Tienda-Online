@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TiendaOnline.API.Controllers;
 
-[Authorize(Roles = "Administrador")]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class MovimientoInventariosController : ControllerBase

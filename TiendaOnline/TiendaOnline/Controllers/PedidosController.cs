@@ -1,147 +1,228 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TiendaOnline.AccesoDatos.Context;
+using TiendaOnline.Dominio.DTO;
 using TiendaOnline.Dominio.Model;
 using TiendaOnline.LogicaNegocio.Interfaces;
-using TiendaOnline.LogicaNegocio.Servicios;
-using System.Security.Claims;
-using TiendaOnline.Dominio.DTO;
-using TiendaOnline.LogicaNegocio.Interfaces;
 
-namespace TiendaOnline.API.Controllers;
-
-
-[Authorize]
-[ApiController]
-[Route("api/[controller]")]
-
-public class PedidosController : ControllerBase
+namespace TiendaOnline.API.Controllers
 {
-    private readonly TiendaOnlineContext _context;
-    private readonly IPedidoServicio _pedidoServicio;
-
-    public PedidosController(TiendaOnlineContext context, IPedidoServicio pedidoServicio)
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class PedidosController : ControllerBase
     {
-        _context = context;
-        _pedidoServicio = pedidoServicio;
-    }
+        private readonly TiendaOnlineContext _context;
+        private readonly IPedidoServicio _pedidoServicio;
 
-    // GET: api/Pedidos
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidos()
-    {
-        return await _context.Pedidos
-            .AsNoTracking()
-            .ToListAsync();
-    }
-
-    // GET: api/Pedidos/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Pedido>> GetPedido(int id)
-    {
-        var pedido = await _context.Pedidos.FindAsync(id);
-
-        if (pedido == null)
+        public PedidosController(
+            TiendaOnlineContext context,
+            IPedidoServicio pedidoServicio)
         {
-            return NotFound();
+            _context = context;
+            _pedidoServicio = pedidoServicio;
         }
 
-        return pedido;
-    }
-
-    // POST: api/Pedidos
-    [HttpPost]
-    public async Task<ActionResult<Pedido>> PostPedido(
-        Pedido pedido)
-    {
-        pedido.IdPedido = 0;
-        pedido.FechaPedido = DateTime.Now;
-
-        if (string.IsNullOrWhiteSpace(pedido.Estado))
+        // GET: api/Pedidos
+        // Administrador y Empleado pueden ver todos los pedidos.
+        [Authorize(Roles = "Administrador,Empleado")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidos()
         {
-            pedido.Estado = "Pendiente";
+            var pedidos = await _context.Pedidos
+                .AsNoTracking()
+                .OrderByDescending(p => p.FechaPedido)
+                .ToListAsync();
+
+            return Ok(pedidos);
         }
 
-        _context.Pedidos.Add(pedido);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(
-            nameof(GetPedido),
-            new { id = pedido.IdPedido },
-            pedido
-        );
-    }
-
-    // PUT: api/Pedidos/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutPedido(
-        int id,
-        Pedido pedido)
-    {
-        var pedidoActual = await _context.Pedidos.FindAsync(id);
-
-        if (pedidoActual == null)
+        // GET: api/Pedidos/mis-pedidos
+        // El Cliente solamente puede ver sus propios pedidos.
+        [Authorize(Roles = "Cliente")]
+        [HttpGet("mis-pedidos")]
+        public async Task<ActionResult<IEnumerable<Pedido>>> GetMisPedidos()
         {
-            return NotFound();
-        }
+            var idUsuarioTexto = User.FindFirstValue(
+                ClaimTypes.NameIdentifier
+            );
 
-        pedidoActual.IdUsuario = pedido.IdUsuario;
-        pedidoActual.Estado = pedido.Estado;
-        pedidoActual.Subtotal = pedido.Subtotal;
-        pedidoActual.Impuesto = pedido.Impuesto;
-        pedidoActual.Descuento = pedido.Descuento;
-        pedidoActual.Total = pedido.Total;
-        pedidoActual.DireccionEntrega =
-            pedido.DireccionEntrega;
-        pedidoActual.IdEstadoPedido =
-            pedido.IdEstadoPedido;
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    // DELETE: api/Pedidos/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePedido(int id)
-    {
-        var pedido = await _context.Pedidos.FindAsync(id);
-
-        if (pedido == null)
-        {
-            return NotFound();
-        }
-
-        _context.Pedidos.Remove(pedido);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    // POST: api/Pedidos/confirmar
-    [HttpPost("confirmar")]
-    public async Task<ActionResult<PedidoCreadoDto>> ConfirmarPedido(
-        PedidoCrearDto pedidoDto)
-    {
-        var idUsuarioTexto = User.FindFirstValue(
-            ClaimTypes.NameIdentifier
-        );
-
-        if (string.IsNullOrWhiteSpace(idUsuarioTexto) ||
-            !int.TryParse(idUsuarioTexto, out var idUsuario))
-        {
-            return Unauthorized(new
+            if (!int.TryParse(idUsuarioTexto, out int idUsuario))
             {
-                mensaje = "No se pudo identificar al usuario."
+                return Unauthorized(
+                    "No se pudo identificar al usuario del token."
+                );
+            }
+
+            var pedidos = await _context.Pedidos
+                .AsNoTracking()
+                .Where(p => p.IdUsuario == idUsuario)
+                .OrderByDescending(p => p.FechaPedido)
+                .ToListAsync();
+
+            return Ok(pedidos);
+        }
+
+        // GET: api/Pedidos/5
+        // Administrador y Empleado pueden ver cualquier pedido.
+        // El Cliente solamente puede ver un pedido propio.
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Pedido>> GetPedido(int id)
+        {
+            var pedido = await _context.Pedidos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.IdPedido == id);
+
+            if (pedido == null)
+            {
+                return NotFound("El pedido no existe.");
+            }
+
+            var rol = User.FindFirstValue(ClaimTypes.Role);
+
+            if (rol == "Administrador" || rol == "Empleado")
+            {
+                return Ok(pedido);
+            }
+
+            var idUsuarioTexto = User.FindFirstValue(
+                ClaimTypes.NameIdentifier
+            );
+
+            if (!int.TryParse(idUsuarioTexto, out int idUsuario))
+            {
+                return Unauthorized(
+                    "No se pudo identificar al usuario del token."
+                );
+            }
+
+            if (pedido.IdUsuario != idUsuario)
+            {
+                return Forbid();
+            }
+
+            return Ok(pedido);
+        }
+
+        // POST: api/Pedidos/confirmar
+        // Crea el pedido del Cliente autenticado.
+        [Authorize(Roles = "Cliente")]
+        [HttpPost("confirmar")]
+        public async Task<ActionResult<PedidoCreadoDto>> ConfirmarPedido(
+            [FromBody] PedidoCrearDto pedidoDto)
+        {
+            var idUsuarioTexto = User.FindFirstValue(
+                ClaimTypes.NameIdentifier
+            );
+
+            if (!int.TryParse(idUsuarioTexto, out int idUsuario))
+            {
+                return Unauthorized(
+                    "No se pudo identificar al usuario del token."
+                );
+            }
+
+            var resultado = await _pedidoServicio.CrearPedidoAsync(
+                idUsuario,
+                pedidoDto
+            );
+
+            return Ok(resultado);
+        }
+
+        // PUT: api/Pedidos/5/estado
+        // Solamente cambia el estado del pedido.
+        // No permite modificar precios, descuentos, impuestos ni total.
+        [Authorize(Roles = "Administrador,Empleado")]
+        [HttpPut("{id:int}/estado")]
+        public async Task<IActionResult> CambiarEstadoPedido(
+            int id,
+            [FromBody] CambiarEstadoPedidoDto dto)
+        {
+            if (dto.IdEstadoPedido <= 0)
+            {
+                return BadRequest(
+                    "Debe indicar un estado de pedido válido."
+                );
+            }
+
+            var pedido = await _context.Pedidos
+                .FirstOrDefaultAsync(p => p.IdPedido == id);
+
+            if (pedido == null)
+            {
+                return NotFound("El pedido no existe.");
+            }
+
+            var nuevoEstado = await _context.EstadoPedidos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e =>
+                    e.IdEstadoPedido == dto.IdEstadoPedido &&
+                    e.Estado);
+
+            if (nuevoEstado == null)
+            {
+                return BadRequest(
+                    "El estado indicado no existe o está inactivo."
+                );
+            }
+
+            if (pedido.IdEstadoPedido == nuevoEstado.IdEstadoPedido)
+            {
+                return BadRequest(
+                    $"El pedido ya tiene el estado {nuevoEstado.Nombre}."
+                );
+            }
+
+            pedido.IdEstadoPedido = nuevoEstado.IdEstadoPedido;
+            pedido.Estado = nuevoEstado.Nombre;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                mensaje = "Estado del pedido actualizado correctamente.",
+                idPedido = pedido.IdPedido,
+                idEstadoPedido = pedido.IdEstadoPedido,
+                estado = pedido.Estado
             });
         }
 
-        var resultado = await _pedidoServicio.CrearPedidoAsync(
-            idUsuario,
-            pedidoDto
-        );
+        // DELETE: api/Pedidos/5
+        // Solamente el Administrador puede eliminar pedidos sin detalles.
+        [Authorize(Roles = "Administrador")]
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeletePedido(int id)
+        {
+            var pedido = await _context.Pedidos
+                .FirstOrDefaultAsync(p => p.IdPedido == id);
 
-        return Ok(resultado);
+            if (pedido == null)
+            {
+                return NotFound("El pedido no existe.");
+            }
+
+            var tieneDetalles = await _context.DetallePedidos
+                .AnyAsync(d => d.IdPedido == id);
+
+            if (tieneDetalles)
+            {
+                return BadRequest(
+                    "No se puede eliminar el pedido porque tiene detalles registrados."
+                );
+            }
+
+            _context.Pedidos.Remove(pedido);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+    }
+
+    public class CambiarEstadoPedidoDto
+    {
+        public int IdEstadoPedido { get; set; }
     }
 }

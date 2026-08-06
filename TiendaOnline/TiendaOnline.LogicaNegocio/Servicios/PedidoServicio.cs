@@ -20,6 +20,7 @@ public class PedidoServicio : IPedidoServicio
         int idUsuario,
         PedidoCrearDto pedidoDto)
     {
+        // Validar usuario recibido desde el token
         if (idUsuario <= 0)
         {
             throw new ArgumentException(
@@ -27,6 +28,7 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
+        // Validar que el pedido tenga productos
         if (pedidoDto.Detalles == null ||
             pedidoDto.Detalles.Count == 0)
         {
@@ -35,6 +37,7 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
+        // Verificar que el usuario exista y esté activo
         var usuarioExiste = await _context.Usuarios
             .AnyAsync(u =>
                 u.IdUsuario == idUsuario &&
@@ -48,9 +51,8 @@ public class PedidoServicio : IPedidoServicio
         }
 
         /*
-         * Agrupa los productos repetidos.
-         * Por ejemplo, si el mismo producto aparece dos veces,
-         * suma las cantidades.
+         * Si el mismo producto viene repetido,
+         * se agrupan sus cantidades.
          */
         var detallesAgrupados = pedidoDto.Detalles
             .GroupBy(d => d.IdProducto)
@@ -70,8 +72,8 @@ public class PedidoServicio : IPedidoServicio
         }
 
         /*
-         * Serializable ayuda a evitar que dos compras simultáneas
-         * utilicen el mismo inventario.
+         * La transacción Serializable ayuda a evitar
+         * que dos compras usen el mismo inventario.
          */
         await using var transaccion =
             await _context.Database.BeginTransactionAsync(
@@ -80,6 +82,7 @@ public class PedidoServicio : IPedidoServicio
 
         try
         {
+            // Buscar el estado Pendiente
             var estadoPendiente = await _context.EstadoPedidos
                 .FirstOrDefaultAsync(e =>
                     e.Nombre == "Pendiente" &&
@@ -96,16 +99,24 @@ public class PedidoServicio : IPedidoServicio
             decimal impuestoPedido = 0;
             decimal descuentoPedido = 0;
 
-            /*
-             * Aquí guardaremos temporalmente la información
-             * calculada de cada producto.
-             */
             var lineasCalculadas =
                 new List<LineaPedidoCalculada>();
 
             foreach (var detalleDto in detallesAgrupados)
             {
+                /*
+                 * Obtener el producto con los descuentos:
+                 * - asignados directamente al producto;
+                 * - asignados a la categoría;
+                 * - asignados a la familia.
+                 */
                 var producto = await _context.Productos
+                    .Include(p => p.IdDescuentos)
+                    .Include(p => p.IdCategoriaNavigation)
+                        .ThenInclude(c => c.IdDescuentos)
+                    .Include(p => p.IdCategoriaNavigation)
+                        .ThenInclude(c => c.IdFamiliaNavigation)
+                            .ThenInclude(f => f.IdDescuentos)
                     .AsNoTracking()
                     .FirstOrDefaultAsync(p =>
                         p.IdProducto == detalleDto.IdProducto &&
@@ -119,6 +130,7 @@ public class PedidoServicio : IPedidoServicio
                     );
                 }
 
+                // Buscar inventario del producto
                 var inventario = await _context.Inventarios
                     .FirstOrDefaultAsync(i =>
                         i.IdProducto == producto.IdProducto);
@@ -131,6 +143,7 @@ public class PedidoServicio : IPedidoServicio
                     );
                 }
 
+                // Evitar vender más de lo disponible
                 if (inventario.CantidadDisponible <
                     detalleDto.Cantidad)
                 {
@@ -141,6 +154,7 @@ public class PedidoServicio : IPedidoServicio
                     );
                 }
 
+                // Buscar el impuesto del producto
                 var impuesto = await _context.Impuestos
                     .AsNoTracking()
                     .FirstOrDefaultAsync(i =>
@@ -155,18 +169,64 @@ public class PedidoServicio : IPedidoServicio
                     );
                 }
 
+                // Subtotal antes de descuentos e impuesto
                 var subtotalLinea = Math.Round(
                     producto.Precio * detalleDto.Cantidad,
                     2
                 );
 
-                /*
-                 * Los descuentos se conectarán en el próximo paso.
-                 * Por ahora se deja en cero para completar primero
-                 * la transacción y evitar sobreventa.
-                 */
-                decimal descuentoLinea = 0;
+                // Fecha utilizada para validar descuentos vigentes
+                var hoy = DateOnly.FromDateTime(DateTime.Today);
 
+                var descuentosAplicables =
+                    new List<Descuento>();
+
+                // Descuentos asignados al producto
+                descuentosAplicables.AddRange(
+                    producto.IdDescuentos
+                );
+
+                // Descuentos asignados a la categoría
+                if (producto.IdCategoriaNavigation != null)
+                {
+                    descuentosAplicables.AddRange(
+                        producto.IdCategoriaNavigation
+                            .IdDescuentos
+                    );
+                }
+
+                // Descuentos asignados a la familia
+                if (producto.IdCategoriaNavigation?
+                        .IdFamiliaNavigation != null)
+                {
+                    descuentosAplicables.AddRange(
+                        producto.IdCategoriaNavigation
+                            .IdFamiliaNavigation
+                            .IdDescuentos
+                    );
+                }
+
+                /*
+                 * Se aplica únicamente el porcentaje más alto.
+                 * No se suman los descuentos.
+                 */
+                var porcentajeDescuento =
+                    descuentosAplicables
+                        .Where(d =>
+                            d.Estado &&
+                            d.FechaInicio <= hoy &&
+                            d.FechaFin >= hoy)
+                        .Select(d => d.Porcentaje)
+                        .DefaultIfEmpty(0)
+                        .Max();
+
+                var descuentoLinea = Math.Round(
+                    subtotalLinea *
+                    porcentajeDescuento / 100,
+                    2
+                );
+
+                // El impuesto se calcula después del descuento
                 var baseImponible =
                     subtotalLinea - descuentoLinea;
 
@@ -194,17 +254,29 @@ public class PedidoServicio : IPedidoServicio
                 );
             }
 
-            subtotalPedido = Math.Round(subtotalPedido, 2);
-            impuestoPedido = Math.Round(impuestoPedido, 2);
-            descuentoPedido = Math.Round(descuentoPedido, 2);
+            subtotalPedido = Math.Round(
+                subtotalPedido,
+                2
+            );
 
-            var totalPedido = Math.Round(
-                subtotalPedido +
-                impuestoPedido -
+            descuentoPedido = Math.Round(
                 descuentoPedido,
                 2
             );
 
+            impuestoPedido = Math.Round(
+                impuestoPedido,
+                2
+            );
+
+            var totalPedido = Math.Round(
+                subtotalPedido -
+                descuentoPedido +
+                impuestoPedido,
+                2
+            );
+
+            // Crear encabezado del pedido
             var pedido = new Pedido
             {
                 IdUsuario = idUsuario,
@@ -223,13 +295,14 @@ public class PedidoServicio : IPedidoServicio
             _context.Pedidos.Add(pedido);
 
             /*
-             * Primer guardado para obtener el IdPedido
+             * Se guarda primero para obtener el IdPedido
              * generado por SQL Server.
              */
             await _context.SaveChangesAsync();
 
             foreach (var linea in lineasCalculadas)
             {
+                // Crear detalle del pedido
                 var detallePedido = new DetallePedido
                 {
                     IdPedido = pedido.IdPedido,
@@ -243,20 +316,18 @@ public class PedidoServicio : IPedidoServicio
                     Subtotal = linea.Subtotal
                 };
 
-                _context.DetallePedidos.Add(detallePedido);
+                _context.DetallePedidos.Add(
+                    detallePedido
+                );
 
-                /*
-                 * Descontar inventario.
-                 */
+                // Descontar inventario
                 linea.Inventario.CantidadDisponible -=
                     linea.Cantidad;
 
                 linea.Inventario.FechaActualizacion =
                     DateTime.Now;
 
-                /*
-                 * Registrar la salida en el historial.
-                 */
+                // Registrar movimiento de salida
                 var movimiento =
                     new MovimientoInventario
                     {
@@ -281,6 +352,8 @@ public class PedidoServicio : IPedidoServicio
             }
 
             await _context.SaveChangesAsync();
+
+            // Confirmar todos los cambios
             await transaccion.CommitAsync();
 
             return new PedidoCreadoDto
@@ -293,19 +366,20 @@ public class PedidoServicio : IPedidoServicio
                 Total = pedido.Total,
                 Estado = pedido.Estado,
                 Mensaje =
-                    "Pedido creado y existencias actualizadas correctamente."
+                    "Pedido creado, descuento aplicado y existencias actualizadas correctamente."
             };
         }
         catch
         {
+            // Si falla una operación, se revierte todo
             await transaccion.RollbackAsync();
             throw;
         }
     }
 
     /*
-     * Clase interna utilizada únicamente para almacenar
-     * los cálculos temporales de cada producto.
+     * Clase interna para guardar temporalmente
+     * los cálculos de cada producto.
      */
     private class LineaPedidoCalculada
     {

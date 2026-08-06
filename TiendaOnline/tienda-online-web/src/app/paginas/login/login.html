@@ -1,0 +1,291 @@
+<section class="pagina-login">
+  <div class="tarjeta">
+
+    <aside class="marca-panel">
+      <div class="follaje" aria-hidden="true">
+        <svg
+          class="hoja hoja-a"
+          viewBox="0 0 400 400"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M200 20C260 60 340 110 350 200C360 290 300 360 200 380C220 320 210 260 170 220C130 180 90 190 40 210C60 130 120 40 200 20Z"
+            fill="#354A2C"
+            fill-opacity="0.55"
+          />
+        </svg>
+
+        <svg
+          class="hoja hoja-b"
+          viewBox="0 0 400 400"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M60 40C150 30 260 60 320 150C380 240 340 340 250 380C240 300 190 250 120 230C50 210 20 240 10 300C-20 210 -20 100 60 40Z"
+            fill="#42583A"
+            fill-opacity="0.5"
+          />
+        </svg>
+
+        <svg
+          class="hoja hoja-c"
+          viewBox="0 0 200 200"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <ellipse
+            cx="100"
+            cy="100"
+            rx="90"
+            ry="46"
+            fill="#C6A15B"
+            fill-opacity="0.16"
+          />
+        </svg>
+      </div>
+
+      <div class="marca-superior">
+        <span class="punto"></span>
+        Tienda Online
+      </div>
+
+      <div class="marca-centro">
+        <p class="categoria">
+          Bienestar · Cuidado · Belleza
+        </p>
+
+        <h2>
+          Un ritual diario, no una lista de compras.
+        </h2>
+
+        <p class="texto-marca">
+          Productos elegidos con cuidado, para que tu rutina
+          se sienta como un momento tuyo.
+        </p>
+
+        <div class="chips">
+          <span class="chip">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path
+                d="M12 3c4 3 7 6 7 10a7 7 0 1 1-14 0c0-4 3-7 7-10Z"
+              />
+            </svg>
+            Bienestar
+          </span>
+
+          <span class="chip">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path
+                d="M12 21s-7-4.4-9.5-8.7C.7 8.6 2.3 5 6 5c2 0 3.5 1.1 4.2 2.6C10.9 6.1 12.4 5 14.4 5c3.7 0 5.3 3.6 3.5 7.3C19 16.6 12 21 12 21Z"
+              />
+            </svg>
+            Cuidado
+          </span>
+
+          <span class="chip">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path
+                d="m12 2 2.2 5.6L20 9l-4.6 3.9L16.9 19 12 15.8 7.1 19l1.5-6.1L4 9l5.8-1.4L12 2Z"
+              />
+            </svg>
+            Belleza
+          </span>
+        </div>
+      </div>
+
+      <div class="lista-rituales">
+        <div>
+          <span>01</span>
+          Higiene consciente
+        </div>
+
+        <div>
+          <span>02</span>
+          Ingredientes limpios
+        </div>
+
+        <div>
+          <span>03</span>
+          Rituales que perduran
+        </div>
+      </div>
+    </aside>
+
+    <main class="panel-formulario">
+      <div class="contenido-formulario">
+        <p class="bienvenida">
+          Bienvenidos a Tienda Online Cuidado Personal
+        </p>
+
+        <h1>Inicia sesión</h1>
+
+        <p class="descripcion">
+          Tu espacio para cuidar de ti, sentirte bien y encontrar
+          productos de higiene, belleza y bienestar.
+        </p>
+
+        <form>
+          <div class="campo">
+            <label for="correo">
+              Correo electrónico
+            </label>
+
+            <div class="contenedor-input">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+              >
+                <path d="M3 6h18v12H3z" />
+                <path d="m3 7 9 6 9-6" />
+              </svg>
+
+              <input
+                id="correo"
+                type="email"
+                placeholder="ejemplo@correo.com"
+                autocomplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="contrasena">
+              Contraseña
+            </label>
+
+            <div class="contenedor-input">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+              >
+                <rect
+                  x="4"
+                  y="10"
+                  width="16"
+                  height="10"
+                  rx="2"
+                />
+                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+              </svg>
+
+              <input
+                id="contrasena"
+                [type]="mostrarContrasena ? 'text' : 'password'"
+                placeholder="Escribe tu contraseña"
+                autocomplete="current-password"
+                required
+              />
+
+              <button
+                type="button"
+                class="mostrar-contrasena"
+                (click)="cambiarVisibilidadContrasena()"
+                [attr.aria-label]="
+                  mostrarContrasena
+                    ? 'Ocultar contraseña'
+                    : 'Mostrar contraseña'
+                "
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                >
+                  <path
+                    d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"
+                  />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="fila-enlace">
+            <a href="#">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+
+          <button
+            type="submit"
+            class="boton-principal"
+          >
+            Inicia sesión
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </form>
+
+        <div class="separador">
+          O continúa con
+        </div>
+
+        <div class="botones-sociales">
+          <button
+            class="boton-social"
+            type="button"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                fill="#EA4335"
+                d="M12 10.2v3.9h5.5c-.25 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6.2s2.7-6.2 6-6.2c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3 14.7 2 12 2 6.9 2 2.7 6.1 2.7 11.2S6.9 20.4 12 20.4c6.9 0 8.9-4.8 8.9-7.3 0-.5 0-.9-.1-1.3H12Z"
+              />
+            </svg>
+
+            Google
+          </button>
+
+          <button
+            class="boton-social"
+            type="button"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                fill="#1877F2"
+                d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.5 1.5-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.9h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94Z"
+              />
+            </svg>
+
+            Facebook
+          </button>
+        </div>
+
+        <p class="registro">
+          ¿No tienes una cuenta?
+          <a href="#">Regístrate</a>
+        </p>
+      </div>
+    </main>
+
+  </div>
+</section>
