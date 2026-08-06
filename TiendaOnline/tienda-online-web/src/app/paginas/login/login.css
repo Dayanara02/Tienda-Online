@@ -585,3 +585,19 @@ input:focus-visible {
     display: none;
   }
 }
+.mensaje-error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #a5635c;
+  border-radius: 6px;
+  background-color: #ead1ca;
+  color: #6f2924;
+  font-size: 12.5px;
+  text-align: center;
+}
+
+.boton-principal:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}

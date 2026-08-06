@@ -131,6 +131,16 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // CREAR LA APLICACIÓN
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Angular", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 app.UseExceptionHandler();
 
@@ -146,6 +156,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+app.UseCors("Angular");
 app.UseAuthorization();
 
 app.MapControllers();

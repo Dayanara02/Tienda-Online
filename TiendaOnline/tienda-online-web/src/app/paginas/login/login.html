@@ -130,6 +130,7 @@
 
     <main class="panel-formulario">
       <div class="contenido-formulario">
+
         <p class="bienvenida">
           Bienvenidos a Tienda Online Cuidado Personal
         </p>
@@ -141,7 +142,8 @@
           productos de higiene, belleza y bienestar.
         </p>
 
-        <form>
+        <form (ngSubmit)="iniciarSesion()">
+
           <div class="campo">
             <label for="correo">
               Correo electrónico
@@ -160,9 +162,11 @@
 
               <input
                 id="correo"
+                name="correo"
                 type="email"
                 placeholder="ejemplo@correo.com"
                 autocomplete="email"
+                [(ngModel)]="correo"
                 required
               />
             </div>
@@ -187,14 +191,17 @@
                   height="10"
                   rx="2"
                 />
+
                 <path d="M8 10V7a4 4 0 0 1 8 0v3" />
               </svg>
 
               <input
                 id="contrasena"
+                name="contrasena"
                 [type]="mostrarContrasena ? 'text' : 'password'"
                 placeholder="Escribe tu contraseña"
                 autocomplete="current-password"
+                [(ngModel)]="contrasena"
                 required
               />
 
@@ -217,7 +224,12 @@
                   <path
                     d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"
                   />
-                  <circle cx="12" cy="12" r="3" />
+
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                  />
                 </svg>
               </button>
             </div>
@@ -232,8 +244,9 @@
           <button
             type="submit"
             class="boton-principal"
+            [disabled]="cargando"
           >
-            Inicia sesión
+            {{ cargando ? 'Ingresando...' : 'Inicia sesión' }}
 
             <svg
               viewBox="0 0 24 24"
@@ -244,6 +257,14 @@
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </button>
+
+          <p
+            class="mensaje-error"
+            *ngIf="mensajeError"
+          >
+            {{ mensajeError }}
+          </p>
+
         </form>
 
         <div class="separador">
@@ -284,6 +305,7 @@
           ¿No tienes una cuenta?
           <a href="#">Regístrate</a>
         </p>
+
       </div>
     </main>
 
