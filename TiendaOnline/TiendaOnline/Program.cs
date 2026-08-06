@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
+using TiendaOnline.LogicaNegocio.Interfaces;
+using TiendaOnline.LogicaNegocio.Servicios;
 using System.Text.Json.Serialization;
 using TiendaOnline.AccesoDatos.Context;
 using TiendaOnline.Dominio.Configuracion;
@@ -21,6 +23,7 @@ builder.Services.Configure<JwtConfiguracion>(
 
 builder.Services.AddScoped<IJwtServicio, JwtServicio>();
 builder.Services.AddScoped<IAuthServicio, AuthServicio>();
+builder.Services.AddScoped<IPedidoServicio, PedidoServicio>();
 
 var jwtConfiguracion = builder.Configuration
     .GetSection("Jwt")

@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TiendaOnline.AccesoDatos.Context;
 using TiendaOnline.Dominio.Model;
-using Microsoft.AspNetCore.Authorization;
+using TiendaOnline.LogicaNegocio.Interfaces;
+using TiendaOnline.LogicaNegocio.Servicios;
+using System.Security.Claims;
+using TiendaOnline.Dominio.DTO;
+using TiendaOnline.LogicaNegocio.Interfaces;
 
 namespace TiendaOnline.API.Controllers;
 
@@ -14,10 +19,12 @@ namespace TiendaOnline.API.Controllers;
 public class PedidosController : ControllerBase
 {
     private readonly TiendaOnlineContext _context;
+    private readonly IPedidoServicio _pedidoServicio;
 
-    public PedidosController(TiendaOnlineContext context)
+    public PedidosController(TiendaOnlineContext context, IPedidoServicio pedidoServicio)
     {
         _context = context;
+        _pedidoServicio = pedidoServicio;
     }
 
     // GET: api/Pedidos
@@ -110,5 +117,31 @@ public class PedidosController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    // POST: api/Pedidos/confirmar
+    [HttpPost("confirmar")]
+    public async Task<ActionResult<PedidoCreadoDto>> ConfirmarPedido(
+        PedidoCrearDto pedidoDto)
+    {
+        var idUsuarioTexto = User.FindFirstValue(
+            ClaimTypes.NameIdentifier
+        );
+
+        if (string.IsNullOrWhiteSpace(idUsuarioTexto) ||
+            !int.TryParse(idUsuarioTexto, out var idUsuario))
+        {
+            return Unauthorized(new
+            {
+                mensaje = "No se pudo identificar al usuario."
+            });
+        }
+
+        var resultado = await _pedidoServicio.CrearPedidoAsync(
+            idUsuario,
+            pedidoDto
+        );
+
+        return Ok(resultado);
     }
 }
