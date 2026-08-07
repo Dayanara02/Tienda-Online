@@ -1,0 +1,239 @@
+<div class="admin-layout">
+  <aside class="menu-lateral">
+    <div class="logo">
+      esen<span>c</span>ia
+    </div>
+
+    <p class="tipo-usuario">
+      Panel administrativo
+    </p>
+
+    <nav class="menu">
+      <a
+        routerLink="/admin-dashboard"
+        class="activo"
+      >
+        Inicio
+      </a>
+
+      <a routerLink="/gestion-productos">
+        Productos
+      </a>
+
+      <a routerLink="/gestion-categorias">
+        Categorías
+      </a>
+
+      <a routerLink="/gestion-usuarios">
+        Usuarios
+      </a>
+
+      <a routerLink="/inventario">
+        Inventario
+      </a>
+
+      <a routerLink="/gestion-pedidos">
+        Pedidos
+      </a>
+
+      <a routerLink="/movimientos-inventario">
+        Movimientos
+      </a>
+    </nav>
+
+    <button
+      type="button"
+      class="boton-salir"
+      (click)="cerrarSesion()"
+    >
+      Cerrar sesión
+    </button>
+  </aside>
+
+  <main class="contenido">
+    <header class="encabezado">
+      <div>
+        <span class="etiqueta">
+          Administración
+        </span>
+
+        <h1>
+          Hola, {{ nombreUsuario }}
+        </h1>
+
+        <p>
+          Bienvenido al panel administrativo de Esencia.
+        </p>
+      </div>
+
+      <a
+        routerLink="/perfil"
+        class="boton-perfil"
+      >
+        Mi perfil
+      </a>
+    </header>
+
+    <section class="resumen">
+      <article class="tarjeta-resumen">
+        <span class="icono">👥</span>
+
+        <div>
+          <small>Usuarios</small>
+          <strong>Gestión completa</strong>
+        </div>
+      </article>
+
+      <article class="tarjeta-resumen">
+        <span class="icono">📦</span>
+
+        <div>
+          <small>Productos</small>
+          <strong>Catálogo e inventario</strong>
+        </div>
+      </article>
+
+      <article class="tarjeta-resumen">
+        <span class="icono">🛒</span>
+
+        <div>
+          <small>Pedidos</small>
+          <strong>Seguimiento general</strong>
+        </div>
+      </article>
+
+      <article class="tarjeta-resumen">
+        <span class="icono">📊</span>
+
+        <div>
+          <small>Administración</small>
+          <strong>Control del sistema</strong>
+        </div>
+      </article>
+    </section>
+
+    <section class="seccion">
+      <div class="titulo-seccion">
+        <div>
+          <span class="etiqueta">
+            Accesos rápidos
+          </span>
+
+          <h2>
+            ¿Qué deseas administrar?
+          </h2>
+        </div>
+      </div>
+
+      <div class="acciones-grid">
+        <a
+          routerLink="/gestion-productos"
+          class="tarjeta-accion"
+        >
+          <span class="numero">01</span>
+
+          <h3>
+            Gestión de productos
+          </h3>
+
+          <p>
+            Crear, editar y administrar productos
+            del catálogo.
+          </p>
+
+          <span class="flecha">→</span>
+        </a>
+
+        <a
+          routerLink="/gestion-categorias"
+          class="tarjeta-accion"
+        >
+          <span class="numero">02</span>
+
+          <h3>
+            Gestión de categorías
+          </h3>
+
+          <p>
+            Organizar las categorías disponibles
+            en la tienda.
+          </p>
+
+          <span class="flecha">→</span>
+        </a>
+
+        <a
+          routerLink="/gestion-usuarios"
+          class="tarjeta-accion"
+        >
+          <span class="numero">03</span>
+
+          <h3>
+            Gestión de usuarios
+          </h3>
+
+          <p>
+            Consultar clientes, empleados y
+            administradores.
+          </p>
+
+          <span class="flecha">→</span>
+        </a>
+
+        <a
+          routerLink="/inventario"
+          class="tarjeta-accion"
+        >
+          <span class="numero">04</span>
+
+          <h3>
+            Inventario
+          </h3>
+
+          <p>
+            Revisar existencias y disponibilidad
+            de productos.
+          </p>
+
+          <span class="flecha">→</span>
+        </a>
+
+        <a
+          routerLink="/gestion-pedidos"
+          class="tarjeta-accion"
+        >
+          <span class="numero">05</span>
+
+          <h3>
+            Gestión de pedidos
+          </h3>
+
+          <p>
+            Consultar y administrar los pedidos
+            realizados.
+          </p>
+
+          <span class="flecha">→</span>
+        </a>
+
+        <a
+          routerLink="/movimientos-inventario"
+          class="tarjeta-accion"
+        >
+          <span class="numero">06</span>
+
+          <h3>
+            Movimientos
+          </h3>
+
+          <p>
+            Consultar entradas y salidas del
+            inventario.
+          </p>
+
+          <span class="flecha">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+</div>

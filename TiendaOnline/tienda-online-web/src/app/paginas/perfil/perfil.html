@@ -1,0 +1,93 @@
+<section class="pagina-perfil">
+
+  <header class="barra-superior">
+
+    <div class="logo">
+      esen<span>c</span>ia
+    </div>
+
+    <div class="acciones">
+
+      <button
+        type="button"
+        class="boton-nav"
+        (click)="volver()"
+      >
+        Volver
+      </button>
+
+      <button
+        type="button"
+        class="boton-nav"
+        (click)="cerrarSesion()"
+      >
+        Salir
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="contenido">
+
+    <span class="etiqueta">
+      Mi cuenta
+    </span>
+
+    <h1>
+      Perfil
+    </h1>
+
+    <section class="tarjeta">
+
+      <div class="perfil-superior">
+
+        <div class="avatar">
+          {{ nombreCompleto.charAt(0).toUpperCase() }}
+        </div>
+
+        <div>
+          <span class="rol">
+            {{ rol }}
+          </span>
+
+          <h2>
+            {{ nombreCompleto }}
+          </h2>
+        </div>
+
+      </div>
+
+      <div class="datos">
+
+        <div class="dato">
+          <span>Nombre completo</span>
+          <strong>{{ nombreCompleto }}</strong>
+        </div>
+
+        <div class="dato">
+          <span>Correo electrónico</span>
+          <strong>
+            {{ correo || 'No disponible' }}
+          </strong>
+        </div>
+
+        <div class="dato">
+          <span>Rol</span>
+          <strong>{{ rol }}</strong>
+        </div>
+
+        <div class="dato">
+          <span>ID de usuario</span>
+          <strong>
+            {{ idUsuario || 'No disponible' }}
+          </strong>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</section>

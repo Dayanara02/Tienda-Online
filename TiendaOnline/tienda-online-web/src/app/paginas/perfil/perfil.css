@@ -1,0 +1,163 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #e9eee1;
+  color: #1e2e22;
+}
+
+.pagina-perfil {
+  min-height: 100vh;
+}
+
+.barra-superior {
+  min-height: 76px;
+  padding: 0 5%;
+  background: rgba(233, 238, 225, 0.96);
+  border-bottom: 1px solid rgba(30, 46, 34, 0.14);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.logo span {
+  color: #c89b3c;
+}
+
+.acciones {
+  display: flex;
+  gap: 12px;
+}
+
+.boton-nav {
+  height: 40px;
+  padding: 0 16px;
+
+  border: 1px solid #1e2e22;
+  border-radius: 0;
+
+  background: transparent;
+  color: #1e2e22;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+.boton-nav:hover {
+  background: #1e2e22;
+  color: white;
+}
+
+.contenido {
+  width: min(900px, 90%);
+  margin: 0 auto;
+  padding: 55px 0;
+}
+
+.etiqueta {
+  color: #b85c6b;
+  font-family: monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 8px 0 30px;
+  font-family: Georgia, serif;
+  font-size: 2.6rem;
+  font-weight: 500;
+}
+
+.tarjeta {
+  padding: 32px;
+  background: #fffdf8;
+  border: 1px solid rgba(30, 46, 34, 0.14);
+}
+
+.perfil-superior {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(30, 46, 34, 0.12);
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+
+  background: #1e2e22;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: Georgia, serif;
+  font-size: 2rem;
+}
+
+.rol {
+  color: #c89b3c;
+  font-family: monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.perfil-superior h2 {
+  margin: 5px 0 0;
+  font-family: Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.datos {
+  margin-top: 26px;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.dato {
+  padding: 18px;
+  background: #f5f7ef;
+  border: 1px solid rgba(30, 46, 34, 0.1);
+}
+
+.dato span {
+  display: block;
+  margin-bottom: 6px;
+
+  color: rgba(30, 46, 34, 0.6);
+  font-size: 0.78rem;
+}
+
+.dato strong {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 650px) {
+  .barra-superior {
+    padding: 16px;
+  }
+
+  .datos {
+    grid-template-columns: 1fr;
+  }
+}

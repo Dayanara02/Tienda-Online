@@ -241,6 +241,13 @@
             </a>
           </div>
 
+          <p
+            class="mensaje-error"
+            *ngIf="mensajeError"
+          >
+            {{ mensajeError }}
+          </p>
+
           <button
             type="submit"
             class="boton-principal"
@@ -257,13 +264,6 @@
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </button>
-
-          <p
-            class="mensaje-error"
-            *ngIf="mensajeError"
-          >
-            {{ mensajeError }}
-          </p>
 
         </form>
 
@@ -303,7 +303,9 @@
 
         <p class="registro">
           ¿No tienes una cuenta?
-          <a href="#">Regístrate</a>
+          <a routerLink="/registro">
+            Regístrate
+          </a>
         </p>
 
       </div>

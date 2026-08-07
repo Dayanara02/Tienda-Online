@@ -1,0 +1,261 @@
+<section class="pagina-descuentos">
+
+  <nav class="barra-superior">
+
+    <a
+      routerLink="/dashboard"
+      class="logo"
+    >
+      esen<span>c</span>ia
+    </a>
+
+    <div class="acciones">
+
+      <a
+        routerLink="/dashboard"
+        class="boton-nav"
+      >
+        Tienda
+      </a>
+
+      <a
+        routerLink="/carrito"
+        class="boton-nav"
+      >
+        Carrito
+      </a>
+
+      <a
+        routerLink="/lista-deseos"
+        class="boton-nav"
+      >
+        ♡ Deseos
+      </a>
+
+      <button
+        type="button"
+        class="boton-nav"
+        (click)="cerrarSesion()"
+      >
+        Salir
+      </button>
+
+    </div>
+
+  </nav>
+
+
+  <main class="contenido">
+
+    <header class="encabezado">
+
+      <span class="etiqueta">
+        BENEFICIOS ESENCIA
+      </span>
+
+      <h1>
+        Descuentos disponibles
+      </h1>
+
+      <p>
+        Activa una promoción y completa la cantidad
+        necesaria de productos para desbloquear tu beneficio.
+      </p>
+
+    </header>
+
+
+    <div class="grid-promociones">
+
+      <article
+        class="tarjeta"
+        *ngFor="let promocion of promociones"
+        [class.activa]="promocionActivaId === promocion.id"
+      >
+
+        <div class="parte-superior">
+
+          <div class="icono">
+            {{ promocion.icono }}
+          </div>
+
+          <span class="beneficio">
+            -{{ promocion.porcentaje }}%
+          </span>
+
+        </div>
+
+
+        <span class="tipo">
+          PROMOCIÓN ESENCIA
+        </span>
+
+        <h2>
+          {{ promocion.nombre }}
+        </h2>
+
+        <p class="descripcion">
+          {{ promocion.descripcion }}
+        </p>
+
+
+        <div class="condicion">
+
+          <div>
+            <span>Compra mínima</span>
+
+            <strong>
+              {{ promocion.cantidadMinima }}
+              productos
+            </strong>
+          </div>
+
+          <div>
+            <span>Descuento</span>
+
+            <strong>
+              {{ promocion.porcentaje }}%
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div class="mensaje-promocion">
+
+          Compra
+
+          <strong>
+            {{ promocion.cantidadMinima }}
+          </strong>
+
+          productos y obtén
+
+          <strong>
+            {{ promocion.porcentaje }}%
+          </strong>
+
+          de descuento en tu compra.
+
+        </div>
+
+
+        <button
+          type="button"
+          class="boton-activar"
+          *ngIf="promocionActivaId !== promocion.id"
+          (click)="activarPromocion(promocion)"
+        >
+          Activar descuento
+        </button>
+
+
+        <button
+          type="button"
+          class="boton-activo"
+          *ngIf="promocionActivaId === promocion.id"
+          disabled
+        >
+          ✓ Descuento activado
+        </button>
+
+      </article>
+
+    </div>
+
+
+    <section
+      class="promocion-seleccionada"
+      *ngIf="promocionActivaId > 0"
+    >
+
+      <div>
+
+        <span class="etiqueta etiqueta-clara">
+          PROMOCIÓN SELECCIONADA
+        </span>
+
+        <h2>
+          Tu beneficio está activado
+        </h2>
+
+        <p>
+          Ve al carrito y el sistema comprobará
+          automáticamente si ya alcanzaste
+          la cantidad necesaria.
+        </p>
+
+      </div>
+
+
+      <div class="acciones-promocion">
+
+        <button
+          type="button"
+          class="boton-ir-carrito"
+          (click)="irAlCarrito()"
+        >
+          Ir al carrito →
+        </button>
+
+        <button
+          type="button"
+          class="boton-quitar"
+          (click)="desactivarPromocion()"
+        >
+          Quitar promoción
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section class="informacion">
+
+      <div>
+        <span>01</span>
+
+        <h3>
+          Elige
+        </h3>
+
+        <p>
+          Selecciona la promoción que más
+          te convenga.
+        </p>
+      </div>
+
+
+      <div>
+        <span>02</span>
+
+        <h3>
+          Compra
+        </h3>
+
+        <p>
+          Agrega al carrito la cantidad
+          de productos solicitada.
+        </p>
+      </div>
+
+
+      <div>
+        <span>03</span>
+
+        <h3>
+          Ahorra
+        </h3>
+
+        <p>
+          Al cumplir la condición,
+          el descuento se aplica a tu compra.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+</section>
