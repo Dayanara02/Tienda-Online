@@ -4,8 +4,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TiendaOnline.Dominio.Configuracion;
-using TiendaOnline.Dominio.Model;
-using TiendaOnline.LogicaNegocio.Interfaces;
+using TiendaOnline.Dominio.Entidades;
+using TiendaOnline.Dominio.InterfacesLN;
 
 namespace TiendaOnline.LogicaNegocio.Servicios;
 

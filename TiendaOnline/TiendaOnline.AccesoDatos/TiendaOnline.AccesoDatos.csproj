@@ -19,10 +19,12 @@
 
   <ItemGroup>
     <Folder Include="Context\" />
+    <Folder Include="Base de datos\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TiendaOnline.Dominio\TiendaOnline.Dominio.csproj" />
+    <ProjectReference Include="..\TiendaOnline.Utilidades\TiendaOnline.Utilidades.csproj" />
   </ItemGroup>
 
 </Project>

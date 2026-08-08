@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TiendaOnline.AccesoDatos\TiendaOnline.AccesoDatos.csproj" />
     <ProjectReference Include="..\TiendaOnline.LogicaNegocio\TiendaOnline.LogicaNegocio.csproj" />
+    <ProjectReference Include="..\TiendaOnline.Utilidades\TiendaOnline.Utilidades.csproj" />
   </ItemGroup>
 
 </Project>

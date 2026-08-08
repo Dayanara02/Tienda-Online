@@ -2,10 +2,10 @@
 using System.Data;
 using TiendaOnline.AccesoDatos.Context;
 using TiendaOnline.Dominio.DTO;
-using TiendaOnline.Dominio.Model;
-using TiendaOnline.LogicaNegocio.Interfaces;
+using TiendaOnline.Dominio.Entidades;
+using TiendaOnline.Dominio.InterfacesLN;
 
-namespace TiendaOnline.LogicaNegocio.Servicios;
+namespace TiendaOnline.LogicaNegocio.Servicios;  // Implementa la interfaz del proyecto Dominio
 
 public class PedidoServicio : IPedidoServicio
 {

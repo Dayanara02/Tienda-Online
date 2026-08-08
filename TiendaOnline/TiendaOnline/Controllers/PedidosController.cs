@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using TiendaOnline.AccesoDatos.Context;
 using TiendaOnline.Dominio.DTO;
-using TiendaOnline.Dominio.Model;
-using TiendaOnline.LogicaNegocio.Interfaces;
+using TiendaOnline.Dominio.Entidades;
+using TiendaOnline.Dominio.InterfacesLN;
 
 namespace TiendaOnline.API.Controllers
 {

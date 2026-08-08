@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TiendaOnline.Dominio.DTO;
-using TiendaOnline.LogicaNegocio.Interfaces;
+using TiendaOnline.Dominio.InterfacesLN;
 using Microsoft.AspNetCore.Authorization;
 
 namespace TiendaOnline.API.Controllers;

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using TiendaOnline.Dominio.Model;
+using TiendaOnline.Dominio.EntidadesTipadas;
+using TiendaOnline.Dominio.Entidades;
 
 namespace TiendaOnline.AccesoDatos.Context;
 
