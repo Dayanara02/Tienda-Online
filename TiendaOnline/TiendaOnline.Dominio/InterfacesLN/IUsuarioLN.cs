@@ -1,10 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using TiendaOnline.Dominio.Entidades;
+using TiendaOnline.Utilidades;
 
 namespace TiendaOnline.Dominio.InterfacesLN
 {
-    internal interface IUsuarioLN
+    // Esta interfaz define las operaciones de lógica de negocio
+    // que se pueden realizar con los usuarios.
+    public interface IUsuarioLN
     {
+        // Registra un nuevo usuario en el sistema.
+        Task<Respuesta<Usuario>> InsertarAsync(Usuario datos);
+
+        // Obtiene todos los usuarios registrados.
+        Task<Respuesta<IEnumerable<Usuario>>> ListarAsync();
+
+        // Modifica la información de un usuario existente.
+        Task<Respuesta<Usuario>> ModificarAsync(Usuario datos);
+
+        // Elimina un usuario utilizando su identificador.
+        Task<Respuesta<bool>> EliminarAsync(Usuario datos);
+
+        // Busca usuarios utilizando los datos recibidos.
+        Task<Respuesta<IEnumerable<Usuario>>> BuscarAsync(Usuario datos);
+
+        // Obtiene un usuario específico utilizando su IdUsuario.
+        Task<Respuesta<Usuario>> ObtenerAsync(Usuario datos);
     }
 }
