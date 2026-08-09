@@ -1,1 +1,316 @@
-<p>detalle-pedido works!</p>
+<!-- Contenedor principal de la página de detalle del pedido. -->
+<div class="detalle-page">
+
+  <!-- Encabezado superior. -->
+  <header class="encabezado">
+
+    <!-- Nombre de la tienda y sección actual. -->
+    <div>
+
+      <!-- Nombre principal de la tienda. -->
+      <h1>Esencia</h1>
+
+      <!-- Nombre de la pantalla actual. -->
+      <p>Detalle del pedido</p>
+
+    </div>
+
+
+    <!-- Botón para regresar al dashboard del Cliente. -->
+    <button type="button"
+            class="btn-volver-inicio"
+            (click)="volverInicio()">
+
+      Volver al inicio
+
+    </button>
+
+  </header>
+
+
+  <!-- Contenido principal. -->
+  <main class="contenido">
+
+    <!-- Mensaje mientras se consulta la información. -->
+    <div class="mensaje-carga"
+         *ngIf="cargando">
+
+      Cargando detalle del pedido...
+
+    </div>
+
+
+    <!-- Mensaje cuando ocurre algún error. -->
+    <div class="mensaje-error"
+         *ngIf="mensajeError">
+
+      {{ mensajeError }}
+
+    </div>
+
+
+    <!-- Tarjeta principal del pedido. -->
+    <section class="detalle-card"
+             *ngIf="
+        !cargando &&
+        !mensajeError &&
+        pedido
+      ">
+
+      <!-- Parte superior del pedido. -->
+      <div class="detalle-header">
+
+        <!-- Número y fecha del pedido. -->
+        <div>
+
+          <!-- Muestra el identificador del pedido. -->
+          <h2>
+            Pedido #{{ pedido.idPedido }}
+          </h2>
+
+          <!-- Muestra la fecha de creación del pedido. -->
+          <p>
+            Realizado el
+            {{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+
+        </div>
+
+
+        <!-- Muestra el estado del pago. -->
+        <span class="estado-pedido">
+
+          {{ pedido.estadoPago }}
+
+        </span>
+
+      </div>
+
+
+      <!-- Información general del pedido. -->
+      <div class="informacion">
+
+        <!-- Dirección de entrega. -->
+        <div class="dato dato-completo">
+
+          <!-- Nombre del dato. -->
+          <span>Dirección de entrega</span>
+
+          <!-- Valor recibido desde la API. -->
+          <strong>
+            {{ pedido.direccionEntrega || 'No registrada' }}
+          </strong>
+
+        </div>
+
+
+        <!-- Estado general del pedido. -->
+        <div class="dato">
+
+          <span>Estado del pedido</span>
+
+          <strong>
+            {{ pedido.estado }}
+          </strong>
+
+        </div>
+
+
+        <!-- Estado del pago. -->
+        <div class="dato">
+
+          <span>Estado del pago</span>
+
+          <strong>
+            {{ pedido.estadoPago }}
+          </strong>
+
+        </div>
+
+
+        <!-- Método de pago.
+             Solo se muestra si ya existe uno registrado. -->
+        <div class="dato"
+             *ngIf="pedido.metodoPago">
+
+          <span>Método de pago</span>
+
+          <strong>
+            {{ pedido.metodoPago }}
+          </strong>
+
+        </div>
+
+
+        <!-- Fecha de pago.
+             Solo se muestra si ya existe una fecha registrada. -->
+        <div class="dato"
+             *ngIf="pedido.fechaPago">
+
+          <span>Fecha de pago</span>
+
+          <strong>
+            {{ pedido.fechaPago | date:'dd/MM/yyyy HH:mm' }}
+          </strong>
+
+        </div>
+
+
+        <!-- Subtotal general. -->
+        <div class="dato">
+
+          <span>Subtotal</span>
+
+          <strong>
+            ₡{{ pedido.subtotal | number:'1.0-2' }}
+          </strong>
+
+        </div>
+
+
+        <!-- Impuesto general. -->
+        <div class="dato">
+
+          <span>Impuesto</span>
+
+          <strong>
+            ₡{{ pedido.impuesto | number:'1.0-2' }}
+          </strong>
+
+        </div>
+
+
+        <!-- Descuento general. -->
+        <div class="dato">
+
+          <span>Descuento</span>
+
+          <strong>
+            -₡{{ pedido.descuento | number:'1.0-2' }}
+          </strong>
+
+        </div>
+
+
+        <!-- Total final. -->
+        <div class="dato total-dato">
+
+          <span>Total</span>
+
+          <strong>
+            ₡{{ pedido.total | number:'1.0-2' }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Sección de productos comprados. -->
+      <div class="productos-pendientes">
+
+        <!-- Título de la sección. -->
+        <h3>Productos del pedido</h3>
+
+
+        <!-- Mensaje cuando no existen productos registrados. -->
+        <p *ngIf="
+            !pedido.detalles ||
+            pedido.detalles.length === 0
+          ">
+
+          No hay productos registrados en este pedido.
+
+        </p>
+
+
+        <!-- Recorre todos los productos del pedido. -->
+        <div class="producto-detalle"
+             *ngFor="let detalle of pedido.detalles">
+
+          <!-- Nombre del producto. -->
+          <div class="producto-nombre">
+
+            <strong>
+              {{ detalle.nombreProducto }}
+            </strong>
+
+          </div>
+
+
+          <!-- Información del producto. -->
+          <div class="producto-info">
+
+            <!-- Cantidad comprada. -->
+            <div>
+
+              <span>Cantidad</span>
+
+              <strong>
+                {{ detalle.cantidad }}
+              </strong>
+
+            </div>
+
+
+            <!-- Precio unitario. -->
+            <div>
+
+              <span>Precio unitario</span>
+
+              <strong>
+                ₡{{ detalle.precioUnitario | number:'1.0-2' }}
+              </strong>
+
+            </div>
+
+
+            <!-- Subtotal del producto. -->
+            <div>
+
+              <span>Subtotal</span>
+
+              <strong>
+                ₡{{ detalle.subtotal | number:'1.0-2' }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Contenedor de acciones. -->
+      <div class="acciones">
+
+        <!-- Botón para regresar al historial. -->
+        <button type="button"
+                class="btn-secundario"
+                (click)="volverMisPedidos()">
+
+          Volver a mis pedidos
+
+        </button>
+
+
+        <!-- Este botón solamente aparece
+             cuando el backend indica que el pedido puede pagarse. -->
+        <button type="button"
+                class="btn-pagar"
+                *ngIf="pedido.puedePagar"
+                (click)="pagarPedido()">
+
+          Pagar pedido
+
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

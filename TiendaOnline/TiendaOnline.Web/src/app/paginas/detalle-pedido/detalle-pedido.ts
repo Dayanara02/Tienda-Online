@@ -1,18 +1,16 @@
-// Importa CommonModule para poder usar directivas comunes de Angular
-// como *ngIf, *ngFor y pipes dentro del HTML.
+// Importa CommonModule para utilizar directivas como
+// *ngIf, *ngFor y pipes dentro del HTML.
 import { CommonModule } from '@angular/common';
 
-// Importa Component para poder crear el componente.
-//
-// ChangeDetectorRef permite forzar la actualización visual
-// cuando los datos llegan desde la API.
+// Importa las herramientas necesarias para crear
+// el componente y actualizar la pantalla manualmente.
 import {
   ChangeDetectorRef,
   Component
 } from '@angular/core';
 
-// Importa ActivatedRoute para obtener el id del pedido
-// que viene dentro de la dirección URL.
+// ActivatedRoute permite obtener el id del pedido
+// directamente desde la dirección URL.
 //
 // Router permite navegar hacia otras páginas.
 import {
@@ -20,11 +18,11 @@ import {
   Router
 } from '@angular/router';
 
-// Importa HttpClient para consultar la API.
+// HttpClient permite consultar la API.
+//
+// HttpErrorResponse permite manejar los errores HTTP.
 //
 // HttpHeaders permite enviar el token JWT.
-//
-// HttpErrorResponse permite manejar errores HTTP.
 import {
   HttpClient,
   HttpErrorResponse,
@@ -32,161 +30,224 @@ import {
 } from '@angular/common/http';
 
 
-// Esta interfaz representa la información principal
-// del pedido que se mostrará en pantalla.
-interface PedidoDetalle {
+// =========================================================
+// INTERFAZ DEL DETALLE DE CADA PRODUCTO
+// =========================================================
 
-  // Identificador único del pedido.
-  idPedido: number;
+// Esta interfaz representa cada producto
+// que pertenece al pedido.
+interface DetalleProducto {
 
-  // Identificador del usuario que realizó la compra.
-  idUsuario: number;
+  // Identificador del detalle.
+  idDetallePedido: number;
 
-  // Fecha en que se realizó el pedido.
-  fechaPedido: string;
+  // Identificador del producto.
+  idProducto: number;
 
-  // Estado actual del pedido.
-  estado: string;
+  // Nombre real del producto.
+  nombreProducto: string;
 
-  // Subtotal antes de impuestos y descuentos.
-  subtotal: number;
+  // Cantidad comprada.
+  cantidad: number;
 
-  // Monto correspondiente al impuesto.
-  impuesto: number;
+  // Precio de una unidad.
+  precioUnitario: number;
 
-  // Monto de descuento aplicado.
+  // Descuento aplicado al producto.
   descuento: number;
 
-  // Total final de la compra.
-  total: number;
+  // Impuesto aplicado al producto.
+  impuesto: number;
 
-  // Dirección registrada para la entrega.
-  direccionEntrega: string | null;
-
-  // Identificador del estado del pedido.
-  idEstadoPedido: number | null;
+  // Subtotal correspondiente a ese producto.
+  subtotal: number;
 }
 
 
-// Configuración principal del componente.
+// =========================================================
+// INTERFAZ DEL PEDIDO COMPLETO
+// =========================================================
+
+// Esta interfaz representa toda la información
+// que devuelve GET /api/Pedidos/{id}.
+interface PedidoDetalle {
+
+  // Identificador del pedido.
+  idPedido: number;
+
+  // Usuario propietario del pedido.
+  idUsuario: number;
+
+  // Fecha en que se realizó la compra.
+  fechaPedido: string;
+
+  // Estado general del pedido.
+  estado: string;
+
+  // Subtotal general.
+  subtotal: number;
+
+  // Impuesto general.
+  impuesto: number;
+
+  // Descuento general.
+  descuento: number;
+
+  // Total final.
+  total: number;
+
+  // Dirección donde se entregará el pedido.
+  direccionEntrega: string | null;
+
+  // Identificador del estado general.
+  idEstadoPedido: number | null;
+
+  // Estado que verá el Cliente:
+  // Pendiente, Pagado o Cancelado.
+  estadoPago: string;
+
+  // Método utilizado para pagar.
+  // Puede venir null si todavía no se ha pagado.
+  metodoPago: string | null;
+
+  // Fecha en que se realizó el pago.
+  // Puede venir null si todavía no existe pago.
+  fechaPago: string | null;
+
+  // Indica si debe aparecer el botón
+  // Pagar pedido.
+  puedePagar: boolean;
+
+  // Lista de productos comprados.
+  detalles: DetalleProducto[];
+}
+
+
+// =========================================================
+// COMPONENTE
+// =========================================================
+
 @Component({
 
   // Nombre interno del componente.
   selector: 'app-detalle-pedido',
 
-  // Indica que este componente funciona
-  // de manera independiente.
+  // Indica que funciona como componente independiente.
   standalone: true,
 
-  // Importa CommonModule para utilizar
-  // directivas y pipes dentro del HTML.
+  // Permite utilizar *ngIf, *ngFor y pipes.
   imports: [
     CommonModule
   ],
 
-  // Archivo HTML relacionado con este componente.
+  // Archivo HTML relacionado.
   templateUrl: './detalle-pedido.html',
 
-  // Archivo CSS relacionado con este componente.
+  // Archivo CSS relacionado.
   styleUrl: './detalle-pedido.css'
 })
 
 
-// Esta clase contiene toda la lógica
-// de la pantalla Detalle de Pedido.
+// Clase principal de la página.
 export class DetallePedido {
 
-  // Guarda la información del pedido
+  // Guarda toda la información
   // recibida desde la API.
   pedido: PedidoDetalle | null = null;
 
-  // Guarda el identificador obtenido desde la URL.
+  // Guarda el identificador del pedido
+  // obtenido desde la URL.
   idPedido: number = 0;
 
-  // Indica si la información todavía se está cargando.
+  // Controla el mensaje de carga.
   cargando: boolean = true;
 
-  // Guarda un mensaje cuando ocurre algún error.
+  // Guarda los mensajes de error.
   mensajeError: string = '';
 
-  // Dirección base del controlador Pedidos.
+  // URL principal del controlador Pedidos.
   private readonly apiUrl =
     'https://localhost:7196/api/Pedidos';
 
 
-  // El constructor recibe las dependencias
-  // necesarias mediante inyección de dependencias.
+  // Constructor del componente.
   constructor(
 
-    // ActivatedRoute permite leer datos
-    // que vienen dentro de la URL.
+    // Permite leer el parámetro id de la URL.
     private route: ActivatedRoute,
 
-    // HttpClient permite consultar la API.
+    // Permite realizar peticiones HTTP.
     private http: HttpClient,
 
-    // Router permite navegar entre páginas.
+    // Permite navegar entre páginas.
     private router: Router,
 
-    // Permite actualizar manualmente la pantalla.
+    // Permite actualizar manualmente la interfaz.
     private changeDetector: ChangeDetectorRef
   ) {
 
-    // Obtiene el id del pedido desde una ruta como:
-    // /detalle-pedido/6
+    // Apenas se abre la página,
+    // obtiene el id del pedido.
     this.obtenerIdPedido();
   }
 
 
-  // Este método obtiene el identificador
-  // del pedido desde la dirección URL.
+  // =========================================================
+  // OBTENER ID DESDE LA URL
+  // =========================================================
+
+  // Este método lee el id recibido
+  // en una dirección como:
+  //
+  // /detalle-pedido/5
   obtenerIdPedido(): void {
 
-    // Busca el parámetro llamado "id"
-    // definido en la ruta detalle-pedido/:id.
+    // Obtiene el parámetro llamado id.
     const idTexto =
       this.route.snapshot.paramMap.get('id');
 
 
-    // Intenta convertir el valor recibido
-    // a un número entero.
+    // Convierte el valor recibido a número.
     this.idPedido =
       Number(idTexto);
 
 
-    // Comprueba que el identificador
-    // realmente sea un número válido.
+    // Comprueba que el identificador sea válido.
     if (
       !this.idPedido ||
       this.idPedido <= 0
     ) {
 
-      // Muestra un error si el id no es válido.
+      // Muestra un mensaje si el id no es correcto.
       this.mensajeError =
         'El pedido seleccionado no es válido.';
 
-      // Termina el estado de carga.
+      // Termina la carga.
       this.cargando = false;
 
       // Actualiza la pantalla.
       this.changeDetector.detectChanges();
 
-      // Detiene el proceso.
+      // Detiene el método.
       return;
     }
 
 
     // Si el identificador es válido,
-    // consulta la información del pedido.
+    // consulta el pedido en la API.
     this.cargarPedido();
   }
 
 
-  // Este método consulta en la API
-  // el pedido correspondiente al identificador recibido.
+  // =========================================================
+  // CARGAR EL PEDIDO
+  // =========================================================
+
+  // Consulta el detalle completo
+  // del pedido seleccionado.
   cargarPedido(): void {
 
-    // Indica que comienza la carga.
+    // Inicia el estado de carga.
     this.cargando = true;
 
     // Limpia cualquier error anterior.
@@ -194,7 +255,7 @@ export class DetallePedido {
 
 
     // Obtiene el token JWT guardado
-    // cuando el cliente inició sesión.
+    // después de iniciar sesión.
     const token =
       localStorage.getItem('token');
 
@@ -202,7 +263,7 @@ export class DetallePedido {
     // Comprueba que exista una sesión activa.
     if (!token) {
 
-      // Muestra un mensaje si no existe token.
+      // Informa que no existe token.
       this.mensajeError =
         'No existe una sesión activa.';
 
@@ -217,22 +278,20 @@ export class DetallePedido {
     }
 
 
-    // Crea los encabezados HTTP
-    // que se enviarán hacia la API.
+    // Crea los encabezados que se enviarán
+    // hacia la API.
     const headers =
       new HttpHeaders({
 
-        // Envía el token utilizando
-        // el formato Bearer.
+        // Agrega el token JWT.
         Authorization:
           `Bearer ${token}`
       });
 
 
-    // Realiza la petición GET.
+    // Realiza la consulta:
     //
-    // Por ejemplo:
-    // GET /api/Pedidos/6
+    // GET /api/Pedidos/5
     this.http.get<PedidoDetalle>(
       `${this.apiUrl}/${this.idPedido}`,
       {
@@ -244,11 +303,18 @@ export class DetallePedido {
       // cuando la API responde correctamente.
       next: (respuesta: PedidoDetalle) => {
 
-        // Guarda el pedido recibido.
+        // Muestra la respuesta en consola.
+        // Sirve durante las pruebas del proyecto.
+        console.log(
+          'Detalle del pedido recibido:',
+          respuesta
+        );
+
+        // Guarda el pedido completo.
         this.pedido =
           respuesta;
 
-        // Finaliza el estado de carga.
+        // Termina la carga.
         this.cargando = false;
 
         // Actualiza la pantalla.
@@ -260,40 +326,44 @@ export class DetallePedido {
       // cuando ocurre algún error.
       error: (error: HttpErrorResponse) => {
 
-        // Muestra el error completo
-        // en la consola durante las pruebas.
+        // Muestra información del error
+        // en la consola del navegador.
         console.error(
           'Error al cargar el detalle del pedido:',
           error
         );
 
 
-        // Si la API devuelve 401,
-        // significa que la sesión no es válida.
+        // Si el token no es válido.
         if (error.status === 401) {
 
           this.mensajeError =
             'La sesión no es válida. Inicia sesión nuevamente.';
         }
 
-        // Si devuelve 403,
-        // significa que el pedido pertenece a otro usuario.
+        // Si intenta consultar un pedido
+        // perteneciente a otro usuario.
         else if (error.status === 403) {
 
           this.mensajeError =
             'No tienes permiso para consultar este pedido.';
         }
 
-        // Si devuelve 404,
-        // significa que el pedido no existe.
+        // Si el pedido no existe.
         else if (error.status === 404) {
 
           this.mensajeError =
             'El pedido no existe.';
         }
 
-        // Para cualquier otro error,
-        // muestra un mensaje general.
+        // Si no puede comunicarse con la API.
+        else if (error.status === 0) {
+
+          this.mensajeError =
+            'No se pudo conectar con el servidor.';
+        }
+
+        // Cualquier otro error.
         else {
 
           this.mensajeError =
@@ -301,7 +371,7 @@ export class DetallePedido {
         }
 
 
-        // Termina el estado de carga.
+        // Termina la carga.
         this.cargando = false;
 
         // Actualiza la pantalla.
@@ -311,22 +381,57 @@ export class DetallePedido {
   }
 
 
-  // Este método permite regresar
-  // a la lista de pedidos del cliente.
+  // =========================================================
+  // PAGAR PEDIDO
+  // =========================================================
+
+  // Este método será utilizado por el botón
+  // Pagar pedido.
+  pagarPedido(): void {
+
+    // Comprueba que el pedido exista.
+    if (!this.pedido) {
+      return;
+    }
+
+
+    // Evita continuar si la API indica
+    // que el pedido ya no puede pagarse.
+    if (!this.pedido.puedePagar) {
+      return;
+    }
+
+
+    // Por ahora solamente mostramos un mensaje.
+    //
+    // En el siguiente paso cambiaremos esto
+    // por la navegación hacia la pantalla de pago.
+    alert(
+      `Vamos a pagar el pedido #${this.pedido.idPedido}`
+    );
+  }
+
+
+  // =========================================================
+  // VOLVER A MIS PEDIDOS
+  // =========================================================
+
+  // Regresa al historial de pedidos.
   volverMisPedidos(): void {
 
-    // Navega hacia Mis Pedidos.
     this.router.navigate([
       '/mis-pedidos'
     ]);
   }
 
 
-  // Este método permite regresar
-  // al dashboard principal del cliente.
+  // =========================================================
+  // VOLVER AL INICIO
+  // =========================================================
+
+  // Regresa al dashboard del Cliente.
   volverInicio(): void {
 
-    // Navega hacia el dashboard.
     this.router.navigate([
       '/dashboard'
     ]);

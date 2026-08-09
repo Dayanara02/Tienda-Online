@@ -20,7 +20,7 @@ using TiendaOnline.AccesoDatos.Context;
 // Importa los DTO utilizados por el proceso de pedidos.
 using TiendaOnline.Dominio.DTO;
 
-// Importa las entidades de la base de datos,
+// Importa las entidades de la base de datos.
 using TiendaOnline.Dominio.Entidades;
 
 // Importa las interfaces de lógica de negocio.
@@ -53,13 +53,12 @@ namespace TiendaOnline.API.Controllers
 
 
         // Constructor del controlador.
-        // ASP.NET Core proporciona automáticamente estas dependencias
-        // mediante el sistema de inyección de dependencias.
+        // ASP.NET Core proporciona automáticamente estas dependencias.
         public PedidosController(
             TiendaOnlineContext context,
             IPedidoServicio pedidoServicio)
         {
-            // Guarda el contexto recibido en la variable privada.
+            // Guarda el contexto recibido.
             _context = context;
 
             // Guarda el servicio de pedidos recibido.
@@ -72,17 +71,18 @@ namespace TiendaOnline.API.Controllers
         // =========================================================
 
         // GET: api/Pedidos
-        // Permite consultar todos los pedidos del sistema.
-        // Solamente Administrador y Empleado pueden utilizarlo.
+        //
+        // Solamente Administrador y Empleado
+        // pueden consultar todos los pedidos.
         [Authorize(Roles = "Administrador,Empleado")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidos()
         {
-            // Consulta la tabla Pedido.
+            // Consulta todos los pedidos.
             var pedidos = await _context.Pedidos
 
-                // AsNoTracking se utiliza porque solamente
-                // se van a consultar los registros.
+                // No se necesita seguimiento porque
+                // solamente estamos leyendo información.
                 .AsNoTracking()
 
                 // Ordena primero los pedidos más recientes.
@@ -90,13 +90,11 @@ namespace TiendaOnline.API.Controllers
                     p => p.FechaPedido
                 )
 
-                // Ejecuta la consulta y convierte
-                // los resultados en una lista.
+                // Ejecuta la consulta.
                 .ToListAsync();
 
 
-            // Devuelve código HTTP 200
-            // junto con la lista de pedidos.
+            // Devuelve los pedidos encontrados.
             return Ok(pedidos);
         }
 
@@ -106,22 +104,22 @@ namespace TiendaOnline.API.Controllers
         // =========================================================
 
         // GET: api/Pedidos/mis-pedidos
-        // Permite que un Cliente consulte únicamente
+        //
+        // Permite que el Cliente vea únicamente
         // los pedidos que le pertenecen.
         [Authorize(Roles = "Cliente")]
         [HttpGet("mis-pedidos")]
         public async Task<IActionResult> GetMisPedidos()
         {
-            // Obtiene del token JWT el identificador
-            // del usuario que actualmente inició sesión.
+            // Obtiene desde el token JWT
+            // el identificador del usuario autenticado.
             var idUsuarioTexto =
                 User.FindFirstValue(
                     ClaimTypes.NameIdentifier
                 );
 
 
-            // Intenta convertir el identificador
-            // recibido desde el token a un número entero.
+            // Intenta convertir el identificador a número.
             if (
                 !int.TryParse(
                     idUsuarioTexto,
@@ -129,24 +127,22 @@ namespace TiendaOnline.API.Controllers
                 )
             )
             {
-                // Si no puede obtenerse correctamente el usuario,
-                // devuelve una respuesta HTTP 401.
+                // Si el token no contiene un usuario válido,
+                // devuelve código HTTP 401.
                 return Unauthorized(
                     "No se pudo identificar al usuario del token."
                 );
             }
 
 
-            // Consulta los pedidos que pertenecen
-            // únicamente al usuario autenticado.
+            // Consulta solamente los pedidos
+            // que pertenecen al Cliente autenticado.
             var pedidos = await _context.Pedidos
 
-                // No se necesita realizar seguimiento de cambios
-                // porque solamente se van a leer los datos.
+                // La consulta solamente será de lectura.
                 .AsNoTracking()
 
-                // Filtra los pedidos utilizando el IdUsuario
-                // obtenido anteriormente desde el token.
+                // Filtra utilizando el usuario del token.
                 .Where(
                     p => p.IdUsuario == idUsuario
                 )
@@ -156,23 +152,23 @@ namespace TiendaOnline.API.Controllers
                     p => p.FechaPedido
                 )
 
-                // Select permite escoger únicamente
-                // los campos que necesita la pantalla Mis Pedidos.
-                //
-                // De esta manera no se devuelve toda la entidad Pedido
-                // con sus propiedades de navegación.
+                // Selecciona únicamente la información
+                // que necesita la pantalla Mis Pedidos.
                 .Select(
                     p => new
                     {
-                        // Identificador único del pedido.
+                        // Identificador del pedido.
                         idPedido =
                             p.IdPedido,
 
-                        // Fecha en que se realizó la compra.
+                        // Fecha en que se realizó.
                         fechaPedido =
                             p.FechaPedido,
 
-                        // Estado actual del pedido.
+                        // Estado general del pedido.
+                        //
+                        // Este puede ser Pendiente,
+                        // Confirmado, Enviado, etc.
                         estado =
                             p.Estado,
 
@@ -180,101 +176,352 @@ namespace TiendaOnline.API.Controllers
                         subtotal =
                             p.Subtotal,
 
-                        // Monto correspondiente al impuesto.
+                        // Impuesto total.
                         impuesto =
                             p.Impuesto,
 
-                        // Monto correspondiente al descuento.
+                        // Descuento total.
                         descuento =
                             p.Descuento,
 
-                        // Total final de la compra.
+                        // Total final.
                         total =
                             p.Total,
 
-                        // Dirección donde se entregará el pedido.
+                        // Dirección de entrega.
                         direccionEntrega =
-                            p.DireccionEntrega
+                            p.DireccionEntrega,
+
+
+                        // =================================================
+                        // ESTADO QUE SE MOSTRARÁ AL CLIENTE
+                        // =================================================
+
+                        // Si el pedido fue cancelado,
+                        // se muestra directamente Cancelado.
+                        //
+                        // Si existe un pago aprobado,
+                        // se muestra Pagado.
+                        //
+                        // En cualquier otro caso,
+                        // se muestra Pendiente.
+                        estadoPago =
+                            p.Estado == "Cancelado"
+
+                                ? "Cancelado"
+
+                                : p.Pagos
+                                    .OrderByDescending(
+                                        pago => pago.IdPago
+                                    )
+                                    .Select(
+                                        pago => pago.Estado
+                                    )
+                                    .FirstOrDefault() == "Aprobado"
+
+                                    ? "Pagado"
+
+                                    : "Pendiente"
                     }
                 )
 
-                // Ejecuta la consulta en SQL Server
-                // y convierte el resultado en una lista.
+                // Ejecuta la consulta en SQL Server.
                 .ToListAsync();
 
 
             // Devuelve código HTTP 200
-            // junto con los pedidos encontrados.
+            // junto con el historial del Cliente.
             return Ok(pedidos);
         }
 
 
         // =========================================================
-        // OBTENER UN PEDIDO ESPECÍFICO
+        // OBTENER EL DETALLE DE UN PEDIDO
         // =========================================================
 
         // GET: api/Pedidos/5
         //
+        // Este endpoint devuelve:
+        //
+        // - Información general del pedido.
+        // - Estado del pago.
+        // - Indicación de si puede pagarse.
+        // - Productos comprados.
+        // - Nombre de cada producto.
+        // - Cantidad.
+        // - Precio unitario.
+        // - Subtotal.
+        //
         // Administrador y Empleado pueden consultar cualquier pedido.
-        // Un Cliente solamente puede consultar un pedido que le pertenezca.
+        // El Cliente solamente puede consultar los suyos.
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Pedido>> GetPedido(
+        public async Task<IActionResult> GetPedido(
             int id
         )
         {
-            // Busca en la base de datos
-            // el pedido correspondiente al identificador recibido.
+            // Consulta el pedido solicitado.
+            //
+            // En lugar de devolver directamente toda la entidad,
+            // utilizamos Select para devolver exactamente
+            // la información que necesita Angular.
             var pedido = await _context.Pedidos
 
-                // Solamente se consultará el registro.
+                // Esta consulta es únicamente de lectura.
                 .AsNoTracking()
 
-                // Busca el primer pedido que tenga ese IdPedido.
-                .FirstOrDefaultAsync(
+                // Busca el pedido por su identificador.
+                .Where(
                     p => p.IdPedido == id
-                );
+                )
+
+                // Construye el resultado.
+                .Select(
+                    p => new
+                    {
+                        // =============================================
+                        // DATOS GENERALES DEL PEDIDO
+                        // =============================================
+
+                        // Identificador del pedido.
+                        idPedido =
+                            p.IdPedido,
+
+                        // Usuario propietario del pedido.
+                        //
+                        // Este dato se utiliza también
+                        // para controlar los permisos.
+                        idUsuario =
+                            p.IdUsuario,
+
+                        // Fecha de la compra.
+                        fechaPedido =
+                            p.FechaPedido,
+
+                        // Estado general del pedido.
+                        estado =
+                            p.Estado,
+
+                        // Subtotal general.
+                        subtotal =
+                            p.Subtotal,
+
+                        // Impuesto general.
+                        impuesto =
+                            p.Impuesto,
+
+                        // Descuento general.
+                        descuento =
+                            p.Descuento,
+
+                        // Total final.
+                        total =
+                            p.Total,
+
+                        // Dirección para entregar la compra.
+                        direccionEntrega =
+                            p.DireccionEntrega,
+
+                        // Identificador del estado general.
+                        idEstadoPedido =
+                            p.IdEstadoPedido,
 
 
-            // Comprueba si el pedido fue encontrado.
+                        // =============================================
+                        // ESTADO DEL PAGO PARA MOSTRAR EN LA PANTALLA
+                        // =============================================
+
+                        // Se convierte el estado interno del pago
+                        // en un texto sencillo para el Cliente.
+                        //
+                        // Pedido cancelado:
+                        //     Cancelado
+                        //
+                        // Pago aprobado:
+                        //     Pagado
+                        //
+                        // Cualquier otro caso:
+                        //     Pendiente
+                        estadoPago =
+                            p.Estado == "Cancelado"
+
+                                ? "Cancelado"
+
+                                : p.Pagos
+                                    .OrderByDescending(
+                                        pago => pago.IdPago
+                                    )
+                                    .Select(
+                                        pago => pago.Estado
+                                    )
+                                    .FirstOrDefault() == "Aprobado"
+
+                                    ? "Pagado"
+
+                                    : "Pendiente",
+
+
+                        // =============================================
+                        // MÉTODO DE PAGO
+                        // =============================================
+
+                        // Busca el método utilizado en el pago más reciente.
+                        //
+                        // Si todavía no se ha pagado,
+                        // este valor puede ser null.
+                        metodoPago =
+                            p.Pagos
+                                .OrderByDescending(
+                                    pago => pago.IdPago
+                                )
+                                .Select(
+                                    pago => pago.MetodoPago
+                                )
+                                .FirstOrDefault(),
+
+
+                        // =============================================
+                        // FECHA DEL PAGO
+                        // =============================================
+
+                        // Obtiene la fecha del pago más reciente.
+                        //
+                        // Si todavía no existe un pago,
+                        // se devolverá null.
+                        fechaPago =
+                            p.Pagos
+                                .OrderByDescending(
+                                    pago => pago.IdPago
+                                )
+                                .Select(
+                                    pago => pago.FechaPago
+                                )
+                                .FirstOrDefault(),
+
+
+                        // =============================================
+                        // INDICAR SI PUEDE PAGARSE
+                        // =============================================
+
+                        // El botón Pagar solamente debe aparecer
+                        // cuando:
+                        //
+                        // 1. El pedido NO está cancelado.
+                        // 2. No existe todavía un pago aprobado.
+                        puedePagar =
+                            p.Estado != "Cancelado" &&
+
+                            p.Pagos
+                                .OrderByDescending(
+                                    pago => pago.IdPago
+                                )
+                                .Select(
+                                    pago => pago.Estado
+                                )
+                                .FirstOrDefault() != "Aprobado",
+
+
+                        // =============================================
+                        // PRODUCTOS DEL PEDIDO
+                        // =============================================
+
+                        // Recorre todos los detalles
+                        // que pertenecen al pedido.
+                        detalles =
+                            p.DetallePedidos
+
+                                // Selecciona la información
+                                // que necesitamos mostrar.
+                                .Select(
+                                    detalle => new
+                                    {
+                                        // Identificador del detalle.
+                                        idDetallePedido =
+                                            detalle.IdDetallePedido,
+
+                                        // Identificador del producto.
+                                        idProducto =
+                                            detalle.IdProducto,
+
+                                        // Obtiene el nombre real del producto
+                                        // utilizando la relación con Producto.
+                                        nombreProducto =
+                                            detalle
+                                                .IdProductoNavigation
+                                                .Nombre,
+
+                                        // Cantidad comprada.
+                                        cantidad =
+                                            detalle.Cantidad,
+
+                                        // Precio de una unidad
+                                        // en el momento de realizar la compra.
+                                        precioUnitario =
+                                            detalle.PrecioUnitario,
+
+                                        // Descuento aplicado al producto.
+                                        descuento =
+                                            detalle.Descuento,
+
+                                        // Impuesto aplicado al producto.
+                                        impuesto =
+                                            detalle.Impuesto,
+
+                                        // Subtotal correspondiente
+                                        // a este producto.
+                                        subtotal =
+                                            detalle.Subtotal
+                                    }
+                                )
+
+                                // Convierte los productos
+                                // en una lista.
+                                .ToList()
+                    }
+                )
+
+                // Obtiene solamente un pedido.
+                .FirstOrDefaultAsync();
+
+
+            // Comprueba si el pedido existe.
             if (pedido == null)
             {
-                // Si no existe, devuelve código HTTP 404.
+                // Si no existe,
+                // devuelve código HTTP 404.
                 return NotFound(
                     "El pedido no existe."
                 );
             }
 
 
-            // Obtiene desde el token
-            // el rol del usuario autenticado.
+            // Obtiene el rol desde el token JWT.
             var rol =
                 User.FindFirstValue(
                     ClaimTypes.Role
                 );
 
 
-            // Los Administradores y Empleados
+            // Administrador y Empleado
             // pueden consultar cualquier pedido.
             if (
                 rol == "Administrador" ||
                 rol == "Empleado"
             )
             {
-                // Devuelve el pedido encontrado.
+                // Devuelve todo el detalle.
                 return Ok(pedido);
             }
 
 
-            // Si el usuario es Cliente,
-            // obtiene su identificador desde el token.
+            // Obtiene el identificador
+            // del Cliente autenticado.
             var idUsuarioTexto =
                 User.FindFirstValue(
                     ClaimTypes.NameIdentifier
                 );
 
 
-            // Intenta convertir el identificador
-            // del usuario a número entero.
+            // Comprueba que sea un número válido.
             if (
                 !int.TryParse(
                     idUsuarioTexto,
@@ -282,7 +529,7 @@ namespace TiendaOnline.API.Controllers
                 )
             )
             {
-                // Si no se logra identificar al usuario,
+                // Si no puede identificar al Cliente,
                 // devuelve HTTP 401.
                 return Unauthorized(
                     "No se pudo identificar al usuario del token."
@@ -290,18 +537,18 @@ namespace TiendaOnline.API.Controllers
             }
 
 
-            // Comprueba que el pedido solicitado
-            // realmente pertenezca al Cliente.
-            if (pedido.IdUsuario != idUsuario)
+            // Comprueba que el pedido realmente
+            // pertenezca al Cliente autenticado.
+            if (pedido.idUsuario != idUsuario)
             {
-                // Si intenta consultar un pedido de otra persona,
-                // devuelve HTTP 403 Forbidden.
+                // Un Cliente no puede consultar
+                // pedidos pertenecientes a otra persona.
                 return Forbid();
             }
 
 
-            // Si el pedido pertenece al usuario,
-            // devuelve el registro.
+            // Si todo está correcto,
+            // devuelve el pedido con sus productos.
             return Ok(pedido);
         }
 
@@ -312,8 +559,7 @@ namespace TiendaOnline.API.Controllers
 
         // POST: api/Pedidos/confirmar
         //
-        // Este endpoint crea un pedido nuevo
-        // para el Cliente que inició sesión.
+        // Permite que un Cliente cree un pedido.
         [Authorize(Roles = "Cliente")]
         [HttpPost("confirmar")]
         public async Task<ActionResult<PedidoCreadoDto>>
@@ -321,16 +567,15 @@ namespace TiendaOnline.API.Controllers
                 [FromBody] PedidoCrearDto pedidoDto
             )
         {
-            // Obtiene desde el token
-            // el IdUsuario del Cliente.
+            // Obtiene el identificador
+            // del Cliente desde el token.
             var idUsuarioTexto =
                 User.FindFirstValue(
                     ClaimTypes.NameIdentifier
                 );
 
 
-            // Intenta convertir el identificador
-            // a un número entero.
+            // Comprueba que el identificador sea válido.
             if (
                 !int.TryParse(
                     idUsuarioTexto,
@@ -338,18 +583,16 @@ namespace TiendaOnline.API.Controllers
                 )
             )
             {
-                // No permite registrar el pedido
-                // si no puede identificar al usuario.
+                // No permite crear el pedido
+                // si no puede identificar al Cliente.
                 return Unauthorized(
                     "No se pudo identificar al usuario del token."
                 );
             }
 
 
-            // Envía la información al servicio de pedidos.
-            //
-            // El servicio contiene la lógica necesaria
-            // para registrar realmente la compra.
+            // Envía el pedido al servicio
+            // donde se encuentra la lógica de negocio.
             var resultado =
                 await _pedidoServicio.CrearPedidoAsync(
                     idUsuario,
@@ -357,8 +600,7 @@ namespace TiendaOnline.API.Controllers
                 );
 
 
-            // Devuelve el resultado obtenido
-            // mediante código HTTP 200.
+            // Devuelve el pedido creado.
             return Ok(resultado);
         }
 
@@ -369,13 +611,8 @@ namespace TiendaOnline.API.Controllers
 
         // PUT: api/Pedidos/5/estado
         //
-        // Permite modificar únicamente el estado del pedido.
-        //
-        // No modifica subtotal, impuesto,
-        // descuento, total ni productos.
-        //
         // Solamente Administrador y Empleado
-        // pueden utilizar este endpoint.
+        // pueden cambiar el estado general del pedido.
         [Authorize(Roles = "Administrador,Empleado")]
         [HttpPut("{id:int}/estado")]
         public async Task<IActionResult> CambiarEstadoPedido(
@@ -387,15 +624,13 @@ namespace TiendaOnline.API.Controllers
             // un identificador de estado válido.
             if (dto.IdEstadoPedido <= 0)
             {
-                // Devuelve HTTP 400
-                // si el identificador no es válido.
                 return BadRequest(
                     "Debe indicar un estado de pedido válido."
                 );
             }
 
 
-            // Busca el pedido que se desea modificar.
+            // Busca el pedido.
             var pedido =
                 await _context.Pedidos
                     .FirstOrDefaultAsync(
@@ -403,27 +638,24 @@ namespace TiendaOnline.API.Controllers
                     );
 
 
-            // Comprueba que el pedido exista.
+            // Comprueba que exista.
             if (pedido == null)
             {
-                // Devuelve HTTP 404
-                // si el pedido no fue encontrado.
                 return NotFound(
                     "El pedido no existe."
                 );
             }
 
 
-            // Busca en EstadoPedido
-            // el nuevo estado seleccionado.
+            // Busca el nuevo estado.
             var nuevoEstado =
                 await _context.EstadoPedidos
 
-                    // Solamente se va a consultar el estado.
+                    // Solamente consulta información.
                     .AsNoTracking()
 
-                    // Busca por identificador y además
-                    // comprueba que esté activo.
+                    // Busca el estado solicitado
+                    // y comprueba que esté activo.
                     .FirstOrDefaultAsync(
                         e =>
                             e.IdEstadoPedido ==
@@ -432,65 +664,54 @@ namespace TiendaOnline.API.Controllers
                     );
 
 
-            // Comprueba que el estado solicitado exista.
+            // Comprueba que el estado exista.
             if (nuevoEstado == null)
             {
-                // Devuelve HTTP 400 si el estado
-                // no existe o está desactivado.
                 return BadRequest(
                     "El estado indicado no existe o está inactivo."
                 );
             }
 
 
-            // Comprueba si el pedido
-            // ya tiene exactamente ese mismo estado.
+            // Evita realizar una actualización innecesaria.
             if (
                 pedido.IdEstadoPedido ==
                 nuevoEstado.IdEstadoPedido
             )
             {
-                // No realiza una modificación innecesaria.
                 return BadRequest(
                     $"El pedido ya tiene el estado {nuevoEstado.Nombre}."
                 );
             }
 
 
-            // Actualiza el identificador
-            // del estado del pedido.
+            // Actualiza el identificador del estado.
             pedido.IdEstadoPedido =
                 nuevoEstado.IdEstadoPedido;
 
-            // Actualiza también el nombre
-            // del estado guardado en Pedido.
+            // Actualiza también el nombre guardado
+            // directamente en Pedido.
             pedido.Estado =
                 nuevoEstado.Nombre;
 
 
-            // Guarda los cambios
-            // permanentemente en SQL Server.
+            // Guarda los cambios.
             await _context.SaveChangesAsync();
 
 
-            // Devuelve información
-            // sobre el cambio realizado.
+            // Devuelve una confirmación.
             return Ok(
                 new
                 {
-                    // Mensaje de confirmación.
                     mensaje =
                         "Estado del pedido actualizado correctamente.",
 
-                    // Identificador del pedido.
                     idPedido =
                         pedido.IdPedido,
 
-                    // Identificador del nuevo estado.
                     idEstadoPedido =
                         pedido.IdEstadoPedido,
 
-                    // Nombre del estado nuevo.
                     estado =
                         pedido.Estado
                 }
@@ -504,16 +725,14 @@ namespace TiendaOnline.API.Controllers
 
         // DELETE: api/Pedidos/5
         //
-        // Solamente el Administrador
-        // puede eliminar un pedido.
+        // Solamente el Administrador puede eliminar pedidos.
         [Authorize(Roles = "Administrador")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePedido(
             int id
         )
         {
-            // Busca el pedido
-            // mediante el identificador recibido.
+            // Busca el pedido.
             var pedido =
                 await _context.Pedidos
                     .FirstOrDefaultAsync(
@@ -521,31 +740,26 @@ namespace TiendaOnline.API.Controllers
                     );
 
 
-            // Comprueba si existe.
+            // Comprueba que exista.
             if (pedido == null)
             {
-                // Devuelve HTTP 404
-                // cuando no encuentra el pedido.
                 return NotFound(
                     "El pedido no existe."
                 );
             }
 
 
-            // Comprueba si existe al menos
-            // un detalle asociado a ese pedido.
+            // Comprueba si el pedido
+            // ya contiene productos.
             var tieneDetalles =
                 await _context.DetallePedidos
-
-                    // AnyAsync devuelve true
-                    // cuando encuentra al menos un registro.
                     .AnyAsync(
                         d => d.IdPedido == id
                     );
 
 
             // No permite eliminar pedidos
-            // que ya contienen productos registrados.
+            // que ya tengan detalles asociados.
             if (tieneDetalles)
             {
                 return BadRequest(
@@ -554,20 +768,17 @@ namespace TiendaOnline.API.Controllers
             }
 
 
-            // Marca el pedido para ser eliminado.
+            // Marca el pedido para eliminarlo.
             _context.Pedidos.Remove(
                 pedido
             );
 
 
-            // Guarda el cambio
-            // en la base de datos.
+            // Guarda la eliminación.
             await _context.SaveChangesAsync();
 
 
-            // HTTP 204 indica que la eliminación
-            // fue realizada correctamente
-            // y no es necesario devolver contenido.
+            // Devuelve HTTP 204.
             return NoContent();
         }
     }
@@ -577,13 +788,11 @@ namespace TiendaOnline.API.Controllers
     // DTO PARA CAMBIAR EL ESTADO DEL PEDIDO
     // =============================================================
 
-    // Esta clase representa la información
-    // que debe recibirse para modificar
-    // el estado de un pedido.
+    // Representa la información necesaria
+    // para cambiar el estado de un pedido.
     public class CambiarEstadoPedidoDto
     {
-        // Guarda el identificador
-        // del nuevo EstadoPedido.
+        // Identificador del nuevo EstadoPedido.
         public int IdEstadoPedido { get; set; }
     }
 }
