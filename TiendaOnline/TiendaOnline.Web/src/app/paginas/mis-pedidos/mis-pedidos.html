@@ -1,1 +1,227 @@
-<p>mis-pedidos works!</p>
+<!-- Contenedor principal de la página de pedidos del cliente. -->
+<div class="pedidos-page">
+
+  <!-- Encabezado superior de la pantalla. -->
+  <header class="encabezado">
+
+    <!-- Nombre principal de la tienda. -->
+    <div>
+
+      <!-- Título principal de la marca. -->
+      <h1>Esencia</h1>
+
+      <!-- Texto que indica la sección actual. -->
+      <p>Mis pedidos</p>
+
+    </div>
+
+
+    <!-- Botón para regresar al dashboard principal. -->
+    <button type="button"
+            class="btn-volver"
+            (click)="volverDashboard()">
+
+      Volver al inicio
+
+    </button>
+
+  </header>
+
+
+  <!-- Contenido principal de la página. -->
+  <main class="contenido">
+
+    <!-- Título de la sección. -->
+    <section class="titulo-seccion">
+
+      <!-- Título principal del historial de compras. -->
+      <h2>Historial de pedidos</h2>
+
+      <!-- Texto de apoyo para el cliente. -->
+      <p>
+        Aquí puedes consultar las compras que has realizado.
+      </p>
+
+    </section>
+
+
+    <!-- Este bloque aparece mientras se están consultando los pedidos. -->
+    <div class="estado-mensaje"
+         *ngIf="cargando">
+
+      Cargando pedidos...
+
+    </div>
+
+
+    <!-- Este mensaje aparece si ocurrió algún problema al consultar la API. -->
+    <div class="mensaje-error"
+         *ngIf="mensajeError">
+
+      {{ mensajeError }}
+
+    </div>
+
+
+    <!-- Este bloque aparece cuando ya terminó la carga
+         y el cliente todavía no tiene pedidos registrados. -->
+    <div class="sin-pedidos"
+         *ngIf="
+        !cargando &&
+        !mensajeError &&
+        pedidos.length === 0
+      ">
+
+      <!-- Título del mensaje. -->
+      <h3>Aún no tienes pedidos</h3>
+
+      <!-- Explicación para el cliente. -->
+      <p>
+        Cuando realices una compra aparecerá en esta sección.
+      </p>
+
+      <!-- Botón para regresar al catálogo principal. -->
+      <button type="button"
+              class="btn-principal"
+              (click)="volverDashboard()">
+
+        Ver productos
+
+      </button>
+
+    </div>
+
+
+    <!-- Este contenedor aparece solamente
+         cuando existen pedidos para mostrar. -->
+    <section class="lista-pedidos"
+             *ngIf="
+             !cargando &&
+             !mensajeError &&
+             pedidos.length>
+      0
+      ">
+
+      <!-- Recorre todos los pedidos recibidos desde la API. -->
+      <article class="pedido-card"
+               *ngFor="let pedido of pedidos">
+
+        <!-- Parte superior de cada tarjeta de pedido. -->
+        <div class="pedido-header">
+
+          <!-- Información principal del pedido. -->
+          <div>
+
+            <!-- Muestra el número o identificador del pedido. -->
+            <h3>
+              Pedido #{{ pedido.idPedido }}
+            </h3>
+
+            <!-- Muestra la fecha en que se realizó la compra.
+                 date es un pipe de Angular que permite dar formato a fechas. -->
+            <p>
+              Realizado el
+              {{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+
+          </div>
+
+
+          <!-- Muestra el estado actual del pedido. -->
+          <span class="estado-pedido">
+
+            {{ pedido.estado }}
+
+          </span>
+
+        </div>
+
+
+        <!-- Información económica y de entrega del pedido. -->
+        <div class="pedido-info">
+
+          <!-- Muestra la dirección registrada para la entrega. -->
+          <div class="dato">
+
+            <!-- Nombre del dato. -->
+            <span>Dirección de entrega</span>
+
+            <!-- Valor correspondiente. -->
+            <strong>
+              {{ pedido.direccionEntrega }}
+            </strong>
+
+          </div>
+
+
+          <!-- Muestra el subtotal del pedido. -->
+          <div class="dato">
+
+            <span>Subtotal</span>
+
+            <strong>
+              ₡{{ pedido.subtotal | number:'1.0-2' }}
+            </strong>
+
+          </div>
+
+
+          <!-- Muestra el impuesto aplicado. -->
+          <div class="dato">
+
+            <span>Impuesto</span>
+
+            <strong>
+              ₡{{ pedido.impuesto | number:'1.0-2' }}
+            </strong>
+
+          </div>
+
+
+          <!-- Muestra el descuento aplicado. -->
+          <div class="dato">
+
+            <span>Descuento</span>
+
+            <strong>
+              -₡{{ pedido.descuento | number:'1.0-2' }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- Parte inferior de la tarjeta. -->
+        <div class="pedido-footer">
+
+          <!-- Muestra el monto final del pedido. -->
+          <div class="total-pedido">
+
+            <span>Total</span>
+
+            <strong>
+              ₡{{ pedido.total | number:'1.0-2' }}
+            </strong>
+
+          </div>
+
+
+          <!-- Abre la pantalla de detalle del pedido seleccionado. -->
+          <button type="button"
+                  class="btn-detalle"
+                  (click)="verDetalle(pedido.idPedido)">
+
+            Ver detalle
+
+          </button>
+
+        </div>
+
+      </article>
+
+    </section>
+
+  </main>
+
+</div>

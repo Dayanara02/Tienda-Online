@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System; // Permite utilizar tipos básicos del sistema, como bool.
+using System.Collections.Generic; // Permite trabajar con colecciones como ICollection y List.
 
-namespace TiendaOnline.Dominio.Entidades;
+namespace TiendaOnline.Dominio.Entidades; 
 
-public partial class EstadoPedido
+public partial class EstadoPedido // Representa los diferentes estados que puede tener un pedido.
 {
-    public int IdEstadoPedido { get; set; }
+    public int IdEstadoPedido { get; set; } // Identificador único del estado del pedido.
 
-    public string Nombre { get; set; } = null!;
+    public string Nombre { get; set; } = null!; // Guarda el nombre del estado del pedido.
 
-    public string? Descripcion { get; set; }
+    public string? Descripcion { get; set; } // Guarda una descripción del estado, si existe.
 
-    public bool Estado { get; set; }
+    public bool Estado { get; set; } // Indica si este estado de pedido está activo o inactivo.
 
-    public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
+    public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>(); // Contiene los pedidos que utilizan este estado.
 }
+

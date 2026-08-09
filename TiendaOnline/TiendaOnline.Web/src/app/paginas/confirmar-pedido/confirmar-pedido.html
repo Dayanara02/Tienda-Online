@@ -1,1 +1,196 @@
-<p>confirmar-pedido works!</p>
+<!-- Contenedor principal de la página de confirmación del pedido. -->
+<div class="confirmar-page">
+
+  <!-- Encabezado superior de la página. -->
+  <header class="encabezado">
+
+    <!-- Título principal de la tienda. -->
+    <h1>Esencia</h1>
+
+    <!-- Texto que indica en qué parte del proceso se encuentra el cliente. -->
+    <p>Confirmar pedido</p>
+
+  </header>
+
+
+  <!-- Contenido principal de la pantalla. -->
+  <main class="contenido">
+
+    <!-- Sección izquierda donde se muestran los productos del carrito. -->
+    <section class="resumen">
+
+      <!-- Título de la sección. -->
+      <h2>Resumen de tu compra</h2>
+
+      <!-- Este bloque se muestra solamente si existen productos en el carrito. -->
+      <div *ngIf="productos.length > 0">
+
+        <!-- Recorre todos los productos guardados en el carrito. -->
+        <article class="producto"
+                 *ngFor="let producto of productos">
+
+          <!-- Información principal del producto. -->
+          <div class="producto-info">
+
+            <!-- Muestra el nombre del producto. -->
+            <h3>{{ producto.nombre }}</h3>
+
+            <!-- Muestra cuántas unidades comprará el cliente. -->
+            <p>
+              Cantidad:
+              {{ producto.cantidad }}
+            </p>
+
+          </div>
+
+          <!-- Muestra el total de ese producto.
+               Se calcula multiplicando precio por cantidad. -->
+          <div class="producto-precio">
+            ₡{{ producto.precio * producto.cantidad | number:'1.0-2' }}
+          </div>
+
+        </article>
+
+      </div>
+
+
+      <!-- Este mensaje aparece si el carrito está vacío. -->
+      <p class="carrito-vacio"
+         *ngIf="productos.length === 0">
+
+        No hay productos en el carrito.
+
+      </p>
+
+
+      <!-- Sección donde se muestran los cálculos de la compra. -->
+      <div class="totales">
+
+        <!-- Muestra la cantidad total de artículos. -->
+        <div class="fila-total">
+          <span>Productos</span>
+          <strong>{{ cantidadTotal }}</strong>
+        </div>
+
+        <!-- Muestra el subtotal antes del descuento. -->
+        <div class="fila-total">
+          <span>Subtotal</span>
+          <strong>
+            ₡{{ subtotal | number:'1.0-2' }}
+          </strong>
+        </div>
+
+
+        <!-- Este bloque aparece solamente si existe una promoción activa
+             y la cantidad de productos cumple sus requisitos. -->
+        <div class="fila-total descuento"
+             *ngIf="promocionCumplida">
+
+          <!-- Muestra el nombre de la promoción seleccionada. -->
+          <span>
+            Descuento
+            {{ promocionActiva?.nombre }}
+          </span>
+
+          <!-- Muestra cuánto dinero se descontará. -->
+          <strong>
+            -₡{{ montoDescuento | number:'1.0-2' }}
+          </strong>
+
+        </div>
+
+
+        <!-- Muestra el total final de la compra. -->
+        <div class="fila-total total-final">
+
+          <span>Total</span>
+
+          <strong>
+            ₡{{ total | number:'1.0-2' }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Sección derecha donde el cliente completa
+         la información necesaria para continuar. -->
+    <section class="datos-entrega">
+
+      <!-- Título de la sección de entrega. -->
+      <h2>Datos de entrega</h2>
+
+
+      <!-- Etiqueta que explica qué debe escribir el cliente. -->
+      <label for="direccionEntrega">
+        Dirección de entrega
+      </label>
+
+
+      <!-- Campo donde el cliente escribe la dirección.
+       [(ngModel)] conecta el contenido del textarea
+       con la variable direccionEntrega del archivo TypeScript. -->
+      <textarea id="direccionEntrega"
+                name="direccionEntrega"
+                [(ngModel)]="direccionEntrega"
+                rows="5"
+                placeholder="Ejemplo: San José, 200 metros norte del parque..."></textarea>
+
+
+      <!-- Mensaje de ayuda para explicar para qué se utiliza la dirección. -->
+      <small>
+        Esta dirección se utilizará para registrar el envío del pedido.
+      </small>
+
+
+      <!-- Este mensaje solamente aparece cuando existe un error. -->
+      <div class="mensaje-error"
+           *ngIf="mensajeError">
+
+        {{ mensajeError }}
+
+      </div>
+
+      <!-- Este mensaje aparece cuando el pedido fue registrado correctamente. -->
+      <div class="mensaje-exito"
+           *ngIf="mensajeExito">
+
+        {{ mensajeExito }}
+
+      </div>
+
+      <!-- Contenedor de los botones principales. -->
+      <div class="acciones">
+
+        <!-- Regresa al carrito para que el cliente pueda modificar la compra. -->
+        <button type="button"
+                class="btn-secundario"
+                (click)="volverAlCarrito()">
+
+          Volver al carrito
+
+        </button>
+
+
+        <!-- Ejecuta continuarCompra() cuando el cliente quiere seguir.
+         disabled evita que pueda presionarse mientras se procesa la compra. -->
+        <button type="button"
+                class="btn-principal"
+                [disabled]="procesando"
+                (click)="continuarCompra()">
+
+          <!-- Muestra un texto diferente según el estado del proceso. -->
+          {{ procesando ? 'Procesando...' : 'Continuar compra' }}
+
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

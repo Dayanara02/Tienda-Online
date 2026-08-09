@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TiendaOnline.Dominio.InterfacesLN
 {
-    internal interface NotificacionLN
+    internal interface INotificacionLN
     {
     }
 }
