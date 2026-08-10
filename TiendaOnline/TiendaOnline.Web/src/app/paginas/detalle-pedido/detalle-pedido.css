@@ -1,36 +1,44 @@
-/* Estilo general de toda la página de detalle del pedido. */
+/* ========================================================= */
+/* PÁGINA GENERAL */
+/* ========================================================= */
+
+/* Estilo general de toda la pantalla. */
 .detalle-page {
-  /* Mantiene el fondo claro usado en el diseño de Esencia. */
+  /* Usa un fondo claro y cálido acorde al estilo de Esencia. */
   background: #f7f3ea;
-  /* Hace que la página ocupe como mínimo toda la pantalla. */
+  /* Hace que la pantalla ocupe como mínimo toda la altura disponible. */
   min-height: 100vh;
   /* Define el color principal del texto. */
   color: #22352b;
-  /* Usa una tipografía elegante similar al resto del proyecto. */
+  /* Usa una tipografía elegante para títulos y textos principales. */
   font-family: Georgia, 'Times New Roman', serif;
 }
 
 
-/* Estilos del encabezado superior. */
+/* ========================================================= */
+/* ENCABEZADO */
+/* ========================================================= */
+
+/* Contenedor superior de la página. */
 .encabezado {
-  /* Coloca el título y el botón en la misma fila. */
+  /* Coloca el título y el botón en una misma fila. */
   display: flex;
   /* Separa ambos elementos hacia los extremos. */
   justify-content: space-between;
-  /* Centra verticalmente el contenido. */
+  /* Centra verticalmente los elementos. */
   align-items: center;
   /* Agrega espacio interno. */
   padding: 28px 40px 18px;
-  /* Agrega una línea inferior para separar el encabezado. */
+  /* Agrega una línea inferior sutil. */
   border-bottom: 1px solid #d8d0c2;
   /* Usa un fondo ligeramente diferente. */
   background: #fbf8f1;
 }
 
 
-  /* Estilo del título principal Esencia. */
+  /* Título principal Esencia. */
   .encabezado h1 {
-    /* Elimina el margen automático. */
+    /* Elimina márgenes automáticos. */
     margin: 0;
     /* Define un tamaño grande. */
     font-size: 34px;
@@ -39,48 +47,56 @@
   }
 
 
-  /* Estilo del texto Detalle del pedido. */
+  /* Texto de la sección actual. */
   .encabezado p {
-    /* Agrega una pequeña separación con respecto al título. */
+    /* Separa ligeramente del título. */
     margin: 6px 0 0;
-    /* Usa un color secundario. */
+    /* Usa un tono secundario. */
     color: #6f756f;
     /* Define un tamaño menor. */
     font-size: 15px;
   }
 
 
-/* Contenedor principal del contenido. */
+/* ========================================================= */
+/* CONTENIDO PRINCIPAL */
+/* ========================================================= */
+
+/* Contenedor principal de la información. */
 .contenido {
-  /* Limita el ancho de la información. */
-  max-width: 1050px;
-  /* Centra horizontalmente el contenido. */
+  /* Limita el ancho para que la información no quede demasiado extendida. */
+  max-width: 1100px;
+  /* Centra el contenido horizontalmente. */
   margin: 0 auto;
   /* Agrega espacio alrededor. */
   padding: 35px 40px 50px;
 }
 
 
-/* Estilo del mensaje de carga. */
+/* ========================================================= */
+/* MENSAJES */
+/* ========================================================= */
+
+/* Mensaje que aparece mientras se cargan los datos. */
 .mensaje-carga {
   /* Centra el texto. */
   text-align: center;
   /* Agrega espacio interno. */
   padding: 40px 20px;
-  /* Usa un color secundario. */
+  /* Usa un tono secundario. */
   color: #73776f;
-  /* Define un tamaño cómodo. */
+  /* Define un tamaño legible. */
   font-size: 16px;
 }
 
 
-/* Estilo del mensaje de error. */
+/* Mensaje que aparece cuando ocurre un error. */
 .mensaje-error {
   /* Agrega espacio interno. */
   padding: 14px 16px;
   /* Usa un fondo rojizo suave. */
   background: #f8e9e6;
-  /* Agrega un borde relacionado con error. */
+  /* Agrega un borde asociado con errores. */
   border: 1px solid #e6c3bc;
   /* Redondea las esquinas. */
   border-radius: 12px;
@@ -88,12 +104,16 @@
   color: #8b453c;
   /* Usa una fuente sencilla para mensajes del sistema. */
   font-family: Arial, sans-serif;
-  /* Define un tamaño legible. */
+  /* Define un tamaño cómodo. */
   font-size: 14px;
 }
 
 
-/* Tarjeta principal que contiene la información del pedido. */
+/* ========================================================= */
+/* TARJETA PRINCIPAL */
+/* ========================================================= */
+
+/* Tarjeta que contiene toda la información del pedido. */
 .detalle-card {
   /* Usa un fondo blanco cálido. */
   background: #fffdf8;
@@ -101,31 +121,35 @@
   border: 1px solid #ddd5c7;
   /* Redondea las esquinas. */
   border-radius: 18px;
-  /* Evita que el contenido sobresalga de los bordes. */
+  /* Evita que algo sobresalga del borde. */
   overflow: hidden;
 }
 
 
-/* Parte superior de la tarjeta del pedido. */
+/* ========================================================= */
+/* CABECERA DEL PEDIDO */
+/* ========================================================= */
+
+/* Parte superior donde aparece el número, fecha y estado. */
 .detalle-header {
   /* Coloca la información y el estado en la misma fila. */
   display: flex;
-  /* Separa los elementos hacia los extremos. */
+  /* Separa ambos elementos. */
   justify-content: space-between;
-  /* Centra verticalmente los elementos. */
+  /* Centra verticalmente. */
   align-items: center;
-  /* Agrega espacio entre los elementos. */
+  /* Agrega separación entre los elementos. */
   gap: 20px;
   /* Agrega espacio interno. */
-  padding: 24px;
-  /* Agrega una línea inferior. */
+  padding: 24px 28px;
+  /* Separa visualmente esta sección. */
   border-bottom: 1px solid #ece5da;
   /* Usa un fondo ligeramente diferente. */
   background: #fbf8f1;
 }
 
 
-  /* Estilo del número del pedido. */
+  /* Número del pedido. */
   .detalle-header h2 {
     /* Elimina márgenes innecesarios. */
     margin: 0 0 6px;
@@ -136,9 +160,9 @@
   }
 
 
-  /* Estilo de la fecha del pedido. */
+  /* Fecha del pedido. */
   .detalle-header p {
-    /* Elimina el margen automático. */
+    /* Elimina margen automático. */
     margin: 0;
     /* Usa un color secundario. */
     color: #777a72;
@@ -147,63 +171,69 @@
   }
 
 
-/* Etiqueta visual donde se muestra el estado del pedido. */
+/* Etiqueta del estado del pago. */
 .estado-pedido {
   /* Evita que el estado se divida en varias líneas. */
   white-space: nowrap;
   /* Agrega espacio interno. */
-  padding: 8px 14px;
+  padding: 9px 16px;
   /* Usa un fondo verde suave. */
-  background: #e8efe8;
+  background: #e7eee7;
   /* Agrega un borde verde claro. */
-  border: 1px solid #c7d6c8;
-  /* Redondea bastante para darle apariencia de etiqueta. */
+  border: 1px solid #c5d3c7;
+  /* Redondea completamente la etiqueta. */
   border-radius: 999px;
   /* Usa un verde oscuro para el texto. */
-  color: #3f6148;
+  color: #355541;
   /* Usa una fuente sencilla. */
   font-family: Arial, sans-serif;
   /* Define un tamaño pequeño. */
   font-size: 13px;
   /* Resalta ligeramente el estado. */
-  font-weight: 600;
+  font-weight: 700;
 }
 
 
-/* Contenedor de los datos generales del pedido. */
+/* ========================================================= */
+/* INFORMACIÓN GENERAL DEL PEDIDO */
+/* ========================================================= */
+
+/* Contenedor de la información general. */
 .informacion {
-  /* Utiliza grid para organizar la información. */
+  /* Organiza la información en dos columnas. */
   display: grid;
-  /* Divide los datos en dos columnas. */
+  /* Divide el espacio en dos partes iguales. */
   grid-template-columns: repeat(2, 1fr);
   /* Agrega separación entre los datos. */
-  gap: 22px;
+  gap: 24px;
   /* Agrega espacio interno. */
-  padding: 26px;
+  padding: 28px;
 }
 
 
-/* Cada bloque individual de información. */
+/* Cada dato individual. */
 .dato {
-  /* Organiza el nombre y el valor verticalmente. */
+  /* Organiza título y valor verticalmente. */
   display: flex;
   /* Coloca los elementos uno debajo del otro. */
   flex-direction: column;
-  /* Agrega espacio entre el nombre y el valor. */
-  gap: 6px;
+  /* Separa el nombre del valor. */
+  gap: 7px;
+  /* Agrega espacio interno suave. */
+  padding: 4px 0;
 }
 
 
-/* Hace que la dirección ocupe las dos columnas. */
+/* Hace que la dirección ocupe todo el ancho. */
 .dato-completo {
-  /* Ocupa desde la primera hasta la última columna. */
+  /* Ocupa las dos columnas. */
   grid-column: 1 / -1;
 }
 
 
-/* Estilo del nombre de cada dato. */
+/* Nombre de cada dato. */
 .dato span {
-  /* Usa un color secundario. */
+  /* Usa un tono secundario. */
   color: #777a72;
   /* Define un tamaño menor. */
   font-size: 13px;
@@ -212,165 +242,363 @@
 }
 
 
-/* Estilo del valor de cada dato. */
+/* Valor de cada dato. */
 .dato strong {
-  /* Define un tamaño legible. */
+  /* Define un tamaño cómodo. */
   font-size: 17px;
-  /* Mantiene un peso medio. */
+  /* Resalta el dato. */
   font-weight: 600;
 }
 
 
-/* Resalta especialmente el total final. */
+/* Caja especial del total final. */
 .total-dato {
-  /* Agrega un fondo suave. */
-  background: #f3efe5;
+  /* Usa un fondo ligeramente más oscuro. */
+  background: #f2ede3;
   /* Agrega espacio interno. */
-  padding: 14px;
+  padding: 16px 18px;
   /* Redondea las esquinas. */
   border-radius: 12px;
 }
 
 
-  /* Aumenta el tamaño del total final. */
+  /* Total final destacado. */
   .total-dato strong {
-    /* Hace que el monto final sea más visible. */
-    font-size: 21px;
+    /* Hace que el total se vea más importante. */
+    font-size: 22px;
   }
 
 
-/* Sección preparada para mostrar los productos del pedido. */
+/* ========================================================= */
+/* SECCIÓN DE PRODUCTOS */
+/* ========================================================= */
+
+/* Contenedor general de los productos comprados. */
 .productos-pendientes {
-  /* Agrega una línea superior para separar la sección. */
+  /* Separa esta sección de la información superior. */
   border-top: 1px solid #ece5da;
   /* Agrega espacio interno. */
-  padding: 26px;
+  padding: 28px;
 }
 
 
-  /* Título de la sección de productos. */
+  /* Título Productos del pedido. */
   .productos-pendientes h3 {
     /* Elimina el margen superior. */
-    margin: 0 0 10px;
+    margin: 0 0 20px;
     /* Define un tamaño destacado. */
-    font-size: 21px;
+    font-size: 22px;
     /* Mantiene un peso elegante. */
     font-weight: 500;
   }
 
 
-  /* Texto temporal de la sección de productos. */
-  .productos-pendientes p {
-    /* Elimina márgenes innecesarios. */
+  /* Mensaje cuando no hay productos. */
+  .productos-pendientes > p {
+    /* Elimina margen innecesario. */
     margin: 0;
-    /* Usa un color secundario. */
+    /* Usa un tono secundario. */
     color: #777a72;
     /* Define un tamaño cómodo. */
     font-size: 14px;
   }
 
 
-/* Contenedor de los botones inferiores. */
-.acciones {
-  /* Coloca los botones hacia la derecha. */
-  display: flex;
-  /* Alinea el contenido al final. */
-  justify-content: flex-end;
+/* ========================================================= */
+/* TARJETA DE CADA PRODUCTO */
+/* ========================================================= */
+
+/* Cada producto comprado aparece dentro de una tarjeta separada. */
+.producto-detalle {
+  /* Usa una cuadrícula para separar nombre e información. */
+  display: grid;
+  /* La primera columna se usa para el nombre
+     y la segunda para los datos del producto. */
+  grid-template-columns: minmax(220px, 1.2fr) 2fr;
+  /* Agrega separación entre columnas. */
+  gap: 24px;
+  /* Centra verticalmente el contenido. */
+  align-items: center;
   /* Agrega espacio interno. */
-  padding: 20px 26px;
-  /* Coloca una línea superior. */
-  border-top: 1px solid #ece5da;
+  padding: 20px;
+  /* Agrega un borde suave. */
+  border: 1px solid #e4ddd0;
+  /* Redondea las esquinas. */
+  border-radius: 14px;
+  /* Usa un fondo ligeramente diferente al resto. */
+  background: #fbf8f1;
+  /* Agrega separación entre productos. */
+  margin-bottom: 14px;
 }
 
 
-/* Estilos compartidos por los botones. */
-.btn-volver-inicio,
-.btn-secundario {
+  /* Evita espacio extra después del último producto. */
+  .producto-detalle:last-child {
+    /* Elimina el margen inferior. */
+    margin-bottom: 0;
+  }
+
+
+/* Contenedor del nombre del producto. */
+.producto-nombre {
+  /* Agrega espacio lateral para separar visualmente el nombre. */
+  padding-right: 18px;
+  /* Separa el nombre de los datos mediante una línea vertical. */
+  border-right: 1px solid #ddd5c7;
+}
+
+
+  /* Nombre del producto. */
+  .producto-nombre strong {
+    /* Define un tamaño más visible. */
+    font-size: 18px;
+    /* Mantiene un peso medio. */
+    font-weight: 600;
+    /* Usa el verde oscuro principal. */
+    color: #2f493b;
+  }
+
+
+/* Contenedor de cantidad, precio y subtotal. */
+.producto-info {
+  /* Organiza los tres datos en columnas. */
+  display: grid;
+  /* Crea tres columnas iguales. */
+  grid-template-columns: repeat(3, 1fr);
+  /* Agrega separación entre ellas. */
+  gap: 18px;
+}
+
+
+  /* Cada dato individual del producto. */
+  .producto-info > div {
+    /* Organiza nombre y valor verticalmente. */
+    display: flex;
+    /* Coloca el contenido uno debajo del otro. */
+    flex-direction: column;
+    /* Agrega separación. */
+    gap: 6px;
+  }
+
+
+  /* Nombre del dato del producto. */
+  .producto-info span {
+    /* Usa un color secundario. */
+    color: #777a72;
+    /* Usa una fuente sencilla. */
+    font-family: Arial, sans-serif;
+    /* Define un tamaño pequeño. */
+    font-size: 12px;
+  }
+
+
+  /* Valor del dato del producto. */
+  .producto-info strong {
+    /* Usa un tamaño cómodo. */
+    font-size: 15px;
+    /* Resalta ligeramente el dato. */
+    font-weight: 600;
+    /* Usa el color principal. */
+    color: #26392f;
+  }
+
+
+/* ========================================================= */
+/* BOTONES INFERIORES */
+/* ========================================================= */
+
+/* Contenedor donde aparecen Volver y Pagar. */
+.acciones {
+  /* Coloca ambos botones en una fila. */
+  display: flex;
+  /* Centra verticalmente los botones. */
+  align-items: center;
+  /* Coloca los botones hacia la derecha. */
+  justify-content: flex-end;
+  /* Agrega separación entre ambos botones. */
+  gap: 12px;
+  /* Agrega espacio interno. */
+  padding: 22px 28px;
+  /* Separa esta parte de los productos. */
+  border-top: 1px solid #ece5da;
+  /* Usa un fondo ligeramente diferente. */
+  background: #fbf8f1;
+}
+
+
+/* ========================================================= */
+/* BOTÓN VOLVER AL INICIO */
+/* ========================================================= */
+
+/* Botón ubicado en el encabezado. */
+.btn-volver-inicio {
+  /* Usa un fondo transparente. */
+  background: transparent;
+  /* Agrega un borde verde oscuro. */
+  border: 1px solid #40584a;
+  /* Usa el mismo tono en el texto. */
+  color: #40584a;
   /* Agrega espacio interno. */
   padding: 11px 18px;
   /* Redondea las esquinas. */
   border-radius: 11px;
-  /* Indica que el elemento puede presionarse. */
+  /* Cambia el cursor al pasar por encima. */
   cursor: pointer;
-  /* Define el tamaño del texto. */
+  /* Define un tamaño cómodo. */
   font-size: 14px;
   /* Resalta ligeramente el texto. */
   font-weight: 600;
-  /* Usa una tipografía sencilla para botones. */
+  /* Usa una fuente sencilla. */
   font-family: Arial, sans-serif;
   /* Suaviza los cambios visuales. */
   transition: 0.2s ease;
 }
 
 
-/* Botón superior para volver al inicio. */
-.btn-volver-inicio {
-  /* Usa un fondo transparente. */
-  background: transparent;
-  /* Agrega un borde verde oscuro. */
-  border: 1px solid #40584a;
-  /* Usa el mismo tono para el texto. */
-  color: #40584a;
-}
-
-
-  /* Cambio visual al pasar el mouse por el botón superior. */
+  /* Cambio visual al pasar el mouse. */
   .btn-volver-inicio:hover {
     /* Usa un fondo verde muy suave. */
     background: #edf1eb;
   }
 
 
-/* Botón inferior para volver a Mis Pedidos. */
+/* ========================================================= */
+/* BOTÓN VOLVER A MIS PEDIDOS */
+/* ========================================================= */
+
+/* Botón secundario inferior. */
 .btn-secundario {
-  /* Usa un fondo verde oscuro. */
-  background: #2f493b;
-  /* Usa el mismo tono para el borde. */
-  border: 1px solid #2f493b;
-  /* Usa texto claro para mantener contraste. */
-  color: #fffdf8;
+  /* Usa fondo transparente para que no compita con Pagar. */
+  background: transparent;
+  /* Agrega un borde verde oscuro. */
+  border: 1px solid #40584a;
+  /* Usa verde oscuro en el texto. */
+  color: #40584a;
+  /* Agrega espacio interno. */
+  padding: 12px 20px;
+  /* Redondea las esquinas. */
+  border-radius: 11px;
+  /* Cambia el cursor. */
+  cursor: pointer;
+  /* Define tamaño del texto. */
+  font-size: 14px;
+  /* Resalta ligeramente el texto. */
+  font-weight: 600;
+  /* Usa una fuente sencilla. */
+  font-family: Arial, sans-serif;
+  /* Suaviza los cambios. */
+  transition: 0.2s ease;
 }
 
 
-  /* Cambio visual al pasar el mouse por el botón inferior. */
+  /* Cambio visual al pasar el mouse. */
   .btn-secundario:hover {
-    /* Oscurece ligeramente el botón. */
-    background: #233a2e;
+    /* Agrega un fondo suave. */
+    background: #edf1eb;
   }
 
 
-/* Adapta la interfaz para pantallas pequeñas. */
-@media (max-width: 750px) {
+/* ========================================================= */
+/* BOTÓN PAGAR PEDIDO */
+/* ========================================================= */
+
+/* Botón principal utilizado para iniciar el pago. */
+.btn-pagar {
+  /* Usa el verde oscuro principal de Esencia. */
+  background: #2f493b;
+  /* Usa el mismo tono para el borde. */
+  border: 1px solid #2f493b;
+  /* Usa texto claro. */
+  color: #fffdf8;
+  /* Agrega espacio interno. */
+  padding: 12px 24px;
+  /* Redondea las esquinas. */
+  border-radius: 11px;
+  /* Indica que puede presionarse. */
+  cursor: pointer;
+  /* Define el tamaño del texto. */
+  font-size: 14px;
+  /* Resalta el texto. */
+  font-weight: 700;
+  /* Usa una fuente sencilla. */
+  font-family: Arial, sans-serif;
+  /* Suaviza los efectos. */
+  transition: 0.2s ease;
+  /* Evita que el texto se divida. */
+  white-space: nowrap;
+}
+
+
+  /* Cambio visual al pasar el mouse. */
+  .btn-pagar:hover {
+    /* Oscurece ligeramente el botón. */
+    background: #22382c;
+    /* Cambia también el borde. */
+    border-color: #22382c;
+    /* Levanta ligeramente el botón. */
+    transform: translateY(-1px);
+  }
+
+
+  /* Cambio mientras se presiona el botón. */
+  .btn-pagar:active {
+    /* Devuelve el botón a su posición normal. */
+    transform: translateY(0);
+  }
+
+
+/* ========================================================= */
+/* RESPONSIVE */
+/* ========================================================= */
+
+/* Ajustes para tablets y pantallas medianas. */
+@media (max-width: 800px) {
 
   /* Reduce los espacios laterales. */
   .contenido {
     padding: 25px 18px 40px;
   }
 
-  /* Reduce los espacios del encabezado. */
+  /* Reduce el espacio del encabezado. */
   .encabezado {
     padding: 24px 18px 16px;
   }
 
-  /* Cambia los datos a una sola columna. */
+  /* Cambia los datos generales a una sola columna. */
   .informacion {
     grid-template-columns: 1fr;
   }
 
-  /* La dirección sigue ocupando todo el ancho. */
+  /* La dirección vuelve a ocupar una columna normal. */
   .dato-completo {
     grid-column: auto;
+  }
+
+  /* Cambia la tarjeta del producto a una sola columna. */
+  .producto-detalle {
+    grid-template-columns: 1fr;
+  }
+
+  /* Elimina la línea vertical del nombre del producto. */
+  .producto-nombre {
+    border-right: none;
+    /* Agrega una línea inferior en su lugar. */
+    border-bottom: 1px solid #ddd5c7;
+    /* Elimina el espacio derecho. */
+    padding-right: 0;
+    /* Agrega espacio inferior. */
+    padding-bottom: 14px;
   }
 }
 
 
-/* Adapta todavía más la interfaz para celulares. */
-@media (max-width: 520px) {
+/* Ajustes para celulares. */
+@media (max-width: 550px) {
 
   /* Coloca el encabezado verticalmente. */
   .encabezado {
     flex-direction: column;
-    /* Alinea el contenido hacia la izquierda. */
+    /* Alinea el contenido a la izquierda. */
     align-items: flex-start;
     /* Agrega separación. */
     gap: 16px;
@@ -384,17 +612,26 @@
   /* Coloca la cabecera del pedido verticalmente. */
   .detalle-header {
     flex-direction: column;
-    /* Alinea el contenido hacia la izquierda. */
+    /* Alinea los elementos a la izquierda. */
     align-items: flex-start;
   }
 
-  /* Hace que el botón inferior ocupe todo el ancho. */
-  .btn-secundario {
-    width: 100%;
+  /* Cambia cantidad, precio y subtotal
+     a una sola columna en pantallas pequeñas. */
+  .producto-info {
+    grid-template-columns: 1fr;
   }
 
-  /* Hace que el contenedor inferior use todo el ancho. */
+  /* Coloca los botones inferiores verticalmente. */
   .acciones {
-    justify-content: stretch;
+    flex-direction: column;
+    /* Hace que ocupen todo el ancho. */
+    align-items: stretch;
+  }
+
+  /* Hace que ambos botones ocupen todo el ancho. */
+  .btn-secundario,
+  .btn-pagar {
+    width: 100%;
   }
 }

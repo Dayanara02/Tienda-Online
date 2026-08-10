@@ -385,30 +385,36 @@ export class DetallePedido {
   // PAGAR PEDIDO
   // =========================================================
 
-  // Este método será utilizado por el botón
-  // Pagar pedido.
+  // Este método se ejecuta cuando el Cliente
+  // presiona el botón "Pagar pedido".
   pagarPedido(): void {
 
-    // Comprueba que el pedido exista.
+    // Comprueba que exista información del pedido.
     if (!this.pedido) {
+
       return;
     }
 
 
-    // Evita continuar si la API indica
-    // que el pedido ya no puede pagarse.
+    // Evita abrir la pantalla de pago
+    // si el backend indica que el pedido
+    // ya no puede pagarse.
     if (!this.pedido.puedePagar) {
+
       return;
     }
 
 
-    // Por ahora solamente mostramos un mensaje.
+    // Navega hacia la nueva pantalla de pago
+    // enviando el identificador del pedido.
     //
-    // En el siguiente paso cambiaremos esto
-    // por la navegación hacia la pantalla de pago.
-    alert(
-      `Vamos a pagar el pedido #${this.pedido.idPedido}`
-    );
+    // Por ejemplo:
+    //
+    // /pago-pedido/5
+    this.router.navigate([
+      '/pago-pedido',
+      this.pedido.idPedido
+    ]);
   }
 
 
