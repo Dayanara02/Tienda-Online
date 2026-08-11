@@ -1,0 +1,282 @@
+<div class="empleado-layout">
+  <aside class="menu-lateral">
+
+    <div class="logo">
+      esen<span>c</span>ia
+    </div>
+
+    <p class="tipo-usuario">
+      Panel de empleado
+    </p>
+
+    <nav class="menu">
+
+      <a
+        routerLink="/empleado-dashboard"
+        class="activo"
+      >
+        Inicio
+      </a>
+
+      <a routerLink="/productos">
+        Productos
+      </a>
+
+      <a routerLink="/inventario">
+        Inventario
+      </a>
+
+      <a routerLink="/gestion-pedidos">
+        Pedidos
+      </a>
+
+      <a routerLink="/movimientos-inventario">
+        Movimientos
+      </a>
+
+    </nav>
+
+    <button
+      type="button"
+      class="boton-salir"
+      (click)="cerrarSesion()"
+    >
+      Cerrar sesión
+    </button>
+
+  </aside>
+
+
+  <main class="contenido">
+
+    <header class="encabezado">
+
+      <div>
+
+        <span class="etiqueta">
+          Empleado
+        </span>
+
+        <h1>
+          Hola, {{ nombreUsuario }}
+        </h1>
+
+        <p>
+          Bienvenido al panel de trabajo de Esencia.
+        </p>
+
+      </div>
+
+      <a
+        routerLink="/perfil"
+        class="boton-perfil"
+      >
+        Mi perfil
+      </a>
+
+    </header>
+
+
+    <section class="resumen">
+
+      <article class="tarjeta-resumen">
+
+        <span class="icono">
+          📦
+        </span>
+
+        <div>
+          <small>
+            Productos
+          </small>
+
+          <strong>
+            Consulta del catálogo
+          </strong>
+        </div>
+
+      </article>
+
+
+      <article class="tarjeta-resumen">
+
+        <span class="icono">
+          📋
+        </span>
+
+        <div>
+          <small>
+            Inventario
+          </small>
+
+          <strong>
+            Control de existencias
+          </strong>
+        </div>
+
+      </article>
+
+
+      <article class="tarjeta-resumen">
+
+        <span class="icono">
+          🛒
+        </span>
+
+        <div>
+          <small>
+            Pedidos
+          </small>
+
+          <strong>
+            Gestión de pedidos
+          </strong>
+        </div>
+
+      </article>
+
+
+      <article class="tarjeta-resumen">
+
+        <span class="icono">
+          🔄
+        </span>
+
+        <div>
+          <small>
+            Movimientos
+          </small>
+
+          <strong>
+            Entradas y salidas
+          </strong>
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <section class="seccion">
+
+      <div class="titulo-seccion">
+
+        <span class="etiqueta">
+          Accesos rápidos
+        </span>
+
+        <h2>
+          ¿Qué deseas gestionar?
+        </h2>
+
+      </div>
+
+
+      <div class="acciones-grid">
+
+
+        <a
+          routerLink="/productos"
+          class="tarjeta-accion"
+        >
+
+          <span class="numero">
+            01
+          </span>
+
+          <h3>
+            Productos
+          </h3>
+
+          <p>
+            Consulta los productos disponibles
+            en el catálogo de la tienda.
+          </p>
+
+          <span class="flecha">
+            →
+          </span>
+
+        </a>
+
+
+        <a
+          routerLink="/inventario"
+          class="tarjeta-accion"
+        >
+
+          <span class="numero">
+            02
+          </span>
+
+          <h3>
+            Inventario
+          </h3>
+
+          <p>
+            Revisa existencias, disponibilidad
+            y productos próximos a agotarse.
+          </p>
+
+          <span class="flecha">
+            →
+          </span>
+
+        </a>
+
+
+        <a
+          routerLink="/gestion-pedidos"
+          class="tarjeta-accion"
+        >
+
+          <span class="numero">
+            03
+          </span>
+
+          <h3>
+            Pedidos
+          </h3>
+
+          <p>
+            Consulta pedidos y actualiza
+            su estado durante el proceso.
+          </p>
+
+          <span class="flecha">
+            →
+          </span>
+
+        </a>
+
+
+        <a
+          routerLink="/movimientos-inventario"
+          class="tarjeta-accion"
+        >
+
+          <span class="numero">
+            04
+          </span>
+
+          <h3>
+            Movimientos de inventario
+          </h3>
+
+          <p>
+            Consulta las entradas y salidas
+            registradas en el inventario.
+          </p>
+
+          <span class="flecha">
+            →
+          </span>
+
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+</div>

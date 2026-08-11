@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TiendaOnline.Dominio.Model;
 using TiendaOnline.AccesoDatos.Context;
 using Microsoft.AspNetCore.Authorization;
+using TiendaOnline.Dominio.Entidades;
 
 namespace TiendaOnline.API.Controllers
 {

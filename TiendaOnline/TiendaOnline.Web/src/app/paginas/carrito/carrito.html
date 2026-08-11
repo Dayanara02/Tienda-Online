@@ -1,0 +1,429 @@
+<section class="pagina-carrito">
+
+  <nav class="barra-superior">
+
+    <a
+      routerLink="/dashboard"
+      class="logo"
+    >
+      esen<span>c</span>ia
+    </a>
+
+    <div class="acciones-superiores">
+
+      <a
+        routerLink="/descuentos"
+        class="boton-nav"
+      >
+        ✦ Descuentos
+      </a>
+
+      <a
+        routerLink="/lista-deseos"
+        class="boton-nav"
+      >
+        ♡ Deseos
+      </a>
+
+      <a
+        routerLink="/perfil"
+        class="boton-nav"
+      >
+        Perfil
+      </a>
+
+      <a
+        routerLink="/dashboard"
+        class="boton-nav"
+      >
+        Volver
+      </a>
+
+    </div>
+
+  </nav>
+
+
+  <main class="contenido">
+
+    <header class="encabezado">
+
+      <div>
+
+        <span class="etiqueta">
+          Tu compra
+        </span>
+
+        <h1>
+          Carrito
+        </h1>
+
+        <p>
+          Revisa los productos antes de
+          continuar con tu pedido.
+        </p>
+
+      </div>
+
+      <span
+        class="cantidad-productos"
+        *ngIf="productos.length > 0"
+      >
+        {{ cantidadTotal }}
+        producto(s)
+      </span>
+
+    </header>
+
+
+    <!-- CARRITO VACÍO -->
+
+    <section
+      class="carrito-vacio"
+      *ngIf="productos.length === 0"
+    >
+
+      <div class="icono-carrito">
+        🛒
+      </div>
+
+      <h2>
+        Tu carrito está vacío
+      </h2>
+
+      <p>
+        Agrega productos desde nuestra
+        tienda para comenzar tu compra.
+      </p>
+
+      <a
+        routerLink="/dashboard"
+        class="boton-principal"
+      >
+        Explorar productos
+      </a>
+
+    </section>
+
+
+    <!-- CARRITO CON PRODUCTOS -->
+
+    <div
+      class="carrito-grid"
+      *ngIf="productos.length > 0"
+    >
+
+      <section class="productos-carrito">
+
+        <article
+          class="producto"
+          *ngFor="let producto of productos"
+        >
+
+          <div class="imagen">
+
+            <img
+              [src]="producto.imagen"
+              [alt]="producto.nombre"
+            />
+
+          </div>
+
+
+          <div class="informacion">
+
+            <span class="marca">
+              {{ producto.marca }}
+            </span>
+
+            <h2>
+              {{ producto.nombre }}
+            </h2>
+
+            <p class="precio-unitario">
+              {{
+                producto.precio
+                  | currency:'CRC':'symbol-narrow':'1.0-0'
+              }}
+              c/u
+            </p>
+
+            <p class="disponibles">
+              Disponibles:
+              {{ producto.disponibles }}
+            </p>
+
+          </div>
+
+
+          <div class="cantidad">
+
+            <span>
+              Cantidad
+            </span>
+
+            <div class="control-cantidad">
+
+              <button
+                type="button"
+                (click)="disminuirCantidad(producto)"
+              >
+                −
+              </button>
+
+              <strong>
+                {{ producto.cantidad }}
+              </strong>
+
+              <button
+                type="button"
+                [disabled]="
+                  producto.cantidad >=
+                  producto.disponibles
+                "
+                (click)="aumentarCantidad(producto)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="subtotal-producto">
+
+            <span>
+              Subtotal
+            </span>
+
+            <strong>
+              {{
+                subtotalProducto(producto)
+                  | currency:'CRC':'symbol-narrow':'1.0-0'
+              }}
+            </strong>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="boton-eliminar"
+            (click)="eliminarProducto(producto.id)"
+          >
+            Eliminar
+          </button>
+
+        </article>
+
+
+        <div class="acciones-carrito">
+
+          <a
+            routerLink="/dashboard"
+            class="boton-secundario"
+          >
+            ← Seguir comprando
+          </a>
+
+          <button
+            type="button"
+            class="boton-secundario"
+            (click)="vaciarCarrito()"
+          >
+            Vaciar carrito
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- RESUMEN -->
+
+      <aside class="resumen">
+
+        <span class="etiqueta">
+          Resumen
+        </span>
+
+        <h2>
+          Resumen de compra
+        </h2>
+
+
+        <!-- PROMOCIÓN ACTIVA -->
+
+        <div
+          class="promocion-carrito"
+          *ngIf="promocionActiva"
+          [class.desbloqueada]="promocionCumplida"
+        >
+
+          <div class="promocion-cabecera">
+
+            <span class="promocion-icono">
+              {{ promocionActiva.icono }}
+            </span>
+
+            <div>
+
+              <strong>
+                {{ promocionActiva.nombre }}
+              </strong>
+
+              <small>
+                {{ promocionActiva.porcentaje }}%
+                de descuento
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <p
+            class="promocion-pendiente"
+            *ngIf="!promocionCumplida"
+          >
+            Te faltan
+            <strong>
+              {{ productosFaltantes }}
+            </strong>
+            producto(s) para desbloquear
+            este descuento.
+          </p>
+
+
+          <p
+            class="promocion-exito"
+            *ngIf="promocionCumplida"
+          >
+            ✓ Descuento desbloqueado
+          </p>
+
+
+          <button
+            type="button"
+            class="quitar-promocion"
+            (click)="quitarPromocion()"
+          >
+            Quitar promoción
+          </button>
+
+        </div>
+
+
+        <div class="fila-resumen">
+
+          <span>
+            Productos
+          </span>
+
+          <strong>
+            {{ cantidadTotal }}
+          </strong>
+
+        </div>
+
+
+        <div class="fila-resumen">
+
+          <span>
+            Subtotal
+          </span>
+
+          <strong>
+            {{
+              subtotal
+                | currency:'CRC':'symbol-narrow':'1.0-0'
+            }}
+          </strong>
+
+        </div>
+
+
+        <div
+          class="fila-resumen descuento-resumen"
+          *ngIf="promocionCumplida"
+        >
+
+          <span>
+            Descuento
+            {{ promocionActiva?.porcentaje }}%
+          </span>
+
+          <strong>
+            -
+            {{
+              montoDescuento
+                | currency:'CRC':'symbol-narrow':'1.0-0'
+            }}
+          </strong>
+
+        </div>
+
+
+        <div class="fila-resumen">
+
+          <span>
+            Envío
+          </span>
+
+          <strong>
+            Se calcula al confirmar
+          </strong>
+
+        </div>
+
+
+        <div class="fila-total">
+
+          <span>
+            Total
+          </span>
+
+          <strong>
+            {{
+              total
+                | currency:'CRC':'symbol-narrow':'1.0-0'
+            }}
+          </strong>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="boton-confirmar"
+          (click)="confirmarPedido()"
+        >
+          Continuar con el pedido
+          <span>→</span>
+        </button>
+
+
+        <div class="seguridad">
+
+          <p>
+            ✓ Compra segura
+          </p>
+
+          <p>
+            ✓ Inventario verificado
+          </p>
+
+          <p>
+            ✓ Seguimiento del pedido
+          </p>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+</section>

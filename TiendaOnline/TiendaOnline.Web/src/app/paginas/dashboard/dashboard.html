@@ -1,0 +1,500 @@
+<nav class="navegacion">
+
+  <div class="contenedor barra-navegacion">
+
+    <a
+      class="logo"
+      routerLink="/dashboard"
+    >
+      esen<span>c</span>ia
+    </a>
+
+
+    <div class="enlaces">
+
+      <button
+        type="button"
+        class="enlace-menu"
+        (click)="irASeccion('inicio')"
+      >
+        Inicio
+      </button>
+
+      <button
+        type="button"
+        class="enlace-menu"
+        (click)="irASeccion('categorias')"
+      >
+        Categorías
+      </button>
+
+      <button
+        type="button"
+        class="enlace-menu"
+        (click)="irASeccion('productos')"
+      >
+        Productos
+      </button>
+
+      <button
+        type="button"
+        class="enlace-menu"
+        (click)="irASeccion('rutina')"
+      >
+        Rutina
+      </button>
+
+      <button
+        type="button"
+        class="enlace-menu"
+        (click)="irAMisPedidos()"
+      >
+        Mis pedidos
+      </button>
+
+    </div>
+
+
+    <div class="acciones">
+
+      <button
+        type="button"
+        class="boton-nav boton-descuentos"
+        (click)="irADescuentos()"
+      >
+        ✦ Descuentos
+      </button>
+
+      <a
+        routerLink="/lista-deseos"
+        class="boton-nav"
+      >
+        ♡ Deseos
+      </a>
+
+      <a
+        routerLink="/carrito"
+        class="boton-nav"
+      >
+        Carrito
+      </a>
+
+      <a
+        routerLink="/perfil"
+        class="boton-nav"
+      >
+        Perfil
+      </a>
+
+      <button
+        type="button"
+        class="boton-nav"
+        (click)="cerrarSesion()"
+      >
+        Salir
+      </button>
+
+    </div>
+
+  </div>
+
+</nav>
+
+
+<header
+  class="hero"
+  id="inicio"
+>
+
+  <div class="contenedor contenido-hero">
+
+    <div class="texto-hero">
+
+      <span class="etiqueta">
+        Cuidado personal · Costa Rica
+      </span>
+
+      <p class="saludo">
+        Hola, {{ nombreUsuario }}
+      </p>
+
+      <h1>
+        Rituales simples,
+        <br>
+        piel en <em>calma</em>.
+      </h1>
+
+      <p class="descripcion-hero">
+        Cuidado facial y corporal seleccionado
+        con atención. Menos pasos, mejores
+        ingredientes y resultados que se notan.
+      </p>
+
+      <div class="botones-hero">
+
+        <button
+          type="button"
+          class="boton-principal"
+          (click)="irASeccion('productos')"
+        >
+          Explorar productos →
+        </button>
+
+        <button
+          type="button"
+          class="boton-enlace"
+          (click)="irASeccion('rutina')"
+        >
+          Ver rutina recomendada
+        </button>
+
+      </div>
+
+      <div class="beneficios">
+        <span>◇ Envío a todo el país</span>
+        <span>✓ Compra segura</span>
+        <span>☆ Productos verificados</span>
+      </div>
+
+    </div>
+
+
+    <div class="visual-hero">
+
+      <div class="forma forma-dorada"></div>
+      <div class="forma forma-rosa"></div>
+      <div class="forma forma-clara"></div>
+
+      <div class="hoja hoja-uno">
+        ⌁
+      </div>
+
+      <div class="hoja hoja-dos">
+        ⌁
+      </div>
+
+      <div class="tarjeta-flotante tarjeta-superior">
+        <span>✓</span>
+        Productos seleccionados
+      </div>
+
+      <div class="tarjeta-flotante tarjeta-inferior">
+        <span>♡</span>
+        Cuidado para tu piel
+      </div>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<section
+  class="seccion-categorias"
+  id="categorias"
+>
+
+  <div class="contenedor">
+
+    <div class="encabezado-seccion">
+
+      <div>
+
+        <span class="etiqueta">
+          Catálogo
+        </span>
+
+        <h2>
+          Compra por categoría
+        </h2>
+
+      </div>
+
+      <button
+        type="button"
+        class="ver-todos"
+        [class.activo]="categoriaSeleccionada === 0"
+        (click)="mostrarTodos()"
+      >
+        Ver todos
+      </button>
+
+    </div>
+
+
+    <div class="lista-categorias">
+
+      <button
+        type="button"
+        class="tarjeta-categoria"
+        *ngFor="let categoria of categorias"
+        [class.activa]="categoriaSeleccionada === categoria.id"
+        (click)="seleccionarCategoria(categoria.id)"
+      >
+
+        <span class="icono-categoria">
+          {{ categoria.icono }}
+        </span>
+
+        <strong>
+          {{ categoria.nombre }}
+        </strong>
+
+        <small>
+          {{ categoria.descripcion }}
+        </small>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section
+  class="seccion-productos"
+  id="productos"
+>
+
+  <div class="contenedor">
+
+    <div class="encabezado-productos">
+
+      <div>
+
+        <span class="etiqueta">
+          Productos disponibles
+        </span>
+
+        <h2>
+          {{
+            categoriaSeleccionada === 0
+              ? 'Todos nuestros productos'
+              : 'Productos de la categoría'
+          }}
+        </h2>
+
+      </div>
+
+      <p>
+        {{ productosFiltrados.length }}
+        producto(s)
+      </p>
+
+    </div>
+
+
+    <div
+      class="mensaje"
+      *ngIf="mensaje"
+    >
+      {{ mensaje }}
+    </div>
+
+
+    <div class="cuadricula-productos">
+
+      <article
+        class="tarjeta-producto"
+        *ngFor="let producto of productosFiltrados"
+      >
+
+        <div class="contenedor-imagen">
+
+          <img
+            [src]="producto.imagen"
+            [alt]="producto.nombre"
+          >
+
+          <button
+            type="button"
+            class="boton-corazon"
+            [class.activo]="estaEnDeseos(producto.id)"
+            (click)="irADeseos(producto)"
+          >
+            {{
+              estaEnDeseos(producto.id)
+                ? '♥'
+                : '♡'
+            }}
+          </button>
+
+          <span class="disponibles">
+            Disponibles:
+            {{ producto.disponibles }}
+          </span>
+
+        </div>
+
+
+        <div class="informacion-producto">
+
+          <span class="marca-producto">
+            {{ producto.marca }}
+          </span>
+
+          <h3>
+            {{ producto.nombre }}
+          </h3>
+
+          <p class="precio">
+            {{
+              producto.precio
+                | currency:'CRC':'symbol-narrow':'1.0-0'
+            }}
+          </p>
+
+
+          <div class="fila-cantidad">
+
+            <span>
+              Cantidad
+            </span>
+
+            <div class="control-cantidad">
+
+              <button
+                type="button"
+                (click)="disminuirCantidad(producto)"
+              >
+                −
+              </button>
+
+              <strong>
+                {{ producto.cantidad }}
+              </strong>
+
+              <button
+                type="button"
+                (click)="aumentarCantidad(producto)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="boton-agregar"
+            [disabled]="producto.disponibles === 0"
+            (click)="agregarAlCarrito(producto)"
+          >
+            {{
+              producto.disponibles > 0
+                ? 'Añadir al carrito'
+                : 'Producto agotado'
+            }}
+          </button>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section
+  class="seccion-rutina"
+  id="rutina"
+>
+
+  <div class="contenedor">
+
+    <span class="etiqueta etiqueta-clara">
+      Guía rápida
+    </span>
+
+    <h2>
+      Tu rutina, en 5 pasos
+    </h2>
+
+    <p class="introduccion-rutina">
+      El orden importa: cada paso prepara
+      la piel para el siguiente.
+    </p>
+
+
+    <div class="pasos">
+
+      <article class="paso">
+        <span>1</span>
+        <h3>Limpieza</h3>
+        <p>Retira las impurezas del día.</p>
+      </article>
+
+      <article class="paso">
+        <span>2</span>
+        <h3>Tónico</h3>
+        <p>Equilibra el pH de la piel.</p>
+      </article>
+
+      <article class="paso">
+        <span>3</span>
+        <h3>Sérum</h3>
+        <p>Trata tu necesidad puntual.</p>
+      </article>
+
+      <article class="paso">
+        <span>4</span>
+        <h3>Hidratante</h3>
+        <p>Sella la humedad.</p>
+      </article>
+
+      <article class="paso">
+        <span>5</span>
+        <h3>Protector solar</h3>
+        <p>Cuida tu piel durante el día.</p>
+      </article>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<footer class="pie-pagina">
+
+  <div class="contenedor contenido-pie">
+
+    <div class="logo logo-pie">
+      esen<span>c</span>ia
+    </div>
+
+    <div class="enlaces-pie">
+
+      <a routerLink="/descuentos">
+        Descuentos
+      </a>
+
+      <a routerLink="/lista-deseos">
+        Deseos
+      </a>
+
+      <a routerLink="/mis-pedidos">
+        Mis pedidos
+      </a>
+
+      <a routerLink="/carrito">
+        Carrito
+      </a>
+
+    </div>
+
+    <small>
+      © 2026 Esencia
+    </small>
+
+  </div>
+
+</footer>

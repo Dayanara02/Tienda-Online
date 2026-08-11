@@ -1,0 +1,187 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.pagina-registro {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(200, 155, 60, 0.18),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(184, 92, 107, 0.15),
+      transparent 35%
+    ),
+    #26342d;
+}
+
+.tarjeta-registro {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 28px;
+  background: #f5f1e8;
+  padding: 42px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.28);
+}
+
+.encabezado-registro {
+  margin-bottom: 30px;
+}
+
+.marca {
+  margin: 0 0 10px;
+  color: #b85c6b;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.encabezado-registro h1 {
+  margin: 0 0 10px;
+  color: #1e2e22;
+  font-family: Georgia, serif;
+  font-size: 2.2rem;
+  font-weight: 500;
+}
+
+.encabezado-registro p:last-child {
+  margin: 0;
+  color: rgba(30, 46, 34, 0.7);
+  line-height: 1.6;
+}
+
+form {
+  display: grid;
+  gap: 18px;
+}
+
+.campo {
+  display: grid;
+  gap: 8px;
+}
+
+.campo label {
+  color: #1e2e22;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.campo input {
+  width: 100%;
+  border: 1px solid rgba(30, 46, 34, 0.18);
+  border-radius: 14px;
+  background: #ece8df;
+  color: #1e2e22;
+  padding: 14px 16px;
+  font: inherit;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.campo input::placeholder {
+  color: rgba(30, 46, 34, 0.45);
+}
+
+.campo input:focus {
+  border-color: #c89b3c;
+  background: #fffdf8;
+  box-shadow: 0 0 0 3px rgba(200, 155, 60, 0.14);
+}
+
+.boton-registro {
+  width: 100%;
+  margin-top: 4px;
+  border: none;
+  border-radius: 999px;
+  background: #1e2e22;
+  color: #fffdf8;
+  padding: 14px 20px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.boton-registro:hover:not(:disabled) {
+  background: #b85c6b;
+  transform: translateY(-1px);
+}
+
+.boton-registro:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.mensaje-error,
+.mensaje-exito {
+  margin: 0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.88rem;
+}
+
+.mensaje-error {
+  border: 1px solid rgba(184, 92, 107, 0.28);
+  background: rgba(184, 92, 107, 0.1);
+  color: #8d3141;
+}
+
+.mensaje-exito {
+  border: 1px solid rgba(63, 90, 68, 0.28);
+  background: rgba(63, 90, 68, 0.1);
+  color: #2f5a36;
+}
+
+.volver-login {
+  margin: 24px 0 0;
+  color: rgba(30, 46, 34, 0.7);
+  text-align: center;
+}
+
+.volver-login a {
+  color: #1e2e22;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.volver-login a:hover {
+  color: #b85c6b;
+}
+
+@media (max-width: 600px) {
+  .tarjeta-registro {
+    padding: 30px 22px;
+  }
+
+  .encabezado-registro h1 {
+    font-size: 1.9rem;
+  }
+  .fila-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .fila-campos {
+    grid-template-columns: 1fr;
+  }
+}
+}

@@ -1,0 +1,134 @@
+<section class="pagina-registro">
+  <div class="tarjeta-registro">
+
+    <div class="encabezado-registro">
+      <p class="marca">ESENCIA</p>
+
+      <h1>Crear una cuenta</h1>
+
+      <p>
+        Regístrate para comprar productos y consultar tus pedidos.
+      </p>
+    </div>
+
+    <form (ngSubmit)="registrarse()">
+
+      <div class="fila-campos">
+        <div class="campo">
+          <label for="nombre">Nombre</label>
+
+          <input
+            id="nombre"
+            name="nombre"
+            type="text"
+            placeholder="Escribe tu nombre"
+            autocomplete="given-name"
+            [(ngModel)]="nombre"
+            required
+          />
+        </div>
+
+        <div class="campo">
+          <label for="apellido">Apellido</label>
+
+          <input
+            id="apellido"
+            name="apellido"
+            type="text"
+            placeholder="Escribe tu apellido"
+            autocomplete="family-name"
+            [(ngModel)]="apellido"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+
+        <input
+          id="correo"
+          name="correo"
+          type="email"
+          placeholder="ejemplo@correo.com"
+          autocomplete="email"
+          [(ngModel)]="correo"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="telefono">Teléfono</label>
+
+        <input
+          id="telefono"
+          name="telefono"
+          type="tel"
+          placeholder="Ejemplo: 88887777"
+          autocomplete="tel"
+          [(ngModel)]="telefono"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="contrasena">Contraseña</label>
+
+        <input
+          id="contrasena"
+          name="contrasena"
+          type="password"
+          placeholder="Escribe una contraseña"
+          autocomplete="new-password"
+          [(ngModel)]="contrasena"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="confirmarContrasena">
+          Confirmar contraseña
+        </label>
+
+        <input
+          id="confirmarContrasena"
+          name="confirmarContrasena"
+          type="password"
+          placeholder="Repite la contraseña"
+          autocomplete="new-password"
+          [(ngModel)]="confirmarContrasena"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="boton-registro"
+        [disabled]="cargando"
+      >
+        {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
+      </button>
+
+      <p
+        class="mensaje-error"
+        *ngIf="mensajeError"
+      >
+        {{ mensajeError }}
+      </p>
+
+      <p
+        class="mensaje-exito"
+        *ngIf="mensajeExito"
+      >
+        {{ mensajeExito }}
+      </p>
+
+    </form>
+
+    <p class="volver-login">
+      ¿Ya tienes una cuenta?
+      <a routerLink="/login">Inicia sesión</a>
+    </p>
+
+  </div>
+</section>

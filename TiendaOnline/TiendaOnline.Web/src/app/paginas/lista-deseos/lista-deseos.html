@@ -1,0 +1,122 @@
+<section class="pagina-deseos">
+
+  <header class="encabezado">
+
+    <div>
+      <span class="etiqueta">
+        Tus favoritos
+      </span>
+
+      <h1>
+        Lista de deseos
+      </h1>
+
+      <p>
+        Guarda aquí los productos que quieras
+        comprar más adelante.
+      </p>
+    </div>
+
+    <a
+      routerLink="/dashboard"
+      class="boton-volver"
+    >
+      ← Volver a la tienda
+    </a>
+
+  </header>
+
+
+  <div
+    class="lista-vacia"
+    *ngIf="productosDeseados.length === 0"
+  >
+
+    <div class="corazon-grande">
+      ♡
+    </div>
+
+    <h2>
+      Tu lista de deseos está vacía
+    </h2>
+
+    <p>
+      Agrega productos desde la tienda
+      usando el corazón.
+    </p>
+
+    <a
+      routerLink="/dashboard"
+      class="boton-principal"
+    >
+      Explorar productos
+    </a>
+
+  </div>
+
+
+  <div
+    class="grid-productos"
+    *ngIf="productosDeseados.length > 0"
+  >
+
+    <article
+      class="tarjeta-producto"
+      *ngFor="let producto of productosDeseados"
+    >
+
+      <div class="imagen-producto">
+
+        <img
+          [src]="producto.imagen"
+          [alt]="producto.nombre"
+        />
+
+        <button
+          type="button"
+          class="boton-eliminar"
+          (click)="eliminarDeseo(producto.id)"
+        >
+          ♥
+        </button>
+
+      </div>
+
+
+      <div class="contenido-producto">
+
+        <span class="marca">
+          {{ producto.marca }}
+        </span>
+
+        <h3>
+          {{ producto.nombre }}
+        </h3>
+
+        <p class="precio">
+          {{
+            producto.precio
+              | currency:'CRC':'symbol-narrow':'1.0-0'
+          }}
+        </p>
+
+        <p class="stock">
+          Disponibles:
+          {{ producto.disponibles }}
+        </p>
+
+        <button
+          type="button"
+          class="boton-carrito"
+          (click)="agregarAlCarrito(producto)"
+        >
+          Añadir al carrito
+        </button>
+
+      </div>
+
+    </article>
+
+  </div>
+
+</section>

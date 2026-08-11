@@ -1,0 +1,400 @@
+/* Aplica el estilo general de toda la página de confirmación. */
+.confirmar-page {
+  /* Usa un fondo claro para mantener el estilo visual de Esencia. */
+  background: #f7f3ea;
+  /* Hace que la página ocupe como mínimo toda la altura de la pantalla. */
+  min-height: 100vh;
+  /* Define el color principal del texto. */
+  color: #22352b;
+  /* Utiliza una tipografía elegante similar al resto del proyecto. */
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+
+/* Estilos del encabezado superior de la página. */
+.encabezado {
+  /* Agrega espacio interno alrededor del contenido. */
+  padding: 28px 40px 18px;
+  /* Coloca una línea inferior suave para separar el encabezado. */
+  border-bottom: 1px solid #d8d0c2;
+  /* Mantiene el encabezado sobre un fondo claro. */
+  background: #fbf8f1;
+}
+
+
+  /* Estilo del nombre principal de la tienda. */
+  .encabezado h1 {
+    /* Elimina el margen que viene por defecto en los títulos. */
+    margin: 0;
+    /* Define un tamaño grande para resaltar el nombre Esencia. */
+    font-size: 34px;
+    /* Mantiene un peso elegante sin hacerlo demasiado grueso. */
+    font-weight: 500;
+  }
+
+
+  /* Estilo del texto pequeño debajo del título. */
+  .encabezado p {
+    /* Agrega una pequeña separación con respecto al título. */
+    margin: 6px 0 0;
+    /* Usa un color más suave porque es información secundaria. */
+    color: #6f756f;
+    /* Define un tamaño menor que el título principal. */
+    font-size: 15px;
+  }
+
+
+/* Organiza las dos secciones principales de la página. */
+.contenido {
+  /* Utiliza grid para colocar el resumen y los datos de entrega lado a lado. */
+  display: grid;
+  /* La primera columna será un poco más grande que la segunda. */
+  grid-template-columns: 1.2fr 0.8fr;
+  /* Agrega espacio entre ambas columnas. */
+  gap: 30px;
+  /* Agrega espacio alrededor de todo el contenido. */
+  padding: 35px 40px 50px;
+  /* Limita el ancho para que no se estire demasiado en pantallas grandes. */
+  max-width: 1250px;
+  /* Centra el contenido horizontalmente. */
+  margin: 0 auto;
+}
+
+
+/* Aplica un estilo de tarjeta al resumen y a los datos de entrega. */
+.resumen,
+.datos-entrega {
+  /* Usa un fondo blanco cálido para separar el contenido del fondo general. */
+  background: #fffdf8;
+  /* Agrega un borde suave alrededor de cada sección. */
+  border: 1px solid #ddd5c7;
+  /* Redondea las esquinas de las tarjetas. */
+  border-radius: 18px;
+  /* Agrega espacio interno. */
+  padding: 26px;
+}
+
+
+  /* Estilo de los títulos de las dos secciones. */
+  .resumen h2,
+  .datos-entrega h2 {
+    /* Elimina el margen superior automático del navegador. */
+    margin-top: 0;
+    /* Agrega espacio debajo del título. */
+    margin-bottom: 22px;
+    /* Mantiene un tamaño claro y elegante. */
+    font-size: 24px;
+    /* Evita que el título se vea demasiado grueso. */
+    font-weight: 500;
+  }
+
+
+/* Organiza cada producto dentro del resumen. */
+.producto {
+  /* Coloca la información del producto y su precio en extremos opuestos. */
+  display: flex;
+  /* Separa horizontalmente ambos lados. */
+  justify-content: space-between;
+  /* Centra verticalmente el contenido. */
+  align-items: center;
+  /* Agrega espacio interno arriba y abajo. */
+  padding: 16px 0;
+  /* Coloca una línea entre cada producto. */
+  border-bottom: 1px solid #ece5da;
+  /* Agrega espacio entre el nombre y el precio. */
+  gap: 20px;
+}
+
+
+/* Estilo del nombre del producto. */
+.producto-info h3 {
+  /* Elimina márgenes innecesarios. */
+  margin: 0 0 6px;
+  /* Define un tamaño cómodo para leer el nombre. */
+  font-size: 18px;
+  /* Mantiene un peso intermedio. */
+  font-weight: 500;
+}
+
+
+/* Estilo de la cantidad del producto. */
+.producto-info p {
+  /* Elimina el margen automático. */
+  margin: 0;
+  /* Usa un color secundario. */
+  color: #77796f;
+  /* Reduce ligeramente el tamaño del texto. */
+  font-size: 14px;
+}
+
+
+/* Estilo del precio total de cada producto. */
+.producto-precio {
+  /* Evita que el precio se parta en dos líneas. */
+  white-space: nowrap;
+  /* Resalta el precio. */
+  font-weight: 600;
+  /* Mantiene un tamaño visible. */
+  font-size: 17px;
+}
+
+
+/* Estilo del mensaje cuando no existen productos. */
+.carrito-vacio {
+  /* Centra el texto. */
+  text-align: center;
+  /* Agrega bastante espacio para que no quede pegado. */
+  padding: 35px 10px;
+  /* Usa un color más suave. */
+  color: #77796f;
+}
+
+
+/* Contenedor de subtotal, descuentos y total. */
+.totales {
+  /* Separa los cálculos de la lista de productos. */
+  margin-top: 25px;
+  /* Agrega una línea superior para dividir visualmente ambas zonas. */
+  border-top: 1px solid #ddd5c7;
+  /* Agrega espacio arriba después de la línea. */
+  padding-top: 18px;
+}
+
+
+/* Organiza cada fila de los totales. */
+.fila-total {
+  /* Coloca el nombre a la izquierda y el valor a la derecha. */
+  display: flex;
+  /* Separa ambos elementos hasta los extremos. */
+  justify-content: space-between;
+  /* Agrega espacio vertical entre filas. */
+  padding: 8px 0;
+  /* Define un tamaño fácil de leer. */
+  font-size: 16px;
+}
+
+
+/* Da un estilo diferente a la fila de descuento. */
+.descuento {
+  /* Usa un tono verde para indicar un beneficio aplicado. */
+  color: #54705d;
+}
+
+
+/* Resalta el total final de la compra. */
+.total-final {
+  /* Agrega una línea superior antes del total final. */
+  border-top: 1px solid #cfc5b6;
+  /* Agrega separación con respecto a las filas anteriores. */
+  margin-top: 10px;
+  /* Agrega un poco más de espacio arriba. */
+  padding-top: 16px;
+  /* Aumenta el tamaño porque es el dato más importante. */
+  font-size: 21px;
+}
+
+
+/* Estilo de la etiqueta del campo de dirección. */
+.datos-entrega label {
+  /* Hace que la etiqueta ocupe toda su línea. */
+  display: block;
+  /* Agrega espacio debajo antes del textarea. */
+  margin-bottom: 8px;
+  /* Resalta ligeramente la etiqueta. */
+  font-weight: 600;
+}
+
+
+/* Estilo del campo donde el cliente escribe la dirección. */
+.datos-entrega textarea {
+  /* Hace que el textarea ocupe todo el ancho disponible. */
+  width: 100%;
+  /* Evita que el padding aumente incorrectamente el ancho. */
+  box-sizing: border-box;
+  /* Agrega espacio interno para escribir cómodamente. */
+  padding: 14px;
+  /* Coloca un borde suave. */
+  border: 1px solid #cfc7ba;
+  /* Redondea las esquinas. */
+  border-radius: 12px;
+  /* Usa un fondo casi blanco. */
+  background: #fffefa;
+  /* Mantiene el color de texto del proyecto. */
+  color: #22352b;
+  /* Define un tamaño cómodo para escribir. */
+  font-size: 15px;
+  /* Usa una fuente más apropiada para campos de formulario. */
+  font-family: Arial, sans-serif;
+  /* Permite cambiar solo la altura del campo y no su ancho. */
+  resize: vertical;
+  /* Quita el borde de enfoque automático para usar uno personalizado. */
+  outline: none;
+}
+
+
+  /* Se aplica cuando el cliente hace clic dentro del textarea. */
+  .datos-entrega textarea:focus {
+    /* Cambia el borde para indicar que el campo está seleccionado. */
+    border-color: #617867;
+    /* Agrega una sombra muy suave alrededor del campo activo. */
+    box-shadow: 0 0 0 2px rgba(97, 120, 103, 0.12);
+  }
+
+
+/* Estilo del texto de ayuda debajo de la dirección. */
+.datos-entrega small {
+  /* Hace que aparezca en una línea separada. */
+  display: block;
+  /* Agrega un pequeño espacio arriba. */
+  margin-top: 8px;
+  /* Usa un color menos fuerte porque es información secundaria. */
+  color: #7b7c73;
+  /* Usa un tamaño pequeño. */
+  font-size: 13px;
+}
+
+
+/* Estilo del mensaje que aparece cuando existe un error. */
+.mensaje-error {
+  /* Agrega espacio con respecto al campo anterior. */
+  margin-top: 18px;
+  /* Agrega espacio interno. */
+  padding: 12px 14px;
+  /* Utiliza un fondo suave para destacar el problema. */
+  background: #f8e9e6;
+  /* Coloca un borde en un tono relacionado con error. */
+  border: 1px solid #e6c3bc;
+  /* Redondea el contenedor. */
+  border-radius: 10px;
+  /* Usa un color oscuro rojizo para el texto. */
+  color: #8b453c;
+  /* Usa una tipografía normal para mensajes. */
+  font-family: Arial, sans-serif;
+  /* Define un tamaño legible. */
+  font-size: 14px;
+}
+
+
+/* Contenedor de los botones de la página. */
+.acciones {
+  /* Coloca los botones uno al lado del otro. */
+  display: flex;
+  /* Agrega separación entre los botones. */
+  gap: 12px;
+  /* Agrega espacio antes de los botones. */
+  margin-top: 28px;
+}
+
+
+  /* Estilos comunes para ambos botones. */
+  .acciones button {
+    /* Hace que ambos botones ocupen el mismo espacio. */
+    flex: 1;
+    /* Agrega espacio interno. */
+    padding: 13px 16px;
+    /* Redondea las esquinas. */
+    border-radius: 12px;
+    /* Indica visualmente que el botón puede presionarse. */
+    cursor: pointer;
+    /* Define el tamaño del texto. */
+    font-size: 15px;
+    /* Resalta ligeramente el texto. */
+    font-weight: 600;
+    /* Evita usar la fuente serif del resto de la página en los botones. */
+    font-family: Arial, sans-serif;
+    /* Suaviza los cambios visuales al pasar el mouse. */
+    transition: 0.2s ease;
+  }
+
+
+/* Estilo del botón para regresar al carrito. */
+.btn-secundario {
+  /* Usa fondo transparente para darle menos importancia. */
+  background: transparent;
+  /* Coloca un borde verde oscuro. */
+  border: 1px solid #40584a;
+  /* Usa el mismo tono para el texto. */
+  color: #40584a;
+}
+
+
+  /* Cambia el aspecto al pasar el mouse sobre el botón secundario. */
+  .btn-secundario:hover {
+    /* Agrega un fondo verde muy claro. */
+    background: #edf1eb;
+  }
+
+
+/* Estilo principal del botón para continuar la compra. */
+.btn-principal {
+  /* Utiliza un verde oscuro para resaltarlo. */
+  background: #2f493b;
+  /* Usa el mismo tono en el borde. */
+  border: 1px solid #2f493b;
+  /* Hace el texto claro para que contraste. */
+  color: #fffdf8;
+}
+
+
+  /* Cambia ligeramente el botón principal al pasar el mouse. */
+  .btn-principal:hover:not(:disabled) {
+    /* Oscurece un poco el botón. */
+    background: #233a2e;
+  }
+
+
+  /* Se aplica cuando el botón está deshabilitado. */
+  .btn-principal:disabled {
+    /* Reduce la intensidad visual del botón. */
+    opacity: 0.6;
+    /* Indica que temporalmente no puede presionarse. */
+    cursor: not-allowed;
+  }
+
+
+/* Adapta la página para pantallas más pequeñas. */
+@media (max-width: 850px) {
+
+  /* Coloca las dos secciones una debajo de la otra. */
+  .contenido {
+    grid-template-columns: 1fr;
+    /* Reduce un poco los márgenes laterales. */
+    padding: 25px 18px 40px;
+  }
+
+
+  /* Reduce el espacio del encabezado en pantallas pequeñas. */
+  .encabezado {
+    padding: 24px 18px 16px;
+  }
+}
+
+
+/* Adapta los botones para pantallas todavía más pequeñas. */
+@media (max-width: 520px) {
+
+  /* Coloca los botones uno debajo del otro. */
+  .acciones {
+    flex-direction: column;
+  }
+
+  /* Muestra visualmente que la compra fue realizada correctamente. */
+  .mensaje-exito {
+    /* Separa el mensaje de los campos anteriores. */
+    margin-top: 18px;
+    /* Agrega espacio interno para que el texto no quede pegado al borde. */
+    padding: 12px 14px;
+    /* Usa un fondo verde suave para representar una operación exitosa. */
+    background: #e8f1e9;
+    /* Agrega un borde verde claro. */
+    border: 1px solid #bfd2c1;
+    /* Redondea las esquinas del mensaje. */
+    border-radius: 10px;
+    /* Usa un verde oscuro para mantener buena lectura. */
+    color: #365b3e;
+    /* Usa una fuente sencilla para los mensajes del sistema. */
+    font-family: Arial, sans-serif;
+    /* Define un tamaño legible. */
+    font-size: 14px;
+  }
+}

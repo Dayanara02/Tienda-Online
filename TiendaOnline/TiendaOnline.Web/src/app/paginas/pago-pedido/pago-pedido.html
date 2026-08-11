@@ -1,0 +1,595 @@
+<!-- ======================================================= -->
+<!-- PÁGINA GENERAL -->
+<!-- ======================================================= -->
+<!-- Contenedor principal de toda la pantalla de pago. -->
+<div class="pago-page">
+
+  <!-- ===================================================== -->
+  <!-- ENCABEZADO -->
+  <!-- ===================================================== -->
+  <!-- Encabezado superior de la pantalla. -->
+  <header class="encabezado">
+
+    <!-- Nombre de la tienda y sección actual. -->
+    <div>
+
+      <!-- Nombre principal de la tienda. -->
+      <h1>Esencia</h1>
+
+      <!-- Nombre de la pantalla actual. -->
+      <p>Pago del pedido</p>
+
+    </div>
+
+
+    <!-- Botón para regresar al detalle del pedido. -->
+    <button type="button"
+            class="btn-volver"
+            (click)="cancelar()">
+
+      Volver al detalle
+
+    </button>
+
+  </header>
+
+
+  <!-- ===================================================== -->
+  <!-- CONTENIDO PRINCIPAL -->
+  <!-- ===================================================== -->
+
+  <main class="contenido">
+
+    <!-- Mensaje mientras se cargan los datos. -->
+    <div class="mensaje-carga"
+         *ngIf="cargando">
+
+      Cargando información del pago...
+
+    </div>
+
+
+    <!-- Mensaje cuando ocurre algún error. -->
+    <div class="mensaje-error"
+         *ngIf="mensajeError">
+
+      {{ mensajeError }}
+
+    </div>
+
+
+    <!-- Mensaje cuando el pago se realiza correctamente. -->
+    <div class="mensaje-exito"
+         *ngIf="mensajeExito">
+
+      {{ mensajeExito }}
+
+    </div>
+
+
+    <!-- Tarjeta principal del pago. -->
+    <section class="pago-card"
+             *ngIf="
+        !cargando &&
+        pedido &&
+        !mensajeExito
+      ">
+
+      <!-- ================================================= -->
+      <!-- RESUMEN DEL PEDIDO -->
+      <!-- ================================================= -->
+
+      <div class="resumen-pedido">
+
+        <!-- Número del pedido. -->
+        <div>
+
+          <!-- Etiqueta del pedido. -->
+          <span class="etiqueta">
+            Pedido
+          </span>
+
+          <!-- Identificador del pedido. -->
+          <h2>
+            #{{ pedido.idPedido }}
+          </h2>
+
+        </div>
+
+
+        <!-- Total que debe pagarse. -->
+        <div class="total-pagar">
+
+          <!-- Etiqueta del total. -->
+          <span>
+            Total a pagar
+          </span>
+
+          <!-- Monto total del pedido. -->
+          <strong>
+            ₡{{ obtenerTotalPedido() | number:'1.0-2' }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- MÉTODOS DE PAGO -->
+      <!-- ================================================= -->
+
+      <div class="seccion-metodos">
+
+        <!-- Título de la sección. -->
+        <h3>
+          Selecciona un método de pago
+        </h3>
+
+        <!-- Texto informativo. -->
+        <p class="texto-ayuda">
+          Escoge una opción para continuar con el pago.
+        </p>
+
+
+        <!-- Mensaje cuando no hay métodos disponibles. -->
+        <div class="sin-metodos"
+             *ngIf="metodosPago.length === 0">
+
+          No hay métodos de pago disponibles.
+
+        </div>
+
+
+        <!-- Contenedor de métodos. -->
+        <div class="metodos-grid"
+             *ngIf="metodosPago.length > 0">
+
+          <!-- Recorre los métodos recibidos desde la API. -->
+          <button type="button"
+                  class="metodo-card"
+                  *ngFor="let metodo of metodosPago"
+                  [class.seleccionado]="
+              idMetodoPagoSeleccionado === metodo.idMetodoPago
+            "
+                  (click)="seleccionarMetodo(metodo)">
+
+            <!-- Parte superior de cada método. -->
+            <div class="metodo-superior">
+
+              <!-- Indicador visual de selección. -->
+              <span class="selector">
+
+                <!-- Punto interior cuando está seleccionado. -->
+                <span *ngIf="
+                    idMetodoPagoSeleccionado === metodo.idMetodoPago
+                  ">
+                </span>
+
+              </span>
+
+
+              <!-- Nombre del método. -->
+              <strong>
+                {{ metodo.nombre }}
+              </strong>
+
+            </div>
+
+
+            <!-- Descripción opcional. -->
+            <p *ngIf="metodo.descripcion">
+
+              {{ metodo.descripcion }}
+
+            </p>
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- DATOS DEL MÉTODO SELECCIONADO -->
+      <!-- ================================================= -->
+
+      <div class="datos-metodo"
+           *ngIf="idMetodoPagoSeleccionado > 0">
+
+        <!-- Título. -->
+        <h3>
+          Información del pago
+        </h3>
+
+
+        <!-- ================================================= -->
+        <!-- MONTO DISPONIBLE -->
+        <!-- ================================================= -->
+        <!-- Campo utilizado para todos los métodos. -->
+        <div class="campo">
+
+          <!-- Etiqueta del campo. -->
+          <label for="montoDisponible">
+            Dinero disponible
+          </label>
+
+          <!-- Campo donde el Cliente indica
+               cuánto dinero tiene disponible. -->
+          <input id="montoDisponible"
+                 type="number"
+                 min="0"
+                 step="0.01"
+                 placeholder="Ejemplo: 25000"
+                 [value]="montoDisponible || ''"
+                 (input)="cambiarMontoDisponible($event)">
+
+          <!-- Explicación del campo. -->
+          <small>
+            El monto debe ser igual o mayor al total del pedido.
+          </small>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- SALDO INSUFICIENTE -->
+        <!-- ================================================= -->
+        <!-- Este bloque aparece cuando el dinero no alcanza. -->
+        <div class="saldo-error"
+             *ngIf="saldoInsuficiente">
+
+          <!-- Título del error. -->
+          <strong>
+            Pago no completado
+          </strong>
+
+          <!-- Dinero disponible. -->
+          <p>
+            Disponible:
+            ₡{{ montoDisponible | number:'1.0-2' }}
+          </p>
+
+          <!-- Total requerido. -->
+          <p>
+            Total requerido:
+            ₡{{ obtenerTotalPedido() | number:'1.0-2' }}
+          </p>
+
+          <!-- Dinero faltante. -->
+          <p>
+            Te faltan:
+            ₡{{ montoFaltante | number:'1.0-2' }}
+          </p>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- SALDO SUFICIENTE -->
+        <!-- ================================================= -->
+        <!-- Este bloque aparece cuando sí tiene fondos. -->
+        <div class="saldo-correcto"
+             *ngIf="tieneFondosSuficientes()">
+
+          <!-- Confirmación. -->
+          <strong>
+            Fondos suficientes
+          </strong>
+
+          <!-- Saldo que quedaría disponible. -->
+          <p>
+            Saldo restante:
+            ₡{{ saldoRestante | number:'1.0-2' }}
+          </p>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- SINPE MÓVIL -->
+        <!-- ================================================= -->
+        <!-- Aparece solamente si selecciona SINPE. -->
+        <div class="metodo-formulario"
+             *ngIf="esSinpe()">
+
+          <!-- Nombre del método. -->
+          <h4>
+            SINPE Móvil
+          </h4>
+
+
+          <!-- Información para hacer el pago. -->
+          <div class="instruccion-pago">
+
+            <!-- Instrucción. -->
+            <span>
+              Realiza el SINPE al número:
+            </span>
+
+            <!-- Número del negocio. -->
+            <strong>
+              {{ numeroSinpeEsencia }}
+            </strong>
+
+            <!-- Monto exacto. -->
+            <p>
+              Monto exacto:
+              ₡{{ obtenerTotalPedido() | number:'1.0-2' }}
+            </p>
+
+          </div>
+
+
+          <!-- Número desde donde realizó el SINPE. -->
+          <div class="campo">
+
+            <label for="numeroOrigenSinpe">
+              Número desde el que realizaste el SINPE
+            </label>
+
+            <input id="numeroOrigenSinpe"
+                   type="text"
+                   placeholder="Ejemplo: 8888-8888"
+                   [value]="numeroOrigenSinpe"
+                   (input)="cambiarNumeroSinpe($event)">
+
+          </div>
+
+
+          <!-- Referencia del SINPE. -->
+          <div class="campo">
+
+            <label for="referenciaSinpe">
+              Referencia o comprobante
+            </label>
+
+            <input id="referenciaSinpe"
+                   type="text"
+                   placeholder="Número de referencia"
+                   [value]="referenciaSinpe"
+                   (input)="cambiarReferenciaSinpe($event)">
+
+          </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- TRANSFERENCIA BANCARIA -->
+        <!-- ================================================= -->
+        <!-- Aparece solamente si selecciona transferencia. -->
+        <div class="metodo-formulario"
+             *ngIf="esTransferencia()">
+
+          <!-- Nombre del método. -->
+          <h4>
+            Transferencia bancaria
+          </h4>
+
+
+          <!-- Información bancaria. -->
+          <div class="instruccion-pago">
+
+            <!-- Instrucción. -->
+            <span>
+              Transfiere el monto a la cuenta:
+            </span>
+
+            <!-- Cuenta del negocio. -->
+            <strong>
+              {{ cuentaTransferenciaEsencia }}
+            </strong>
+
+            <!-- Monto exacto. -->
+            <p>
+              Monto exacto:
+              ₡{{ obtenerTotalPedido() | number:'1.0-2' }}
+            </p>
+
+          </div>
+
+
+          <!-- Referencia bancaria. -->
+          <div class="campo">
+
+            <label for="referenciaTransferencia">
+              Referencia de la transferencia
+            </label>
+
+            <input id="referenciaTransferencia"
+                   type="text"
+                   placeholder="Número de referencia"
+                   [value]="referenciaTransferencia"
+                   (input)="cambiarReferenciaTransferencia($event)">
+
+          </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- TARJETA DE CRÉDITO O DÉBITO -->
+        <!-- ================================================= -->
+        <!-- Aparece cuando se selecciona cualquier tarjeta. -->
+        <div class="metodo-formulario"
+             *ngIf="esTarjeta()">
+
+          <!-- Título. -->
+          <h4>
+            Datos de la tarjeta
+          </h4>
+
+
+          <!-- Nombre del titular. -->
+          <div class="campo">
+
+            <label for="nombreTarjeta">
+              Nombre del titular
+            </label>
+
+            <input id="nombreTarjeta"
+                   type="text"
+                   placeholder="Nombre como aparece en la tarjeta"
+                   [value]="nombreTarjeta"
+                   (input)="cambiarNombreTarjeta($event)">
+
+          </div>
+
+
+          <!-- Número de tarjeta. -->
+          <div class="campo">
+
+            <label for="numeroTarjeta">
+              Número de tarjeta
+            </label>
+
+            <input id="numeroTarjeta"
+                   type="text"
+                   maxlength="19"
+                   placeholder="0000 0000 0000 0000"
+                   [value]="numeroTarjeta"
+                   (input)="cambiarNumeroTarjeta($event)">
+
+          </div>
+
+
+          <!-- Fila de vencimiento y CVV. -->
+          <div class="fila-campos">
+
+            <!-- Fecha de vencimiento. -->
+            <div class="campo">
+
+              <label for="vencimientoTarjeta">
+                Vencimiento
+              </label>
+
+              <input id="vencimientoTarjeta"
+                     type="text"
+                     maxlength="5"
+                     placeholder="MM/AA"
+                     [value]="vencimientoTarjeta"
+                     (input)="cambiarVencimientoTarjeta($event)">
+
+            </div>
+
+
+            <!-- CVV. -->
+            <div class="campo">
+
+              <label for="cvvTarjeta">
+                CVV
+              </label>
+
+              <input id="cvvTarjeta"
+                     type="password"
+                     maxlength="4"
+                     placeholder="123"
+                     [value]="cvvTarjeta"
+                     (input)="cambiarCvvTarjeta($event)">
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- RESUMEN FINAL -->
+      <!-- ================================================= -->
+
+      <div class="resumen-final">
+
+        <!-- Estado del pago. -->
+        <div>
+
+          <span>
+            Estado actual
+          </span>
+
+          <strong>
+            {{ pedido.estadoPago }}
+          </strong>
+
+        </div>
+
+
+        <!-- Total. -->
+        <div>
+
+          <span>
+            Total a pagar
+          </span>
+
+          <strong>
+            ₡{{ obtenerTotalPedido() | number:'1.0-2' }}
+          </strong>
+
+        </div>
+
+
+        <!-- Método seleccionado. -->
+        <div *ngIf="nombreMetodoSeleccionado">
+
+          <span>
+            Método
+          </span>
+
+          <strong>
+            {{ nombreMetodoSeleccionado }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- BOTONES -->
+      <!-- ================================================= -->
+
+      <div class="acciones">
+
+        <!-- Cancela y vuelve al detalle. -->
+        <button type="button"
+                class="btn-cancelar"
+                (click)="cancelar()"
+                [disabled]="procesandoPago">
+
+          Cancelar
+
+        </button>
+
+
+        <!-- Procesa el pago. -->
+        <button type="button"
+                class="btn-confirmar"
+                (click)="pagar()"
+                [disabled]="
+                procesandoPago ||
+                idMetodoPagoSeleccionado <= 0
+          ">
+
+          <!-- Texto normal. -->
+          <span *ngIf="!procesandoPago">
+            Confirmar pago
+          </span>
+
+          <!-- Texto mientras procesa. -->
+          <span *ngIf="procesandoPago">
+            Procesando pago...
+          </span>
+
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
