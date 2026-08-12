@@ -1,429 +1,375 @@
+<!-- Crea la página completa del carrito. -->
 <section class="pagina-carrito">
 
-  <nav class="barra-superior">
+  <!-- Crea el encabezado principal. -->
+  <header class="encabezado-carrito">
 
-    <a
-      routerLink="/dashboard"
-      class="logo"
-    >
-      esen<span>c</span>ia
-    </a>
+    <!-- Agrupa el título y la descripción. -->
+    <div>
 
-    <div class="acciones-superiores">
+      <!-- Muestra una etiqueta pequeña. -->
+      <span class="etiqueta">
+        Mi compra
+      </span>
 
-      <a
-        routerLink="/descuentos"
-        class="boton-nav"
-      >
-        ✦ Descuentos
-      </a>
+      <!-- Muestra el título principal. -->
+      <h1>
+        Carrito
+      </h1>
 
-      <a
-        routerLink="/lista-deseos"
-        class="boton-nav"
-      >
-        ♡ Deseos
-      </a>
+      <!-- Muestra una descripción corta. -->
+      <p>
+        Revisa los productos antes de confirmar tu pedido.
+      </p>
 
-      <a
-        routerLink="/perfil"
-        class="boton-nav"
-      >
-        Perfil
-      </a>
+    </div>
 
-      <a
-        routerLink="/dashboard"
-        class="boton-nav"
-      >
+    <!-- Agrupa los botones superiores. -->
+    <div class="acciones-encabezado">
+
+      <!-- Permite volver al Dashboard. -->
+      <a routerLink="/dashboard"
+         class="boton-volver">
         Volver
+      </a>
+
+      <!-- Permite ir a Productos. -->
+      <a routerLink="/productos"
+         class="boton-productos">
+        Productos
       </a>
 
     </div>
 
-  </nav>
+  </header>
 
+  <!-- Muestra el resumen superior cuando hay productos. -->
+  <section class="resumen-superior"
+           *ngIf="productos.length > 0">
 
-  <main class="contenido">
+    <!-- Muestra la cantidad total de artículos. -->
+    <article class="tarjeta-resumen">
 
-    <header class="encabezado">
-
-      <div>
-
-        <span class="etiqueta">
-          Tu compra
-        </span>
-
-        <h1>
-          Carrito
-        </h1>
-
-        <p>
-          Revisa los productos antes de
-          continuar con tu pedido.
-        </p>
-
-      </div>
-
-      <span
-        class="cantidad-productos"
-        *ngIf="productos.length > 0"
-      >
-        {{ cantidadTotal }}
-        producto(s)
+      <!-- Muestra el nombre del dato. -->
+      <span>
+        Artículos
       </span>
 
-    </header>
+      <!-- Muestra la cantidad total. -->
+      <strong>
+        {{ cantidadTotal }}
+      </strong>
 
+    </article>
 
-    <!-- CARRITO VACÍO -->
+    <!-- Muestra el subtotal actual. -->
+    <article class="tarjeta-resumen">
 
-    <section
-      class="carrito-vacio"
-      *ngIf="productos.length === 0"
-    >
+      <!-- Muestra el nombre del dato. -->
+      <span>
+        Subtotal
+      </span>
 
-      <div class="icono-carrito">
-        🛒
-      </div>
+      <!-- Muestra el subtotal general. -->
+      <strong>
+        ₡{{ subtotal | number:'1.0-0' }}
+      </strong>
 
-      <h2>
-        Tu carrito está vacío
-      </h2>
+    </article>
 
-      <p>
-        Agrega productos desde nuestra
-        tienda para comenzar tu compra.
-      </p>
+    <!-- Muestra el descuento aplicado. -->
+    <article class="tarjeta-resumen">
 
-      <a
-        routerLink="/dashboard"
-        class="boton-principal"
-      >
-        Explorar productos
-      </a>
+      <!-- Muestra el nombre del dato. -->
+      <span>
+        Descuento
+      </span>
 
-    </section>
+      <!-- Muestra el monto descontado. -->
+      <strong>
+        ₡{{ montoDescuento | number:'1.0-0' }}
+      </strong>
 
+    </article>
 
-    <!-- CARRITO CON PRODUCTOS -->
+  </section>
 
-    <div
-      class="carrito-grid"
-      *ngIf="productos.length > 0"
-    >
+  <!-- Muestra un mensaje cuando el carrito está vacío. -->
+  <section class="carrito-vacio"
+           *ngIf="productos.length === 0">
 
-      <section class="productos-carrito">
+    <!-- Muestra un icono de Angular Material. -->
+    <mat-icon class="icono-vacio">
+      shopping_cart
+    </mat-icon>
 
-        <article
-          class="producto"
-          *ngFor="let producto of productos"
-        >
+    <!-- Muestra el título del estado vacío. -->
+    <h2>
+      Tu carrito está vacío
+    </h2>
 
-          <div class="imagen">
+    <!-- Muestra una explicación corta. -->
+    <p>
+      Agrega productos desde el catálogo para comenzar tu compra.
+    </p>
 
-            <img
-              [src]="producto.imagen"
-              [alt]="producto.nombre"
-            />
+    <!-- Permite ir al catálogo de productos. -->
+    <a routerLink="/productos"
+       class="boton-principal">
+      Ver productos
+    </a>
 
-          </div>
+  </section>
 
+  <!-- Crea el contenido principal cuando existen productos. -->
+  <div class="contenido-carrito"
+       *ngIf="productos.length > 0">
 
-          <div class="informacion">
+    <!-- Crea la lista de productos agregados. -->
+    <section class="lista-productos">
 
-            <span class="marca">
-              {{ producto.marca }}
-            </span>
+      <!-- Crea el encabezado de la lista. -->
+      <div class="titulo-lista">
 
-            <h2>
-              {{ producto.nombre }}
-            </h2>
-
-            <p class="precio-unitario">
-              {{
-                producto.precio
-                  | currency:'CRC':'symbol-narrow':'1.0-0'
-              }}
-              c/u
-            </p>
-
-            <p class="disponibles">
-              Disponibles:
-              {{ producto.disponibles }}
-            </p>
-
-          </div>
-
-
-          <div class="cantidad">
-
-            <span>
-              Cantidad
-            </span>
-
-            <div class="control-cantidad">
-
-              <button
-                type="button"
-                (click)="disminuirCantidad(producto)"
-              >
-                −
-              </button>
-
-              <strong>
-                {{ producto.cantidad }}
-              </strong>
-
-              <button
-                type="button"
-                [disabled]="
-                  producto.cantidad >=
-                  producto.disponibles
-                "
-                (click)="aumentarCantidad(producto)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <div class="subtotal-producto">
-
-            <span>
-              Subtotal
-            </span>
-
-            <strong>
-              {{
-                subtotalProducto(producto)
-                  | currency:'CRC':'symbol-narrow':'1.0-0'
-              }}
-            </strong>
-
-          </div>
-
-
-          <button
-            type="button"
-            class="boton-eliminar"
-            (click)="eliminarProducto(producto.id)"
-          >
-            Eliminar
-          </button>
-
-        </article>
-
-
-        <div class="acciones-carrito">
-
-          <a
-            routerLink="/dashboard"
-            class="boton-secundario"
-          >
-            ← Seguir comprando
-          </a>
-
-          <button
-            type="button"
-            class="boton-secundario"
-            (click)="vaciarCarrito()"
-          >
-            Vaciar carrito
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- RESUMEN -->
-
-      <aside class="resumen">
-
-        <span class="etiqueta">
-          Resumen
-        </span>
-
+        <!-- Muestra el título de la lista. -->
         <h2>
-          Resumen de compra
+          Productos seleccionados
         </h2>
 
+        <!-- Permite eliminar todo el contenido del carrito. -->
+        <button type="button"
+                class="boton-vaciar"
+                (click)="vaciarCarrito()">
+          Vaciar carrito
+        </button>
 
-        <!-- PROMOCIÓN ACTIVA -->
+      </div>
 
-        <div
-          class="promocion-carrito"
-          *ngIf="promocionActiva"
-          [class.desbloqueada]="promocionCumplida"
-        >
+      <!-- Recorre todos los productos del carrito. -->
+      <article class="producto-carrito"
+               *ngFor="let producto of productos">
 
-          <div class="promocion-cabecera">
+        <!-- Muestra la imagen del producto. -->
+        <div class="imagen-producto">
 
-            <span class="promocion-icono">
-              {{ promocionActiva.icono }}
-            </span>
+          <!-- Carga la imagen guardada del producto. -->
+          <img [src]="producto.imagen"
+               [alt]="producto.nombre">
 
-            <div>
+        </div>
 
-              <strong>
-                {{ promocionActiva.nombre }}
-              </strong>
+        <!-- Muestra la información principal del producto. -->
+        <div class="informacion-producto">
 
-              <small>
-                {{ promocionActiva.porcentaje }}%
-                de descuento
-              </small>
+          <!-- Muestra la marca. -->
+          <span class="marca">
+            {{ producto.marca }}
+          </span>
 
-            </div>
+          <!-- Muestra el nombre. -->
+          <h3>
+            {{ producto.nombre }}
+          </h3>
 
-          </div>
-
-
-          <p
-            class="promocion-pendiente"
-            *ngIf="!promocionCumplida"
-          >
-            Te faltan
-            <strong>
-              {{ productosFaltantes }}
-            </strong>
-            producto(s) para desbloquear
-            este descuento.
+          <!-- Muestra el precio por unidad. -->
+          <p class="precio-unitario">
+            ₡{{ producto.precio | number:'1.0-0' }} por unidad
           </p>
 
+        </div>
 
-          <p
-            class="promocion-exito"
-            *ngIf="promocionCumplida"
-          >
-            ✓ Descuento desbloqueado
-          </p>
+        <!-- Crea el control para modificar la cantidad. -->
+        <div class="cantidad-producto">
 
+          <!-- Disminuye la cantidad del producto. -->
+          <button type="button"
+                  [disabled]="producto.cantidad <= 1"
+                  (click)="disminuirCantidad(producto)">
+            −
+          </button>
 
-          <button
-            type="button"
-            class="quitar-promocion"
-            (click)="quitarPromocion()"
-          >
-            Quitar promoción
+          <!-- Muestra la cantidad seleccionada. -->
+          <span>
+            {{ producto.cantidad }}
+          </span>
+
+          <!-- Aumenta la cantidad sin superar el stock. -->
+          <button type="button"
+                  [disabled]="producto.cantidad >= obtenerStock(producto)"
+                  (click)="aumentarCantidad(producto)">
+            +
           </button>
 
         </div>
 
+        <!-- Muestra el subtotal de este producto. -->
+        <div class="subtotal-producto">
 
-        <div class="fila-resumen">
-
-          <span>
-            Productos
-          </span>
-
-          <strong>
-            {{ cantidadTotal }}
-          </strong>
-
-        </div>
-
-
-        <div class="fila-resumen">
-
+          <!-- Muestra el nombre del dato. -->
           <span>
             Subtotal
           </span>
 
+          <!-- Muestra el subtotal calculado. -->
           <strong>
-            {{
-              subtotal
-                | currency:'CRC':'symbol-narrow':'1.0-0'
-            }}
+            ₡{{ subtotalProducto(producto) | number:'1.0-0' }}
           </strong>
 
         </div>
 
-
-        <div
-          class="fila-resumen descuento-resumen"
-          *ngIf="promocionCumplida"
-        >
-
-          <span>
-            Descuento
-            {{ promocionActiva?.porcentaje }}%
-          </span>
-
-          <strong>
-            -
-            {{
-              montoDescuento
-                | currency:'CRC':'symbol-narrow':'1.0-0'
-            }}
-          </strong>
-
-        </div>
-
-
-        <div class="fila-resumen">
-
-          <span>
-            Envío
-          </span>
-
-          <strong>
-            Se calcula al confirmar
-          </strong>
-
-        </div>
-
-
-        <div class="fila-total">
-
-          <span>
-            Total
-          </span>
-
-          <strong>
-            {{
-              total
-                | currency:'CRC':'symbol-narrow':'1.0-0'
-            }}
-          </strong>
-
-        </div>
-
-
-        <button
-          type="button"
-          class="boton-confirmar"
-          (click)="confirmarPedido()"
-        >
-          Continuar con el pedido
-          <span>→</span>
+        <!-- Permite eliminar únicamente este producto. -->
+        <button type="button"
+                class="boton-eliminar"
+                (click)="eliminarProducto(producto.id)">
+          Eliminar
         </button>
 
+      </article>
 
-        <div class="seguridad">
+    </section>
 
-          <p>
-            ✓ Compra segura
-          </p>
+    <!-- Crea el resumen final de la compra. -->
+    <aside class="resumen-compra">
 
-          <p>
-            ✓ Inventario verificado
-          </p>
+      <!-- Muestra el título del resumen. -->
+      <h2>
+        Resumen de compra
+      </h2>
 
-          <p>
-            ✓ Seguimiento del pedido
-          </p>
+      <!-- Muestra la cantidad total de artículos. -->
+      <div class="fila-resumen">
+
+        <!-- Muestra el nombre del dato. -->
+        <span>
+          Productos
+        </span>
+
+        <!-- Muestra la cantidad. -->
+        <strong>
+          {{ cantidadTotal }}
+        </strong>
+
+      </div>
+
+      <!-- Muestra el subtotal de la compra. -->
+      <div class="fila-resumen">
+
+        <!-- Muestra el nombre del dato. -->
+        <span>
+          Subtotal
+        </span>
+
+        <!-- Muestra el subtotal. -->
+        <strong>
+          ₡{{ subtotal | number:'1.0-0' }}
+        </strong>
+
+      </div>
+
+      <!-- Muestra la promoción activa si existe. -->
+      <section class="promocion"
+               *ngIf="promocionActiva">
+
+        <!-- Organiza el icono y los datos de la promoción. -->
+        <div class="promocion-superior">
+
+          <!-- Muestra correctamente el icono de Angular Material. -->
+          <div class="icono-promocion">
+
+            <!-- Usa el nombre del icono guardado en la promoción. -->
+            <mat-icon>
+              {{ promocionActiva.icono }}
+            </mat-icon>
+
+          </div>
+
+          <!-- Agrupa el nombre y descripción. -->
+          <div>
+
+            <!-- Muestra el nombre de la promoción activa. -->
+            <strong>
+              {{ promocionActiva.nombre }}
+            </strong>
+
+            <!-- Muestra la descripción de la promoción. -->
+            <p>
+              {{ promocionActiva.descripcion }}
+            </p>
+
+          </div>
 
         </div>
 
-      </aside>
+        <!-- Muestra que la promoción ya se está aplicando. -->
+        <p class="promocion-cumplida"
+           *ngIf="promocionCumplida">
+          Promoción aplicada:
+          {{ promocionActiva.porcentaje }}% de descuento.
+        </p>
 
-    </div>
+        <!-- Muestra cuántos productos faltan para activar el descuento. -->
+        <p class="promocion-pendiente"
+           *ngIf="!promocionCumplida">
+          Te faltan
+          {{ productosFaltantes }}
+          productos para activar esta promoción.
+        </p>
 
-  </main>
+        <!-- Permite eliminar la promoción seleccionada. -->
+        <button type="button"
+                class="boton-quitar-promocion"
+                (click)="quitarPromocion()">
+          Quitar promoción
+        </button>
+
+      </section>
+
+      <!-- Muestra el descuento cuando realmente se aplica. -->
+      <div class="fila-resumen descuento"
+           *ngIf="montoDescuento > 0">
+
+        <!-- Muestra el nombre del dato. -->
+        <span>
+          Descuento
+        </span>
+
+        <!-- Muestra el monto descontado. -->
+        <strong>
+          - ₡{{ montoDescuento | number:'1.0-0' }}
+        </strong>
+
+      </div>
+
+      <!-- Muestra el total final. -->
+      <div class="fila-total">
+
+        <!-- Muestra el nombre del dato. -->
+        <span>
+          Total
+        </span>
+
+        <!-- Muestra el total que debe pagar el cliente. -->
+        <strong>
+          ₡{{ total | number:'1.0-0' }}
+        </strong>
+
+      </div>
+
+      <!-- Permite avanzar a la confirmación del pedido. -->
+      <button type="button"
+              class="boton-confirmar"
+              (click)="confirmarPedido()">
+        Confirmar pedido
+      </button>
+
+      <!-- Permite regresar al catálogo. -->
+      <a routerLink="/productos"
+         class="seguir-comprando">
+        Seguir comprando
+      </a>
+
+    </aside>
+
+  </div>
 
 </section>

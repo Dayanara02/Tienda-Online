@@ -1,1 +1,416 @@
-<p>productos works!</p>
+<!-- Crea la página completa de Productos. -->
+<section class="pagina-productos">
+
+  <!-- Crea el encabezado superior de la página. -->
+  <header class="encabezado-productos">
+
+    <!-- Agrupa el título y la descripción. -->
+    <div>
+
+      <!-- Muestra el título principal. -->
+      <h1>
+        Productos
+      </h1>
+
+      <!-- Muestra una descripción corta. -->
+      <p>
+        Explora los productos disponibles en Esencia.
+      </p>
+
+    </div>
+
+    <!-- Agrupa los botones de navegación rápida. -->
+    <div class="acciones-encabezado">
+
+      <!-- Botón para regresar al Dashboard. -->
+      <button mat-stroked-button
+              type="button"
+              (click)="volverDashboard()">
+
+        <!-- Muestra el icono de regreso. -->
+        <mat-icon>
+          arrow_back
+        </mat-icon>
+
+        Volver
+      </button>
+
+      <!-- Botón PrimeNG para abrir favoritos. -->
+      <p-button label="Favoritos"
+                icon="pi pi-heart"
+                severity="secondary"
+                (onClick)="irAFavoritos()">
+      </p-button>
+
+      <!-- Botón PrimeNG para abrir el carrito. -->
+      <p-button label="Carrito"
+                icon="pi pi-shopping-cart"
+                (onClick)="irAlCarrito()">
+      </p-button>
+
+    </div>
+
+  </header>
+
+  <!-- Muestra un estado mientras se cargan los productos. -->
+  <section class="sin-productos"
+           *ngIf="cargando">
+
+    <!-- Muestra un icono de carga. -->
+    <mat-icon>
+      sync
+    </mat-icon>
+
+    <!-- Muestra el título. -->
+    <h2>
+      Cargando productos...
+    </h2>
+
+    <!-- Muestra una explicación corta. -->
+    <p>
+      Estamos consultando los productos disponibles.
+    </p>
+
+  </section>
+
+  <!-- Muestra los contadores principales cuando termina la carga. -->
+  <section class="resumen-productos"
+           *ngIf="!cargando">
+
+    <!-- Tarjeta con la cantidad de productos encontrados. -->
+    <article class="tarjeta-resumen">
+
+      <!-- Muestra un icono de productos. -->
+      <mat-icon>
+        inventory_2
+      </mat-icon>
+
+      <!-- Agrupa la información. -->
+      <div>
+
+        <!-- Muestra el título. -->
+        <span>
+          Productos encontrados
+        </span>
+
+        <!-- Muestra la cantidad filtrada. -->
+        <strong>
+          {{ productosFiltrados.length }}
+        </strong>
+
+      </div>
+
+    </article>
+
+    <!-- Tarjeta con la cantidad del carrito. -->
+    <article class="tarjeta-resumen">
+
+      <!-- Muestra el icono del carrito. -->
+      <mat-icon>
+        shopping_cart
+      </mat-icon>
+
+      <!-- Agrupa la información. -->
+      <div>
+
+        <!-- Muestra el título. -->
+        <span>
+          En carrito
+        </span>
+
+        <!-- Muestra la cantidad del carrito. -->
+        <strong>
+          {{ cantidadCarrito }}
+        </strong>
+
+      </div>
+
+    </article>
+
+    <!-- Tarjeta con la cantidad de favoritos. -->
+    <article class="tarjeta-resumen">
+
+      <!-- Muestra el icono de favoritos. -->
+      <mat-icon>
+        favorite
+      </mat-icon>
+
+      <!-- Agrupa la información. -->
+      <div>
+
+        <!-- Muestra el título. -->
+        <span>
+          Favoritos
+        </span>
+
+        <!-- Muestra la cantidad de favoritos. -->
+        <strong>
+          {{ cantidadDeseos }}
+        </strong>
+
+      </div>
+
+    </article>
+
+  </section>
+
+  <!-- Muestra mensajes después de realizar una acción. -->
+  <div class="mensaje-productos"
+       [class.mensaje-exito]="tipoMensaje === 'exito'"
+       [class.mensaje-info]="tipoMensaje === 'info'"
+       [class.mensaje-error]="tipoMensaje === 'error'"
+       *ngIf="mensaje">
+
+    <!-- Muestra un icono informativo. -->
+    <mat-icon>
+      info
+    </mat-icon>
+
+    <!-- Muestra el mensaje actual. -->
+    <span>
+      {{ mensaje }}
+    </span>
+
+  </div>
+
+  <!-- Crea la zona de búsqueda y filtros. -->
+  <section class="filtros-productos"
+           *ngIf="!cargando">
+
+    <!-- Crea el buscador. -->
+    <div class="buscador">
+
+      <!-- Muestra el icono de búsqueda. -->
+      <mat-icon>
+        search
+      </mat-icon>
+
+      <!-- Permite buscar productos. -->
+      <input type="text"
+             placeholder="Buscar producto..."
+             [(ngModel)]="textoBusqueda">
+
+    </div>
+
+    <!-- Crea los botones de categorías reales. -->
+    <div class="lista-categorias">
+
+      <!-- Recorre los nombres de categorías recibidos. -->
+      <button type="button"
+              *ngFor="let categoria of categorias"
+              [class.categoria-activa]="
+          categoriaSeleccionada === categoria
+        "
+              (click)="seleccionarCategoria(categoria)">
+
+        <!-- Muestra un icono general para las categorías. -->
+        <mat-icon>
+          category
+        </mat-icon>
+
+        <!-- Muestra el nombre real de la categoría. -->
+        <span>
+          {{ categoria }}
+        </span>
+
+      </button>
+
+    </div>
+
+    <!-- Muestra el filtro aplicado actualmente. -->
+    <div class="estado-filtro">
+
+      <!-- Muestra la categoría seleccionada. -->
+      <span>
+        Categoría:
+        <strong>
+          {{ categoriaSeleccionada }}
+        </strong>
+      </span>
+
+      <!-- Permite limpiar búsqueda y categoría. -->
+      <button type="button"
+              *ngIf="
+          categoriaSeleccionada !== 'Todos' ||
+          textoBusqueda
+        "
+              (click)="limpiarFiltros()">
+
+        <!-- Muestra el icono de cerrar. -->
+        <mat-icon>
+          close
+        </mat-icon>
+
+        Limpiar
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- Crea la cuadrícula del catálogo. -->
+  <section class="productos-grid"
+           *ngIf="
+           !cargando &&
+           productosFiltrados.length>
+    0
+    ">
+
+    <!-- Recorre cada producto filtrado. -->
+    <article class="producto-card"
+             *ngFor="let producto of productosFiltrados">
+
+      <!-- Crea la zona de la imagen. -->
+      <div class="producto-imagen">
+
+        <!-- Muestra la imagen del producto. -->
+        <img [src]="producto.imagen"
+             [alt]="producto.nombre">
+
+        <!-- Permite agregar o eliminar de favoritos. -->
+        <button mat-icon-button
+                type="button"
+                class="boton-favorito"
+                [class.es-favorito]="esFavorito(producto)"
+                matTooltip="Agregar o quitar de favoritos"
+                (click)="cambiarFavorito(producto)">
+
+          <!-- Cambia el icono según el estado del favorito. -->
+          <mat-icon>
+            {{
+              esFavorito(producto)
+                ? 'favorite'
+                : 'favorite_border'
+            }}
+          </mat-icon>
+
+        </button>
+
+      </div>
+
+      <!-- Crea el contenido de la tarjeta. -->
+      <div class="producto-contenido">
+
+        <!-- Muestra la categoría real. -->
+        <span class="producto-categoria">
+          {{ producto.categoria }}
+        </span>
+
+        <!-- Muestra el nombre real del producto. -->
+        <h2>
+          {{ producto.nombre }}
+        </h2>
+
+        <!-- Muestra la marca visual de la tienda. -->
+        <span class="producto-marca">
+          {{ producto.marca }}
+        </span>
+
+        <!-- Muestra la descripción real. -->
+        <p class="producto-descripcion">
+          {{ producto.descripcion }}
+        </p>
+
+        <!-- Muestra el stock disponible. -->
+        <div class="producto-stock">
+
+          <!-- Muestra el icono de inventario. -->
+          <mat-icon>
+            inventory
+          </mat-icon>
+
+          <!-- Muestra la cantidad disponible. -->
+          <span>
+            {{ producto.stock }} disponibles
+          </span>
+
+        </div>
+
+        <!-- Muestra el precio real de SQL Server. -->
+        <div class="producto-precio">
+          ₡{{ producto.precio | number:'1.0-0' }}
+        </div>
+
+        <!-- Crea el selector de cantidad. -->
+        <div class="selector-cantidad">
+
+          <!-- Disminuye la cantidad. -->
+          <button type="button"
+                  [disabled]="producto.cantidad <= 1"
+                  (click)="disminuirCantidad(producto)">
+
+            <!-- Muestra el icono de resta. -->
+            <mat-icon>
+              remove
+            </mat-icon>
+
+          </button>
+
+          <!-- Muestra la cantidad seleccionada. -->
+          <span>
+            {{ producto.cantidad }}
+          </span>
+
+          <!-- Aumenta la cantidad sin superar el stock. -->
+          <button type="button"
+                  [disabled]="
+                  producto.stock <= 0 ||
+              producto.cantidad >= producto.stock
+            "
+            (click)="aumentarCantidad(producto)">
+
+            <!-- Muestra el icono de suma. -->
+            <mat-icon>
+              add
+            </mat-icon>
+
+          </button>
+
+        </div>
+
+        <!-- Permite agregar el producto al carrito. -->
+        <p-button label="Agregar al carrito"
+                  icon="pi pi-shopping-cart"
+                  styleClass="boton-agregar"
+                  [disabled]="producto.stock <= 0"
+                  (onClick)="agregarAlCarrito(producto)">
+        </p-button>
+
+      </div>
+
+    </article>
+
+  </section>
+
+  <!-- Muestra este bloque cuando no existen coincidencias. -->
+  <section class="sin-productos"
+           *ngIf="
+      !cargando &&
+      productosFiltrados.length === 0
+    ">
+
+    <!-- Muestra un icono grande. -->
+    <mat-icon>
+      search_off
+    </mat-icon>
+
+    <!-- Muestra el título. -->
+    <h2>
+      No se encontraron productos
+    </h2>
+
+    <!-- Muestra una explicación. -->
+    <p>
+      Cambia la búsqueda o selecciona otra categoría.
+    </p>
+
+    <!-- Permite restablecer los filtros. -->
+    <button mat-flat-button
+            type="button"
+            (click)="limpiarFiltros()">
+      Mostrar todos
+    </button>
+
+  </section>
+
+</section>

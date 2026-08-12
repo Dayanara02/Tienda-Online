@@ -1,163 +1,295 @@
+/* Define los colores principales de la pantalla Perfil. */
+:host {
+  display: block;
+  /* Azul principal de Esencia. */
+  --azul-principal: #1f4e79;
+  /* Azul oscuro para títulos y botones. */
+  --azul-oscuro: #163a5c;
+  /* Azul claro para fondos suaves. */
+  --azul-claro: #eaf2f8;
+  /* Dorado para pequeños detalles. */
+  --dorado: #c79b42;
+  /* Blanco para tarjetas. */
+  --blanco: #ffffff;
+  /* Gris claro para el fondo general. */
+  --gris-suave: #f4f6f8;
+  /* Color principal del texto. */
+  --texto: #24313d;
+  /* Color para textos secundarios. */
+  --texto-secundario: #6d7882;
+  /* Color para bordes suaves. */
+  --borde: #d8e0e7;
+}
+
+
+/* Hace más sencillo controlar los tamaños de los elementos. */
 * {
   box-sizing: border-box;
 }
 
-:host {
-  display: block;
-  min-height: 100vh;
-  background: #e9eee1;
-  color: #1e2e22;
-}
 
+/* Crea la estructura general de la página Perfil. */
 .pagina-perfil {
   min-height: 100vh;
+  background-color: var(--gris-suave);
+  color: var(--texto);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.barra-superior {
-  min-height: 76px;
-  padding: 0 5%;
-  background: rgba(233, 238, 225, 0.96);
-  border-bottom: 1px solid rgba(30, 46, 34, 0.14);
 
+/* Crea la barra superior. */
+.barra-superior {
+  min-height: 72px;
+  padding: 0 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--borde);
+  background-color: var(--blanco);
 }
 
+
+/* Estiliza el nombre ESENCIA. */
 .logo {
-  font-family: Georgia, serif;
-  font-size: 1.6rem;
-  font-weight: 700;
+  color: var(--azul-oscuro);
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 3px;
 }
 
-.logo span {
-  color: #c89b3c;
-}
 
+  /* Estiliza el texto Tienda Online. */
+  .logo span {
+    display: block;
+    margin-top: 3px;
+    color: var(--dorado);
+    font-size: 10px;
+    font-weight: normal;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+
+/* Organiza los botones del encabezado. */
 .acciones {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
 }
 
-.boton-nav {
-  height: 40px;
-  padding: 0 16px;
 
-  border: 1px solid #1e2e22;
-  border-radius: 0;
-
-  background: transparent;
-  color: #1e2e22;
-
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 16px;
-
-  cursor: pointer;
+/* Cambia el botón para cerrar sesión. */
+.boton-salir {
+  background-color: var(--azul-principal) !important;
+  color: var(--blanco) !important;
 }
 
-.boton-nav:hover {
-  background: #1e2e22;
-  color: white;
-}
 
+  /* Cambia el botón al pasar el mouse. */
+  .boton-salir:hover {
+    background-color: var(--azul-oscuro) !important;
+  }
+
+
+/* Crea el contenido principal. */
 .contenido {
-  width: min(900px, 90%);
+  width: 100%;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 55px 0;
+  padding: 40px 28px;
 }
 
+
+/* Estiliza el texto Mi cuenta. */
 .etiqueta {
-  color: #b85c6b;
-  font-family: monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  display: block;
+  margin-bottom: 5px;
+  color: var(--azul-principal);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 
-h1 {
-  margin: 8px 0 30px;
-  font-family: Georgia, serif;
-  font-size: 2.6rem;
-  font-weight: 500;
+
+/* Estiliza el título Perfil. */
+.contenido > h1 {
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 28px;
 }
 
+
+/* Estiliza la descripción debajo del título. */
+.descripcion {
+  margin: 7px 0 24px;
+  color: var(--texto-secundario);
+  font-size: 14px;
+}
+
+
+/* Crea la tarjeta principal del Perfil. */
 .tarjeta {
-  padding: 32px;
-  background: #fffdf8;
-  border: 1px solid rgba(30, 46, 34, 0.14);
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background-color: var(--blanco);
 }
 
+
+/* Crea la parte superior de la tarjeta. */
 .perfil-superior {
+  padding: 24px;
   display: flex;
   align-items: center;
-  gap: 20px;
-
-  padding-bottom: 26px;
-  border-bottom: 1px solid rgba(30, 46, 34, 0.12);
+  gap: 16px;
+  border-bottom: 1px solid var(--borde);
+  background-color: var(--azul-claro);
 }
 
+
+/* Crea el círculo del avatar. */
 .avatar {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-
-  background: #1e2e22;
-  color: white;
-
+  width: 58px;
+  height: 58px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  font-family: Georgia, serif;
-  font-size: 2rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--azul-principal);
+  color: var(--blanco);
+  font-size: 24px;
+  font-weight: bold;
 }
 
+
+/* Estiliza el rol del usuario. */
 .rol {
-  color: #c89b3c;
-  font-family: monospace;
-  font-size: 0.72rem;
+  display: inline-block;
+  margin-bottom: 5px;
+  color: var(--azul-principal);
+  font-size: 11px;
+  font-weight: bold;
   text-transform: uppercase;
 }
 
+
+/* Estiliza el nombre completo. */
 .perfil-superior h2 {
-  margin: 5px 0 0;
-  font-family: Georgia, serif;
-  font-size: 1.8rem;
-  font-weight: 500;
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 21px;
 }
 
-.datos {
-  margin-top: 26px;
 
+/* Crea la cuadrícula de datos. */
+.datos {
+  padding: 24px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
+  gap: 16px;
 }
 
+
+/* Estiliza cada dato del Perfil. */
 .dato {
-  padding: 18px;
-  background: #f5f7ef;
-  border: 1px solid rgba(30, 46, 34, 0.1);
+  min-height: 85px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background-color: var(--blanco);
 }
 
-.dato span {
-  display: block;
-  margin-bottom: 6px;
 
-  color: rgba(30, 46, 34, 0.6);
-  font-size: 0.78rem;
-}
-
-.dato strong {
-  font-size: 0.95rem;
-}
-
-@media (max-width: 650px) {
-  .barra-superior {
-    padding: 16px;
+  /* Cambia ligeramente la tarjeta al pasar el mouse. */
+  .dato:hover {
+    border-color: var(--azul-principal);
   }
 
+
+  /* Estiliza los iconos de los datos. */
+  .dato > mat-icon {
+    width: 38px;
+    height: 38px;
+    padding: 7px;
+    flex-shrink: 0;
+    border-radius: 7px;
+    background-color: var(--azul-claro);
+    color: var(--azul-principal);
+    font-size: 24px;
+  }
+
+
+  /* Estiliza el nombre de cada dato. */
+  .dato span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--texto-secundario);
+    font-size: 11px;
+  }
+
+
+  /* Estiliza el valor de cada dato. */
+  .dato strong {
+    display: block;
+    color: var(--texto);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+
+
+/* Adapta la pantalla a tabletas. */
+@media (max-width: 750px) {
+
+  /* Coloca un dato por fila. */
   .datos {
     grid-template-columns: 1fr;
+  }
+
+  /* Permite que la barra superior tenga más espacio. */
+  .barra-superior {
+    padding: 16px 20px;
+  }
+
+  /* Reduce el espacio principal. */
+  .contenido {
+    padding: 30px 20px;
+  }
+}
+
+
+/* Adapta la pantalla a teléfonos. */
+@media (max-width: 520px) {
+
+  /* Organiza la barra superior verticalmente. */
+  .barra-superior {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Permite que los botones ocupen el ancho necesario. */
+  .acciones {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  /* Reduce el espacio exterior. */
+  .contenido {
+    padding: 24px 15px;
+  }
+
+  /* Organiza el encabezado del Perfil verticalmente. */
+  .perfil-superior {
+    align-items: flex-start;
+  }
+
+  /* Reduce el espacio de la zona de datos. */
+  .datos {
+    padding: 16px;
   }
 }

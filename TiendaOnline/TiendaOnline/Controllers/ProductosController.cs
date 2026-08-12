@@ -1,113 +1,321 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TiendaOnline.AccesoDatos.Context;
+﻿// Permite utilizar autorización por roles.
 using Microsoft.AspNetCore.Authorization;
+
+// Permite crear controladores de API.
+using Microsoft.AspNetCore.Mvc;
+
+// Permite realizar consultas con Entity Framework Core.
+using Microsoft.EntityFrameworkCore;
+
+// Importa el contexto de la base de datos.
+using TiendaOnline.AccesoDatos.Context;
+
+// Importa la entidad Producto.
 using TiendaOnline.Dominio.Entidades;
 
-
+// Define el espacio de nombres del controlador.
 namespace TiendaOnline.API.Controllers;
 
+// Indica que esta clase funciona como controlador de API.
 [ApiController]
+
+// Define la ruta principal como api/Productos.
 [Route("api/[controller]")]
 public class ProductosController : ControllerBase
 {
+    // Guarda el contexto utilizado para acceder a SQL Server.
     private readonly TiendaOnlineContext _context;
 
-    public ProductosController(TiendaOnlineContext context)
+    // Recibe el contexto mediante inyección de dependencias.
+    public ProductosController(
+        TiendaOnlineContext context
+    )
     {
+        // Guarda el contexto recibido.
         _context = context;
     }
 
-    // GET: api/Productos
+    // Obtiene todos los productos activos de la tienda.
     [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()
+    public async Task<IActionResult> GetProductos()
     {
-        return await _context.Productos
-            .AsNoTracking()
-            .ToListAsync();
+        // Consulta los productos activos.
+        var productos =
+            await _context.Productos
+
+                // La consulta es solamente de lectura.
+                .AsNoTracking()
+
+                // Filtra solamente productos activos.
+                .Where(
+                    producto =>
+                        producto.Estado
+                )
+
+                // Ordena los productos por nombre.
+                .OrderBy(
+                    producto =>
+                        producto.Nombre
+                )
+
+                // Selecciona solamente los datos que necesita Angular.
+                .Select(
+                    producto => new
+                    {
+                        // Identificador real del producto.
+                        idProducto =
+                            producto.IdProducto,
+
+                        // Identificador de la categoría.
+                        idCategoria =
+                            producto.IdCategoria,
+
+                        // Nombre real de la categoría.
+                        categoria =
+                            producto.IdCategoriaNavigation != null
+                                ? producto.IdCategoriaNavigation.Nombre
+                                : "Sin categoría",
+
+                        // Nombre real del producto.
+                        nombre =
+                            producto.Nombre,
+
+                        // Descripción registrada en SQL Server.
+                        descripcion =
+                            producto.Descripcion,
+
+                        // Precio real guardado en SQL Server.
+                        precio =
+                            producto.Precio,
+
+                        // Imagen registrada para el producto.
+                        imagen =
+                            producto.Imagen,
+
+                        // Stock real obtenido desde Inventario.
+                        stock =
+                            producto.Inventario != null
+                                ? producto.Inventario.CantidadDisponible
+                                : 0
+                    }
+                )
+
+                // Ejecuta la consulta.
+                .ToListAsync();
+
+        // Devuelve HTTP 200 con la lista.
+        return Ok(productos);
     }
 
-    // GET: api/Productos/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Producto>> GetProducto(int id)
+    // Obtiene un producto específico por su identificador.
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetProducto(
+        int id
+    )
     {
-        var producto = await _context.Productos.FindAsync(id);
+        // Busca el producto solicitado.
+        var producto =
+            await _context.Productos
 
+                // La consulta es solamente de lectura.
+                .AsNoTracking()
+
+                // Busca por identificador.
+                .Where(
+                    producto =>
+                        producto.IdProducto == id
+                )
+
+                // Selecciona los datos que necesita Angular.
+                .Select(
+                    producto => new
+                    {
+                        // Identificador real.
+                        idProducto =
+                            producto.IdProducto,
+
+                        // Identificador de la categoría.
+                        idCategoria =
+                            producto.IdCategoria,
+
+                        // Nombre real de la categoría.
+                        categoria =
+                            producto.IdCategoriaNavigation != null
+                                ? producto.IdCategoriaNavigation.Nombre
+                                : "Sin categoría",
+
+                        // Nombre del producto.
+                        nombre =
+                            producto.Nombre,
+
+                        // Descripción del producto.
+                        descripcion =
+                            producto.Descripcion,
+
+                        // Precio actual.
+                        precio =
+                            producto.Precio,
+
+                        // Imagen del producto.
+                        imagen =
+                            producto.Imagen,
+
+                        // Stock actual.
+                        stock =
+                            producto.Inventario != null
+                                ? producto.Inventario.CantidadDisponible
+                                : 0,
+
+                        // Indica si el producto está activo.
+                        estado =
+                            producto.Estado
+                    }
+                )
+
+                // Obtiene un único resultado.
+                .FirstOrDefaultAsync();
+
+        // Comprueba si el producto existe.
         if (producto == null)
         {
-            return NotFound();
+            // Devuelve HTTP 404.
+            return NotFound(
+                "El producto no existe."
+            );
         }
 
-        return producto;
+        // Devuelve HTTP 200 con el producto.
+        return Ok(producto);
     }
 
-    // POST: api/Productos
+    // Permite al Administrador crear un producto.
     [Authorize(Roles = "Administrador")]
     [HttpPost]
-    public async Task<ActionResult<Producto>> PostProducto(Producto producto)
+    public async Task<ActionResult<Producto>> PostProducto(
+        Producto producto
+    )
     {
-        producto.FechaRegistro = DateTime.Now;
+        // Guarda la fecha de registro.
+        producto.FechaRegistro =
+            DateTime.Now;
 
-        _context.Productos.Add(producto);
-        await _context.SaveChangesAsync();
+        // Agrega el producto al contexto.
+        _context.Productos.Add(
+            producto
+        );
 
+        // Guarda el nuevo producto.
+        await _context
+            .SaveChangesAsync();
+
+        // Devuelve HTTP 201.
         return CreatedAtAction(
             nameof(GetProducto),
-            new { id = producto.IdProducto },
+            new
+            {
+                id =
+                    producto.IdProducto
+            },
             producto
         );
     }
 
-    // PUT: api/Productos/5
+    // Permite al Administrador modificar un producto.
     [Authorize(Roles = "Administrador")]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutProducto(int id, Producto producto)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> PutProducto(
+        int id,
+        Producto producto
+    )
     {
-        if (id != producto.IdProducto)
+        // Comprueba que los identificadores coincidan.
+        if (
+            id !=
+            producto.IdProducto
+        )
         {
-            return BadRequest("El ID de la URL no coincide con el ID del producto.");
+            // Devuelve HTTP 400.
+            return BadRequest(
+                "El ID de la URL no coincide con el ID del producto."
+            );
         }
 
-        _context.Entry(producto).State = EntityState.Modified;
+        // Marca la entidad como modificada.
+        _context.Entry(
+            producto
+        ).State =
+            EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
+            // Guarda los cambios.
+            await _context
+                .SaveChangesAsync();
         }
-        catch (DbUpdateConcurrencyException)
+        catch (
+            DbUpdateConcurrencyException
+        )
         {
-            if (!ProductoExists(id))
+            // Comprueba si el producto todavía existe.
+            if (
+                !ProductoExists(id)
+            )
             {
+                // Devuelve HTTP 404.
                 return NotFound();
             }
 
+            // Vuelve a lanzar el error.
             throw;
         }
 
+        // Devuelve HTTP 204.
         return NoContent();
     }
 
-    // DELETE: api/Productos/5
+    // Permite al Administrador eliminar un producto.
     [Authorize(Roles = "Administrador")]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProducto(int id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteProducto(
+        int id
+    )
     {
-        var producto = await _context.Productos.FindAsync(id);
+        // Busca el producto solicitado.
+        var producto =
+            await _context.Productos
+                .FindAsync(id);
 
+        // Comprueba que exista.
         if (producto == null)
         {
+            // Devuelve HTTP 404.
             return NotFound();
         }
 
-        _context.Productos.Remove(producto);
-        await _context.SaveChangesAsync();
+        // Elimina el producto.
+        _context.Productos.Remove(
+            producto
+        );
 
+        // Guarda la eliminación.
+        await _context
+            .SaveChangesAsync();
+
+        // Devuelve HTTP 204.
         return NoContent();
     }
 
-    private bool ProductoExists(int id)
+    // Comprueba si existe un producto determinado.
+    private bool ProductoExists(
+        int id
+    )
     {
-        return _context.Productos.Any(e => e.IdProducto == id);
+        // Busca el identificador en la tabla Producto.
+        return _context.Productos
+            .Any(
+                producto =>
+                    producto.IdProducto == id
+            );
     }
 }

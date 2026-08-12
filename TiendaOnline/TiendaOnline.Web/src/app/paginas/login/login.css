@@ -1,603 +1,491 @@
-@import url(
-  'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Sora:wght@300;400;500;600;700&display=swap'
-);
+/* Importa una fuente sencilla para los textos del sistema. */
+@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' );
 
+
+/* Aplica estilos al componente completo del Login. */
 :host {
+  /* Hace que el componente se comporte como un bloque. */
   display: block;
-
-  --bosque: #1c2a1e;
-  --bosque-profundo: #101a12;
-  --salvia: #8ca084;
-  --salvia-clara: #c4d2bc;
-  --crema: #fbf7f0;
-  --crema-oscura: #f3ede2;
-  --dorado: #c6a15b;
-  --dorado-claro: #e4cc9a;
-  --tinta: #22281f;
-  --linea: #e7dfd1;
-  --radio: 6px;
+  /* Define el azul principal de Esencia. */
+  --azul-principal: #1f4e79;
+  /* Define el azul oscuro utilizado en títulos y botones. */
+  --azul-oscuro: #163a5c;
+  /* Define el azul claro utilizado en fondos. */
+  --azul-claro: #eaf2f8;
+  /* Define el dorado utilizado como detalle visual. */
+  --dorado: #c79b42;
+  /* Define el blanco principal. */
+  --blanco: #ffffff;
+  /* Define un gris muy claro para fondos secundarios. */
+  --gris-suave: #f4f6f8;
+  /* Define el color principal del texto. */
+  --texto: #263746;
+  /* Define el color de textos secundarios. */
+  --texto-secundario: #6c7a86;
+  /* Define el color de los bordes. */
+  --borde: #d7e0e7;
 }
 
+
+/* Hace que padding y border se incluyan en el tamaño del elemento. */
 * {
   box-sizing: border-box;
 }
 
+
+/* Crea el fondo general de toda la pantalla de Login. */
 .pagina-login {
+  /* Hace que ocupe todo el ancho disponible. */
   width: 100%;
+  /* Hace que ocupe como mínimo toda la altura de la pantalla. */
   min-height: 100vh;
+  /* Centra la tarjeta horizontalmente. */
+  display: flex;
+  /* Centra la tarjeta verticalmente. */
+  align-items: center;
+  /* Centra horizontalmente el contenido. */
+  justify-content: center;
+  /* Agrega espacio alrededor de la tarjeta. */
   padding: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  color: var(--tinta);
-  font-family: 'Sora', sans-serif;
-  background:
-    radial-gradient(
-      70% 60% at 10% 10%,
-      rgba(140, 160, 132, 0.2),
-      transparent 60%
-    ),
-    radial-gradient(
-      55% 50% at 90% 90%,
-      rgba(198, 161, 91, 0.15),
-      transparent 60%
-    ),
-    linear-gradient(
-      135deg,
-      #26342d,
-      #3c4b42,
-      #4f5149
-    );
+  /* Utiliza un fondo azul muy claro. */
+  background: linear-gradient( 135deg, #eaf2f8, #f4f6f8 );
+  /* Utiliza la fuente principal del Login. */
+  font-family: 'Inter', Arial, sans-serif;
+  /* Define el color general del texto. */
+  color: var(--texto);
 }
 
-.pagina-login::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(
-      circle,
-      rgba(28, 42, 30, 0.055) 1px,
-      transparent 1px
-    );
-  background-size: 26px 26px;
-}
 
-.tarjeta {
+/* Crea la tarjeta blanca central del Login. */
+.tarjeta-login {
+  /* Hace que la tarjeta utilice todo el ancho disponible hasta su límite. */
   width: 100%;
-  max-width: 1180px;
-  min-height: 560px;
-  display: flex;
-  position: relative;
-  overflow: hidden;
-  border-radius: 18px;
-  background-color: #b7b0a5;
-  box-shadow:
-    0 40px 90px -30px rgba(19, 29, 21, 0.35),
-    0 12px 30px -14px rgba(19, 29, 21, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.4);
+  /* Limita el ancho para evitar que sea demasiado grande. */
+  max-width: 470px;
+  /* Agrega espacio interno. */
+  padding: 40px 42px;
+  /* Utiliza fondo blanco. */
+  background: var(--blanco);
+  /* Agrega un borde suave. */
+  border: 1px solid var(--borde);
+  /* Redondea ligeramente las esquinas. */
+  border-radius: 12px;
+  /* Agrega una sombra discreta. */
+  box-shadow: 0 18px 45px rgba(22, 58, 92, 0.10);
 }
 
-.marca-panel {
-  flex: 0 0 42%;
-  min-width: 0;
-  padding: 44px 42px 36px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  overflow: hidden;
-  color: var(--crema);
-  background:
-    radial-gradient(
-      130% 150% at 12% 8%,
-      #2a3d24 0%,
-      var(--bosque) 48%,
-      var(--bosque-profundo) 100%
-    );
+
+/* ========================================================= */
+/* MARCA ESENCIA                                             */
+/* ========================================================= */
+
+
+/* Contiene el nombre ESENCIA y Tienda Online. */
+.marca-login {
+  /* Centra los textos. */
+  text-align: center;
+  /* Agrega espacio debajo de la marca. */
+  margin-bottom: 34px;
 }
 
-.marca-panel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    repeating-linear-gradient(
-      115deg,
-      rgba(255, 255, 255, 0.028) 0,
-      rgba(255, 255, 255, 0.028) 1px,
-      transparent 1px,
-      transparent 60px
-    );
-}
 
-.follaje {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.hoja {
-  position: absolute;
-  height: auto;
-}
-
-.hoja-a {
-  width: 80%;
-  top: -18%;
-  right: -30%;
-  transform-origin: 30% 25%;
-  animation: mover-hoja 13s ease-in-out infinite;
-}
-
-.hoja-b {
-  width: 78%;
-  left: -28%;
-  bottom: -22%;
-  opacity: 0.55;
-  transform-origin: 70% 75%;
-  animation: mover-hoja 16s ease-in-out infinite reverse;
-}
-
-.hoja-c {
-  width: 26%;
-  top: 44%;
-  right: 2%;
-  opacity: 0.35;
-  animation: mover-hoja 9s ease-in-out infinite;
-}
-
-@keyframes mover-hoja {
-  0%,
-  100% {
-    transform: rotate(0deg) translateY(0);
+  /* Estiliza el nombre ESENCIA. */
+  .marca-login h2 {
+    /* Elimina el margen predeterminado. */
+    margin: 0;
+    /* Utiliza el azul oscuro. */
+    color: var(--azul-oscuro);
+    /* Define un tamaño destacado. */
+    font-size: 1.55rem;
+    /* Hace el texto más grueso. */
+    font-weight: 700;
+    /* Agrega espacio entre las letras. */
+    letter-spacing: 0.18em;
   }
 
-  50% {
-    transform: rotate(2deg) translateY(-5px);
+
+  /* Estiliza el texto Tienda Online. */
+  .marca-login span {
+    /* Hace que aparezca debajo del nombre. */
+    display: block;
+    /* Agrega separación superior. */
+    margin-top: 6px;
+    /* Utiliza el dorado como detalle visual. */
+    color: var(--dorado);
+    /* Reduce el tamaño del texto. */
+    font-size: 0.72rem;
+    /* Hace el texto un poco más grueso. */
+    font-weight: 600;
+    /* Agrega separación entre letras. */
+    letter-spacing: 0.12em;
+    /* Convierte el texto a mayúsculas. */
+    text-transform: uppercase;
   }
-}
 
-.marca-superior {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--salvia-clara);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 
-.punto {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--dorado);
-  box-shadow:
-    0 0 0 4px rgba(198, 161, 91, 0.18);
-}
+/* ========================================================= */
+/* CONTENIDO DEL FORMULARIO                                  */
+/* ========================================================= */
 
-.marca-centro {
-  position: relative;
-  z-index: 2;
-}
 
-.categoria {
-  margin: 0 0 14px;
-  color: var(--dorado-claro);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.marca-centro h2 {
-  max-width: 320px;
-  margin: 0 0 16px;
-  color: var(--crema);
-  font-family: 'Fraunces', serif;
-  font-size: clamp(24px, 2.3vw, 32px);
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.22;
-  letter-spacing: -0.01em;
-}
-
-.texto-marca {
-  max-width: 290px;
-  margin: 0;
-  color: var(--salvia-clara);
-  font-size: 13.5px;
-  font-weight: 300;
-  line-height: 1.65;
-}
-
-.chips {
-  margin-top: 22px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  position: relative;
-  z-index: 2;
-}
-
-.chip {
-  padding: 7px 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(251, 247, 240, 0.22);
-  border-radius: 999px;
-  background-color: rgba(251, 247, 240, 0.05);
-  color: var(--crema);
-  font-size: 12px;
-}
-
-.chip svg {
-  width: 12px;
-  height: 12px;
-}
-
-.lista-rituales {
-  padding-top: 16px;
-  display: flex;
-  gap: 22px;
-  position: relative;
-  z-index: 2;
-  border-top: 1px solid rgba(251, 247, 240, 0.14);
-  color: var(--salvia-clara);
-  font-size: 11.5px;
-  font-weight: 300;
-}
-
-.lista-rituales span {
-  margin-right: 5px;
-  color: var(--dorado-claro);
-  font-family: 'Fraunces', serif;
-  font-style: italic;
-}
-
-.panel-formulario {
-  flex: 1;
-  min-width: 0;
-  padding: 40px 56px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-y: auto;
-  background:
-    linear-gradient(
-      145deg,
-      #c8c1b5,
-      #b7b0a5
-    );
-}
-
-.contenido-formulario {
+/* Contiene el formulario completo. */
+.contenido-login {
+  /* Utiliza todo el ancho disponible. */
   width: 100%;
-  max-width: 380px;
 }
 
-.bienvenida {
-  margin: 0 0 8px;
-  color: #526c5f;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+
+  /* Estiliza el título Iniciar sesión. */
+  .contenido-login h1 {
+    /* Elimina margen superior. */
+    margin: 0 0 8px;
+    /* Utiliza azul oscuro. */
+    color: var(--azul-oscuro);
+    /* Define el tamaño del título. */
+    font-size: 1.75rem;
+    /* Define un peso medio. */
+    font-weight: 600;
+    /* Centra el título. */
+    text-align: center;
+  }
+
+
+/* Estiliza la descripción debajo del título. */
+.descripcion-login {
+  /* Define el margen inferior. */
+  margin: 0 0 30px;
+  /* Utiliza un color secundario. */
+  color: var(--texto-secundario);
+  /* Define un tamaño ligeramente menor. */
+  font-size: 0.88rem;
+  /* Mejora el espacio entre líneas. */
+  line-height: 1.5;
+  /* Centra el texto. */
+  text-align: center;
 }
 
-h1 {
-  margin: 0 0 8px;
-  color: #26342d;
-  font-family: 'Fraunces', serif;
-  font-size: clamp(26px, 2.4vw, 32px);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
 
-.descripcion {
-  margin: 0 0 22px;
-  color: #4f544f;
-  font-size: 13.5px;
-  font-weight: 300;
-  line-height: 1.55;
-}
-
+/* Organiza los elementos dentro del formulario. */
 form {
+  /* Utiliza Flexbox. */
   display: flex;
+  /* Coloca los elementos verticalmente. */
   flex-direction: column;
-  gap: 16px;
+  /* Define separación entre elementos. */
+  gap: 6px;
 }
 
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
 
-.campo label {
-  color: #26342d;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
+/* ========================================================= */
+/* CAMPOS ANGULAR MATERIAL                                   */
+/* ========================================================= */
 
-.contenedor-input {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
 
-.contenedor-input > svg {
-  width: 15px;
-  height: 15px;
-  position: absolute;
-  left: 15px;
-  color: #a79c87;
-  pointer-events: none;
-}
-
-input {
+/* Hace que cada campo Angular Material ocupe todo el ancho. */
+.campo-completo {
+  /* Define ancho completo. */
   width: 100%;
-  padding: 12.5px 42px;
-  border: 1px solid #b9b2a6;
-  border-radius: var(--radio);
-  outline: none;
-  background-color: #d8d1c6;
-  color: #2d352f;
-  font-family: 'Sora', sans-serif;
-  font-size: 13.5px;
-  transition:
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background-color 0.18s ease;
+  /* Agrega una pequeña separación inferior. */
+  margin-bottom: 4px;
 }
 
+
+/* Personaliza el contenedor interno de los campos Material. */
+:host ::ng-deep
+.campo-completo
+.mat-mdc-text-field-wrapper {
+  /* Utiliza un fondo muy claro. */
+  background: #fbfcfd;
+  /* Redondea las esquinas. */
+  border-radius: 7px;
+}
+
+
+/* Personaliza el texto escrito dentro de los inputs. */
+:host ::ng-deep
+.campo-completo
+input.mat-mdc-input-element {
+  /* Define el color del texto. */
+  color: var(--texto);
+  /* Define el tamaño del texto. */
+  font-size: 0.9rem;
+}
+
+
+/* Personaliza los textos placeholder. */
+:host ::ng-deep
+.campo-completo
 input::placeholder {
-  color: #746f67;
-  font-weight: 300;
-}
-
-input:focus {
-  border-color: var(--salvia);
-  background-color: #e1dbd1;
-  box-shadow:
-    0 0 0 3px rgba(140, 160, 132, 0.18);
+  /* Utiliza un gris suave. */
+  color: #9aa6af;
 }
 
 
-.mostrar-contrasena {
-  padding: 3px;
-  display: flex;
-  position: absolute;
-  right: 13px;
-  border: none;
-  background: none;
-  color: #a79c87;
-  cursor: pointer;
+/* Personaliza los iconos dentro de los campos. */
+:host ::ng-deep
+.campo-completo
+mat-icon {
+  /* Utiliza el azul principal. */
+  color: var(--azul-principal);
 }
 
-.mostrar-contrasena:hover {
-  color: var(--bosque);
+
+/* Personaliza el texto de las etiquetas Material. */
+:host ::ng-deep
+.campo-completo
+.mat-mdc-floating-label {
+  /* Utiliza un color gris azulado. */
+  color: #607587;
 }
 
-.mostrar-contrasena svg {
-  width: 15px;
-  height: 15px;
+
+/* Cambia la etiqueta cuando el campo está enfocado. */
+:host ::ng-deep
+.campo-completo.mat-focused
+.mat-mdc-floating-label {
+  /* Utiliza el azul principal. */
+  color: var(--azul-principal);
 }
 
-.fila-enlace {
-  margin-top: -4px;
-  display: flex;
-  justify-content: flex-end;
-}
 
-.fila-enlace a {
-  border-bottom: 1px solid transparent;
-  color: #2f3a34;
-  font-size: 12.5px;
-  font-weight: 500;
-  text-decoration: none;
-  transition:
-    border-color 0.15s ease,
-    color 0.15s ease;
-}
+/* ========================================================= */
+/* MENSAJE DE ERROR                                          */
+/* ========================================================= */
 
-.fila-enlace a:hover {
-  border-color: var(--bosque);
-  color: #17211c;
-}
 
-.boton-principal {
-  margin-top: 4px;
-  padding: 13.5px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 9px;
-  border: none;
-  border-radius: var(--radio);
-  background:
-    linear-gradient(
-      120deg,
-      var(--bosque) 0%,
-      #2c3e27 100%
-    );
-  color: var(--crema);
-  font-family: 'Sora', sans-serif;
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  box-shadow:
-    0 8px 20px -8px rgba(28, 42, 30, 0.55);
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.boton-principal:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 12px 26px -8px rgba(28, 42, 30, 0.65);
-}
-
-.boton-principal svg {
-  width: 14px;
-  height: 14px;
-  transition: transform 0.15s ease;
-}
-
-.boton-principal:hover svg {
-  transform: translateX(3px);
-}
-
-.separador {
-  margin: 20px 0 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #2f3a34;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.separador::before,
-.separador::after {
-  content: "";
-  height: 1px;
-  flex: 1;
-  background-color: var(--linea);
-}
-
-.botones-sociales {
-  display: flex;
-  gap: 10px;
-}
-
-.boton-social {
-  flex: 1;
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 7px;
-  border: 1px solid #b6aea0;
-  border-radius: var(--radio);
-  background-color: #d6cfc4;
-  color: var(--bosque);
-  font-size: 12.5px;
-  cursor: pointer;
-  transition:
-    border-color 0.15s ease,
-    background-color 0.15s ease,
-    transform 0.15s ease;
-}
-
-.boton-social:hover {
-  border-color: var(--salvia);
-  background-color: #c9c2b7;
-  transform: translateY(-1px);
-}
-
-.boton-social svg {
-  width: 15px;
-  height: 15px;
-}
-
-.registro {
-  margin-top: 20px;
-  color: #736a5b;
-  font-size: 12.5px;
-  text-align: center;
-}
-
-.registro a {
-  border-bottom: 1px solid var(--dorado);
-  color: #4f544f;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--dorado);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-}
-
-@media (max-width: 860px) {
-  .pagina-login {
-    padding: 24px;
-  }
-
-  .tarjeta {
-    flex-direction: column;
-  }
-
-  .marca-panel {
-    flex: 0 0 auto;
-    padding: 32px 28px;
-  }
-
-  .marca-centro h2 {
-    max-width: none;
-  }
-
-  .lista-rituales {
-    display: none;
-  }
-
-  .panel-formulario {
-    padding: 32px 28px 40px;
-  }
-}
-
-@media (max-width: 480px) {
-  .pagina-login {
-    padding: 0;
-  }
-
-  .tarjeta {
-    min-height: 100vh;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .chips {
-    display: none;
-  }
-}
+/* Estiliza el mensaje cuando el Login falla. */
 .mensaje-error {
-  margin: 12px 0 0;
-  padding: 10px 12px;
-  border: 1px solid #a5635c;
+  /* Coloca icono y texto horizontalmente. */
+  display: flex;
+  /* Centra verticalmente los elementos. */
+  align-items: center;
+  /* Agrega separación entre icono y texto. */
+  gap: 8px;
+  /* Agrega espacio interno. */
+  padding: 11px 12px;
+  /* Agrega espacio inferior. */
+  margin: 2px 0 12px;
+  /* Utiliza un fondo rojo muy claro. */
+  background: #fcebec;
+  /* Agrega un borde rojo suave. */
+  border: 1px solid #e8b7bb;
+  /* Redondea ligeramente las esquinas. */
   border-radius: 6px;
-  background-color: #ead1ca;
-  color: #6f2924;
-  font-size: 12.5px;
-  text-align: center;
+  /* Define el color del mensaje. */
+  color: #8b343c;
+  /* Define el tamaño del texto. */
+  font-size: 0.8rem;
 }
 
-.boton-principal:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-  transform: none;
+
+  /* Estiliza el icono del mensaje de error. */
+  .mensaje-error mat-icon {
+    /* Define un tamaño más pequeño. */
+    font-size: 19px;
+    /* Ajusta el ancho del icono. */
+    width: 19px;
+    /* Ajusta la altura del icono. */
+    height: 19px;
+    /* Evita que el icono se reduzca. */
+    flex-shrink: 0;
+  }
+
+
+/* ========================================================= */
+/* BOTÓN PRINCIPAL                                           */
+/* ========================================================= */
+
+
+/* Estiliza el botón Angular Material para iniciar sesión. */
+.boton-login {
+  /* Hace que el botón ocupe todo el ancho. */
+  width: 100%;
+  /* Define una altura cómoda. */
+  min-height: 48px;
+  /* Agrega margen superior. */
+  margin-top: 5px;
+  /* Utiliza el azul principal. */
+  background-color: var(--azul-principal) !important;
+  /* Cambia el texto a blanco. */
+  color: var(--blanco) !important;
+  /* Redondea ligeramente las esquinas. */
+  border-radius: 7px !important;
+  /* Define el tamaño del texto. */
+  font-size: 0.9rem;
+  /* Hace el texto más grueso. */
+  font-weight: 600;
+  /* Agrega una transición suave. */
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+  /* Cambia el botón al pasar el mouse. */
+  .boton-login:hover:not(:disabled) {
+    /* Utiliza el azul oscuro. */
+    background-color: var(--azul-oscuro) !important;
+    /* Mueve ligeramente el botón hacia arriba. */
+    transform: translateY(-1px);
+    /* Agrega una pequeña sombra. */
+    box-shadow: 0 7px 15px rgba(22, 58, 92, 0.18);
+  }
+
+
+  /* Cambia el botón cuando está deshabilitado. */
+  .boton-login:disabled {
+    /* Reduce ligeramente su opacidad. */
+    opacity: 0.65;
+    /* Evita mostrar cursor de botón. */
+    cursor: not-allowed;
+  }
+
+
+/* ========================================================= */
+/* SPINNER DE CARGA                                          */
+/* ========================================================= */
+
+
+/* Personaliza el spinner utilizado durante el Login. */
+:host ::ng-deep
+.boton-login
+mat-spinner {
+  /* Agrega espacio derecho cuando aparece. */
+  margin-right: 8px;
+}
+
+
+/* Cambia el color del círculo de carga. */
+:host ::ng-deep
+.boton-login
+.mat-mdc-progress-spinner
+circle {
+  /* Utiliza color blanco. */
+  stroke: #ffffff;
+}
+
+
+/* ========================================================= */
+/* REGISTRO                                                  */
+/* ========================================================= */
+
+
+/* Estiliza el texto que invita a registrarse. */
+.registro {
+  /* Agrega espacio superior. */
+  margin: 24px 0 0;
+  /* Centra el texto. */
+  text-align: center;
+  /* Utiliza color secundario. */
+  color: var(--texto-secundario);
+  /* Define un tamaño pequeño. */
+  font-size: 0.82rem;
+}
+
+
+  /* Estiliza el enlace Regístrate. */
+  .registro a {
+    /* Utiliza el azul principal. */
+    color: var(--azul-principal);
+    /* Hace el texto más grueso. */
+    font-weight: 600;
+    /* Elimina el subrayado. */
+    text-decoration: none;
+    /* Agrega una pequeña separación a la izquierda. */
+    margin-left: 4px;
+  }
+
+
+    /* Cambia el enlace al pasar el mouse. */
+    .registro a:hover {
+      /* Utiliza el azul oscuro. */
+      color: var(--azul-oscuro);
+      /* Agrega subrayado. */
+      text-decoration: underline;
+    }
+
+
+/* ========================================================= */
+/* DETALLE DORADO                                            */
+/* ========================================================= */
+
+
+/* Crea una pequeña línea dorada decorativa sobre la marca. */
+.tarjeta-login::before {
+  /* Crea un elemento decorativo sin contenido. */
+  content: "";
+  /* Hace que se comporte como bloque. */
+  display: block;
+  /* Define el ancho de la línea. */
+  width: 55px;
+  /* Define la altura de la línea. */
+  height: 4px;
+  /* Centra la línea horizontalmente. */
+  margin: -40px auto 30px;
+  /* Utiliza el color dorado. */
+  background: var(--dorado);
+  /* Redondea completamente la línea. */
+  border-radius: 999px;
+}
+
+
+/* ========================================================= */
+/* RESPONSIVE                                                */
+/* ========================================================= */
+
+
+/* Aplica cambios en pantallas pequeñas. */
+@media (max-width: 600px) {
+
+
+  /* Reduce el espacio exterior de la página. */
+  .pagina-login {
+    /* Define menos padding. */
+    padding: 18px;
+  }
+
+
+  /* Reduce el espacio interno de la tarjeta. */
+  .tarjeta-login {
+    /* Define padding más pequeño. */
+    padding: 32px 24px;
+  }
+
+
+    /* Ajusta la línea dorada en móvil. */
+    .tarjeta-login::before {
+      /* Ajusta el margen superior porque cambia el padding. */
+      margin: -32px auto 25px;
+    }
+
+
+  /* Reduce ligeramente el título. */
+  .contenido-login h1 {
+    /* Define un tamaño menor. */
+    font-size: 1.55rem;
+  }
+}
+
+
+/* Aplica cambios en pantallas muy pequeñas. */
+@media (max-width: 380px) {
+
+
+  /* Reduce aún más el padding general. */
+  .pagina-login {
+    /* Define menos espacio exterior. */
+    padding: 10px;
+  }
+
+
+  /* Reduce el padding de la tarjeta. */
+  .tarjeta-login {
+    /* Define menos espacio interno. */
+    padding: 28px 18px;
+  }
+
+
+    /* Ajusta la línea decorativa. */
+    .tarjeta-login::before {
+      /* Corrige la posición superior. */
+      margin: -28px auto 22px;
+    }
 }

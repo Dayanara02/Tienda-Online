@@ -1,15 +1,7 @@
-// Importa el tipo Routes de Angular.
-//
-// Routes permite definir todas las rutas
-// disponibles dentro de la aplicación.
+// Importa el tipo Routes para definir las rutas de Angular.
 import { Routes } from '@angular/router';
 
-
-// =========================================================
-// IMPORTACIONES DE PÁGINAS GENERALES
-// =========================================================
-
-// Importa la pantalla de registro de usuarios.
+// Importa la pantalla de registro.
 import { Registro } from './paginas/registro/registro';
 
 // Importa la pantalla de lista de deseos.
@@ -18,91 +10,62 @@ import { ListaDeseos } from './paginas/lista-deseos/lista-deseos';
 // Importa la pantalla de inicio de sesión.
 import { Login } from './paginas/login/login';
 
-
-// =========================================================
-// IMPORTACIONES DE PÁGINAS DEL CLIENTE
-// =========================================================
-
-// Importa el dashboard principal del Cliente.
+// Importa el Dashboard del Cliente.
 import { Dashboard } from './paginas/dashboard/dashboard';
 
-// Importa la página donde se muestran los productos.
+// Importa la pantalla de productos.
 import { Productos } from './paginas/productos/productos';
 
-// Importa la página del carrito de compras.
+// Importa la pantalla del carrito.
 import { Carrito } from './paginas/carrito/carrito';
 
-// Importa la página donde el Cliente
-// confirma la información antes de crear el pedido.
+// Importa la pantalla para confirmar el pedido.
 import { ConfirmarPedido } from './paginas/confirmar-pedido/confirmar-pedido';
 
-// Importa la página donde se muestra
-// el historial de pedidos del Cliente.
+// Importa el historial de pedidos.
 import { MisPedidos } from './paginas/mis-pedidos/mis-pedidos';
 
-// Importa la página donde se consulta
-// toda la información de un pedido específico.
+// Importa el detalle de un pedido.
 import { DetallePedido } from './paginas/detalle-pedido/detalle-pedido';
 
-// Importa la nueva pantalla donde el Cliente
-// selecciona el método de pago y paga su pedido.
+// Importa la pantalla para pagar un pedido.
 import { PagoPedido } from './paginas/pago-pedido/pago-pedido';
 
-// Importa la página del perfil del Cliente.
+// Importa la nueva pantalla de seguimiento.
+import { SeguimientoPedido } from './paginas/seguimiento-pedido/seguimiento-pedido';
+
+// Importa el perfil del Cliente.
 import { Perfil } from './paginas/perfil/perfil';
 
-// Importa la página de descuentos y promociones.
+// Importa la pantalla de descuentos.
 import { Descuentos } from './paginas/descuentos/descuentos';
 
-
-// =========================================================
-// IMPORTACIONES DE PÁGINAS DEL EMPLEADO
-// =========================================================
-
-// Importa el dashboard principal del Empleado.
+// Importa el Dashboard del Empleado.
 import { EmpleadoDashboard } from './paginas/empleado-dashboard/empleado-dashboard';
 
-// Importa la página de inventario.
+// Importa la pantalla de inventario.
 import { Inventario } from './paginas/inventario/inventario';
 
-// Importa la página donde se consultan
-// los movimientos realizados en el inventario.
+// Importa los movimientos de inventario.
 import { MovimientosInventario } from './paginas/movimientos-inventario/movimientos-inventario';
 
-// Importa la página donde el Empleado
-// puede gestionar los pedidos.
+// Importa la gestión de pedidos.
 import { GestionPedidos } from './paginas/gestion-pedidos/gestion-pedidos';
 
-
-// =========================================================
-// IMPORTACIONES DE PÁGINAS DEL ADMINISTRADOR
-// =========================================================
-
-// Importa el dashboard principal del Administrador.
+// Importa el Dashboard del Administrador.
 import { AdminDashboard } from './paginas/admin-dashboard/admin-dashboard';
 
-// Importa la página para gestionar productos.
+// Importa la gestión de productos.
 import { GestionProductos } from './paginas/gestion-productos/gestion-productos';
 
-// Importa la página para gestionar categorías.
+// Importa la gestión de categorías.
 import { GestionCategorias } from './paginas/gestion-categorias/gestion-categorias';
 
-// Importa la página para gestionar usuarios.
+// Importa la gestión de usuarios.
 import { GestionUsuarios } from './paginas/gestion-usuarios/gestion-usuarios';
 
-
-// =========================================================
-// CONFIGURACIÓN DE TODAS LAS RUTAS
-// =========================================================
-
-// Este arreglo contiene todas las direcciones
-// disponibles dentro de la aplicación Angular.
+// Contiene todas las rutas disponibles de la aplicación.
 export const routes: Routes = [
-
-
-  // =======================================================
-  // RUTAS GENERALES
-  // =======================================================
 
   // Ruta para iniciar sesión.
   {
@@ -110,28 +73,23 @@ export const routes: Routes = [
     component: Login
   },
 
-  // Ruta para registrar un nuevo usuario.
+  // Ruta para registrar un usuario.
   {
     path: 'registro',
     component: Registro
   },
 
-  // Ruta para consultar la lista de deseos.
+  // Ruta para consultar favoritos.
   {
     path: 'lista-deseos',
     component: ListaDeseos
   },
 
-  // Ruta para consultar promociones y descuentos.
+  // Ruta para consultar descuentos.
   {
     path: 'descuentos',
     component: Descuentos
   },
-
-
-  // =======================================================
-  // RUTAS DEL CLIENTE
-  // =======================================================
 
   // Dashboard principal del Cliente.
   {
@@ -139,20 +97,19 @@ export const routes: Routes = [
     component: Dashboard
   },
 
-  // Página donde se muestran los productos.
+  // Catálogo de productos.
   {
     path: 'productos',
     component: Productos
   },
 
-  // Página del carrito de compras.
+  // Carrito de compras.
   {
     path: 'carrito',
     component: Carrito
   },
 
-  // Página donde se confirma el pedido
-  // antes de guardarlo en la base de datos.
+  // Confirmación antes de crear el pedido.
   {
     path: 'confirmar-pedido',
     component: ConfirmarPedido
@@ -164,42 +121,29 @@ export const routes: Routes = [
     component: MisPedidos
   },
 
-  // Detalle de un pedido específico.
-  //
-  // El parámetro :id representa
-  // el identificador del pedido.
-  //
-  // Ejemplo:
-  //
-  // /detalle-pedido/5
+  // Muestra el detalle de un pedido específico.
   {
     path: 'detalle-pedido/:id',
     component: DetallePedido
   },
 
-  // Pantalla para pagar un pedido.
-  //
-  // También recibe el identificador
-  // del pedido dentro de la URL.
-  //
-  // Ejemplo:
-  //
-  // /pago-pedido/5
+  // Permite pagar un pedido específico.
   {
     path: 'pago-pedido/:id',
     component: PagoPedido
   },
 
-  // Página del perfil del Cliente.
+  // Muestra el seguimiento de un pedido específico.
+  {
+    path: 'seguimiento-pedido/:id',
+    component: SeguimientoPedido
+  },
+
+  // Muestra el perfil del Cliente.
   {
     path: 'perfil',
     component: Perfil
   },
-
-
-  // =======================================================
-  // RUTAS DEL EMPLEADO
-  // =======================================================
 
   // Dashboard principal del Empleado.
   {
@@ -207,30 +151,23 @@ export const routes: Routes = [
     component: EmpleadoDashboard
   },
 
-  // Página de inventario.
+  // Pantalla de inventario.
   {
     path: 'inventario',
     component: Inventario
   },
 
-  // Página donde se muestran
-  // los movimientos de inventario.
+  // Pantalla de movimientos de inventario.
   {
     path: 'movimientos-inventario',
     component: MovimientosInventario
   },
 
-  // Página donde el Empleado
-  // administra los pedidos.
+  // Pantalla para gestionar pedidos.
   {
     path: 'gestion-pedidos',
     component: GestionPedidos
   },
-
-
-  // =======================================================
-  // RUTAS DEL ADMINISTRADOR
-  // =======================================================
 
   // Dashboard principal del Administrador.
   {
@@ -256,32 +193,16 @@ export const routes: Routes = [
     component: GestionUsuarios
   },
 
-
-  // =======================================================
-  // RUTA INICIAL
-  // =======================================================
-
-  // Cuando la dirección está vacía,
-  // redirige automáticamente al login.
+  // Redirige al Login cuando no se indica ninguna ruta.
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
   },
 
-
-  // =======================================================
-  // RUTA PARA DIRECCIONES NO EXISTENTES
-  // =======================================================
-
-  // Los dos asteriscos representan
-  // cualquier ruta que no exista.
-  //
-  // Si el usuario escribe una dirección incorrecta,
-  // Angular lo devuelve al login.
+  // Redirige al Login cualquier dirección inexistente.
   {
     path: '**',
     redirectTo: 'login'
   }
-
 ];

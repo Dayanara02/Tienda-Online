@@ -1,419 +1,828 @@
+// Importa CommonModule para usar directivas y pipes de Angular.
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
 
-interface Categoria {
-  id: number;
+// Importa HttpClient y HttpHeaders para consultar la API.
+import {
+  HttpClient,
+  HttpHeaders
+} from '@angular/common/http';
+
+// Importa Component y ChangeDetectorRef para crear y actualizar la pantalla.
+import {
+  ChangeDetectorRef,
+  Component
+} from '@angular/core';
+
+// Importa FormsModule para utilizar ngModel en el buscador.
+import { FormsModule } from '@angular/forms';
+
+// Importa Router y RouterLink para navegar entre páginas.
+import {
+  Router,
+  RouterLink
+} from '@angular/router';
+
+// Importa botones de PrimeNG.
+import { ButtonModule } from 'primeng/button';
+
+// Importa iconos de Angular Material.
+import { MatIconModule } from '@angular/material/icon';
+
+// Importa botones de Angular Material.
+import { MatButtonModule } from '@angular/material/button';
+
+// Importa contadores visuales de Angular Material.
+import { MatBadgeModule } from '@angular/material/badge';
+
+// Importa ayudas emergentes de Angular Material.
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+// Define la respuesta que llega desde la API.
+interface ProductoApi {
+  idProducto: number;
+  idCategoria: number;
+  categoria: string;
   nombre: string;
-  descripcion: string;
-  icono: string;
+  descripcion: string | null;
+  precio: number;
+  imagen: string | null;
+  stock: number;
 }
 
+// Define la estructura utilizada por el Dashboard.
 interface Producto {
+  id: number;
+  idCategoria: number;
+  nombre: string;
+  marca: string;
+  categoria: string;
+  precio: number;
+  stock: number;
+  imagen: string;
+  descripcion: string;
+  cantidad: number;
+}
+
+// Define la estructura utilizada en el carrito.
+interface ProductoCarrito {
   id: number;
   nombre: string;
   marca: string;
   precio: number;
-  disponibles: number;
-  categoriaId: number;
   imagen: string;
   cantidad: number;
+  stock: number;
 }
 
+// Define la estructura utilizada en favoritos.
+interface ProductoFavorito {
+  id: number;
+  nombre: string;
+  marca: string;
+  precio: number;
+  imagen: string;
+  stock: number;
+  categoria: string;
+}
+
+// Configura el componente Dashboard.
 @Component({
   selector: 'app-dashboard',
+
+  // Registra los módulos utilizados en el HTML.
   imports: [
     CommonModule,
-    RouterLink
+    FormsModule,
+    RouterLink,
+    ButtonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatTooltipModule
   ],
+
+  // Define los archivos visuales del componente.
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
 export class Dashboard {
 
-  nombreUsuario =
-    localStorage.getItem('nombreUsuario') || 'Cliente';
+  // Guarda la dirección del endpoint de productos.
+  private readonly urlProductos =
+    'https://localhost:7196/api/Productos';
 
-  categoriaSeleccionada = 0;
+  // Guarda la dirección del endpoint Mis Pedidos.
+  private readonly urlMisPedidos =
+    'https://localhost:7196/api/Pedidos/mis-pedidos';
 
+  // Guarda el nombre del usuario conectado.
+  nombreUsuario = 'Cliente';
+
+  // Guarda todos los productos obtenidos desde SQL Server.
+  productos: Producto[] = [];
+
+  // Guarda el texto escrito en el buscador.
+  textoBusqueda = '';
+
+  // Guarda la categoría seleccionada.
+  categoriaSeleccionada = 'Todos';
+
+  // Guarda la cantidad de artículos del carrito.
   cantidadCarrito = 0;
+
+  // Guarda la cantidad de productos favoritos.
   cantidadDeseos = 0;
 
+  // Guarda la cantidad de pedidos del cliente.
+  cantidadPedidos = 0;
+
+  // Indica si los productos todavía se están cargando.
+  cargandoProductos = false;
+
+  // Indica si los pedidos todavía se están consultando.
+  cargandoPedidos = false;
+
+  // Guarda mensajes temporales.
   mensaje = '';
 
-  listaDeseos: Producto[] = [];
+  // Guarda el tipo del mensaje mostrado.
+  tipoMensaje: 'exito' | 'info' | 'error' =
+    'info';
 
-  categorias: Categoria[] = [
-    {
-      id: 1,
-      nombre: 'Limpieza facial',
-      descripcion: 'Geles y espumas',
-      icono: '🫧'
-    },
-    {
-      id: 2,
-      nombre: 'Hidratación facial',
-      descripcion: 'Sérums y cremas',
-      icono: '💧'
-    },
-    {
-      id: 3,
-      nombre: 'Cuidado corporal',
-      descripcion: 'Lociones y exfoliantes',
-      icono: '🧴'
-    },
-    {
-      id: 4,
-      nombre: 'Protección solar',
-      descripcion: 'Rostro y cuerpo',
-      icono: '☀️'
-    }
-  ];
-
-  productos: Producto[] = [
-    {
-      id: 1,
-      nombre: 'Gel limpiador facial',
-      marca: 'Cureology',
-      precio: 7500,
-      disponibles: 12,
-      categoriaId: 1,
-      imagen:
-        'https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 2,
-      nombre: 'Espuma facial suave',
-      marca: 'Pure Skin',
-      precio: 8900,
-      disponibles: 8,
-      categoriaId: 1,
-      imagen:
-        'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 3,
-      nombre: 'Agua micelar',
-      marca: 'Dermal Care',
-      precio: 6200,
-      disponibles: 18,
-      categoriaId: 1,
-      imagen:
-        'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 4,
-      nombre: 'Sérum Vitamina C',
-      marca: 'Natural Beauty',
-      precio: 14500,
-      disponibles: 14,
-      categoriaId: 2,
-      imagen:
-        'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 5,
-      nombre: 'Crema hidratante facial',
-      marca: 'Hydra Skin',
-      precio: 11900,
-      disponibles: 10,
-      categoriaId: 2,
-      imagen:
-        'https://images.unsplash.com/photo-1601049676869-702ea24cfd58?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 6,
-      nombre: 'Bruma facial de rosas',
-      marca: 'Rose Essence',
-      precio: 8900,
-      disponibles: 11,
-      categoriaId: 2,
-      imagen:
-        'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 7,
-      nombre: 'Loción corporal de avena',
-      marca: 'Soft Care',
-      precio: 5500,
-      disponibles: 20,
-      categoriaId: 3,
-      imagen:
-        'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 8,
-      nombre: 'Exfoliante corporal',
-      marca: 'Body Ritual',
-      precio: 6800,
-      disponibles: 7,
-      categoriaId: 3,
-      imagen:
-        'https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 9,
-      nombre: 'Aceite corporal nutritivo',
-      marca: 'Botanical Care',
-      precio: 9400,
-      disponibles: 13,
-      categoriaId: 3,
-      imagen:
-        'https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 10,
-      nombre: 'Protector solar facial FPS 50',
-      marca: 'Sun Defense',
-      precio: 9800,
-      disponibles: 15,
-      categoriaId: 4,
-      imagen:
-        'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 11,
-      nombre: 'Protector solar corporal',
-      marca: 'Solar Care',
-      precio: 12500,
-      disponibles: 9,
-      categoriaId: 4,
-      imagen:
-        'https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    },
-    {
-      id: 12,
-      nombre: 'Protector solar en spray',
-      marca: 'Sun Fresh',
-      precio: 10800,
-      disponibles: 16,
-      categoriaId: 4,
-      imagen:
-        'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=600&q=80',
-      cantidad: 1
-    }
-  ];
-
+  // Inyecta los servicios utilizados por el Dashboard.
   constructor(
-    private router: Router
+    private router: Router,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {
-    this.actualizarContadorCarrito();
-    this.cargarListaDeseos();
+    // Recupera el nombre guardado durante el Login.
+    const nombreGuardado =
+      localStorage.getItem(
+        'nombreUsuario'
+      );
+
+    // Utiliza el nombre guardado si existe.
+    if (nombreGuardado) {
+      this.nombreUsuario =
+        nombreGuardado;
+    }
+
+    // Carga la información inicial del Dashboard.
+    this.cargarProductos();
+    this.actualizarContadores();
+    this.cargarCantidadPedidos();
   }
 
+  // Obtiene los productos reales desde la API.
+  cargarProductos(): void {
+    // Activa el estado de carga.
+    this.cargandoProductos = true;
+
+    // Consulta el endpoint público de productos.
+    this.http.get<ProductoApi[]>(
+      this.urlProductos
+    ).subscribe({
+
+      // Se ejecuta cuando la API responde correctamente.
+      next: (respuesta) => {
+
+        // Convierte la respuesta al formato utilizado por el Dashboard.
+        this.productos =
+          respuesta.map(
+            producto => ({
+              // Utiliza el identificador real de SQL Server.
+              id:
+                producto.idProducto,
+
+              // Guarda la categoría real.
+              idCategoria:
+                producto.idCategoria,
+
+              // Utiliza el nombre real del producto.
+              nombre:
+                producto.nombre,
+
+              // Mantiene Esencia como marca visual.
+              marca:
+                'Esencia',
+
+              // Utiliza el nombre real de la categoría.
+              categoria:
+                producto.categoria,
+
+              // Utiliza el precio real de SQL Server.
+              precio:
+                Number(producto.precio),
+
+              // Utiliza el stock real del inventario.
+              stock:
+                Number(producto.stock),
+
+              // Construye la ruta hacia public/productos.
+              imagen:
+                producto.imagen
+                  ? `/productos/${producto.imagen}`
+                  : '',
+
+              // Utiliza la descripción real del producto.
+              descripcion:
+                producto.descripcion ||
+                'Sin descripción disponible.',
+
+              // Cada producto inicia con una unidad seleccionada.
+              cantidad:
+                1
+            })
+          );
+
+        // Finaliza el estado de carga.
+        this.cargandoProductos = false;
+
+        // Actualiza inmediatamente la pantalla.
+        this.cdr.detectChanges();
+      },
+
+      // Se ejecuta cuando ocurre un error.
+      error: (error) => {
+
+        // Muestra el error durante el desarrollo.
+        console.error(
+          'Error al cargar productos:',
+          error
+        );
+
+        // Limpia la lista si la consulta falla.
+        this.productos = [];
+
+        // Finaliza la carga.
+        this.cargandoProductos = false;
+
+        // Informa el problema al cliente.
+        this.mostrarMensaje(
+          'No se pudieron cargar los productos.',
+          'error'
+        );
+
+        // Actualiza la pantalla.
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Obtiene las categorías reales sin repetirlas.
+  get categorias(): string[] {
+    // Extrae los nombres de las categorías.
+    const categorias =
+      this.productos.map(
+        producto =>
+          producto.categoria
+      );
+
+    // Devuelve Todos junto con las categorías reales.
+    return [
+      'Todos',
+      ...Array.from(
+        new Set(categorias)
+      )
+    ];
+  }
+
+  // Filtra los productos por búsqueda y categoría.
   get productosFiltrados(): Producto[] {
+    // Prepara el texto escrito por el cliente.
+    const busqueda =
+      this.textoBusqueda
+        .trim()
+        .toLowerCase();
 
-    if (this.categoriaSeleccionada === 0) {
-      return this.productos;
-    }
-
+    // Filtra los productos cargados.
     return this.productos.filter(
-      producto =>
-        producto.categoriaId ===
-        this.categoriaSeleccionada
+      producto => {
+
+        // Comprueba la categoría seleccionada.
+        const coincideCategoria =
+          this.categoriaSeleccionada ===
+          'Todos' ||
+          producto.categoria ===
+          this.categoriaSeleccionada;
+
+        // Comprueba nombre, marca, categoría y descripción.
+        const coincideBusqueda =
+          !busqueda ||
+          producto.nombre
+            .toLowerCase()
+            .includes(busqueda) ||
+          producto.marca
+            .toLowerCase()
+            .includes(busqueda) ||
+          producto.categoria
+            .toLowerCase()
+            .includes(busqueda) ||
+          producto.descripcion
+            .toLowerCase()
+            .includes(busqueda);
+
+        // Devuelve solamente las coincidencias.
+        return (
+          coincideCategoria &&
+          coincideBusqueda
+        );
+      }
     );
   }
 
-  irASeccion(idSeccion: string): void {
-
-    const elemento =
-      document.getElementById(idSeccion);
-
-    if (elemento) {
-      elemento.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
+  // Devuelve algunos productos para la sección destacada.
+  get productosDestacados(): Producto[] {
+    // Utiliza los primeros cuatro productos reales.
+    return this.productos.slice(
+      0,
+      4
+    );
   }
 
-  irAMisPedidos(): void {
-    this.router.navigate([
-      '/mis-pedidos'
-    ]);
+  // Devuelve la cantidad total de productos cargados.
+  get totalProductos(): number {
+    // Cuenta todos los productos de la API.
+    return this.productos.length;
   }
 
-  irADescuentos(): void {
-    this.router.navigate([
-      '/descuentos'
-    ]);
-  }
-
+  // Cambia la categoría seleccionada.
   seleccionarCategoria(
-    idCategoria: number
+    categoria: string
   ): void {
-
+    // Guarda la nueva categoría.
     this.categoriaSeleccionada =
-      idCategoria;
-
-    this.mensaje = '';
+      categoria;
   }
 
-  mostrarTodos(): void {
+  // Limpia la búsqueda y la categoría.
+  limpiarFiltros(): void {
+    // Restablece la categoría.
+    this.categoriaSeleccionada =
+      'Todos';
 
-    this.categoriaSeleccionada = 0;
-
-    this.mensaje = '';
+    // Limpia el buscador.
+    this.textoBusqueda =
+      '';
   }
 
+  // Aumenta la cantidad sin superar el stock.
   aumentarCantidad(
     producto: Producto
   ): void {
-
+    // Comprueba que existan más unidades disponibles.
     if (
       producto.cantidad <
-      producto.disponibles
+      producto.stock
     ) {
+      // Aumenta una unidad.
       producto.cantidad++;
     }
   }
 
+  // Disminuye la cantidad sin bajar de uno.
   disminuirCantidad(
     producto: Producto
   ): void {
-
-    if (producto.cantidad > 1) {
+    // Comprueba que exista más de una unidad.
+    if (
+      producto.cantidad > 1
+    ) {
+      // Reduce una unidad.
       producto.cantidad--;
     }
   }
 
+  // Agrega un producto al carrito.
   agregarAlCarrito(
     producto: Producto
   ): void {
-
-    if (producto.disponibles <= 0) {
-
-      this.mensaje =
-        'Este producto se encuentra agotado.';
+    // Impide agregar productos sin existencias.
+    if (producto.stock <= 0) {
+      this.mostrarMensaje(
+        'Este producto no tiene existencias disponibles.',
+        'error'
+      );
 
       return;
     }
 
-    const carritoActual: Producto[] =
-      JSON.parse(
-        localStorage.getItem('carrito') || '[]'
-      );
+    // Obtiene el carrito actual.
+    const carrito =
+      this.obtenerCarrito();
 
+    // Busca si el producto ya estaba agregado.
     const productoExistente =
-      carritoActual.find(
+      carrito.find(
         item =>
           item.id === producto.id
       );
 
+    // Actualiza la cantidad si el producto ya existe.
     if (productoExistente) {
 
+      // Calcula la nueva cantidad.
       const nuevaCantidad =
         productoExistente.cantidad +
         producto.cantidad;
 
-      productoExistente.cantidad =
-        Math.min(
-          nuevaCantidad,
-          producto.disponibles
+      // Impide superar el stock real.
+      if (
+        nuevaCantidad >
+        producto.stock
+      ) {
+        this.mostrarMensaje(
+          'No puedes agregar una cantidad mayor al stock disponible.',
+          'error'
         );
 
+        return;
+      }
+
+      // Guarda la nueva cantidad.
+      productoExistente.cantidad =
+        nuevaCantidad;
+
+      // Actualiza el stock almacenado.
+      productoExistente.stock =
+        producto.stock;
     } else {
 
-      carritoActual.push({
-        ...producto
-      });
+      // Crea el producto que se guardará en el carrito.
+      const nuevoProducto:
+        ProductoCarrito = {
+        id:
+          producto.id,
+        nombre:
+          producto.nombre,
+        marca:
+          producto.marca,
+        precio:
+          producto.precio,
+        imagen:
+          producto.imagen,
+        cantidad:
+          producto.cantidad,
+        stock:
+          producto.stock
+      };
+
+      // Agrega el producto al carrito.
+      carrito.push(
+        nuevoProducto
+      );
     }
 
+    // Guarda el carrito actualizado.
     localStorage.setItem(
       'carrito',
-      JSON.stringify(carritoActual)
+      JSON.stringify(carrito)
     );
 
-    this.actualizarContadorCarrito();
+    // Actualiza los contadores.
+    this.actualizarContadores();
 
-    this.mensaje =
-      `${producto.nombre} fue añadido al carrito.`;
+    // Reinicia la cantidad seleccionada.
+    producto.cantidad =
+      1;
+
+    // Informa que el producto fue agregado.
+    this.mostrarMensaje(
+      'Producto agregado al carrito.',
+      'exito'
+    );
   }
 
-  actualizarContadorCarrito(): void {
+  // Agrega o elimina un producto de favoritos.
+  cambiarFavorito(
+    producto: Producto
+  ): void {
+    // Obtiene los favoritos actuales.
+    const favoritos =
+      this.obtenerFavoritos();
 
-    const carrito: Producto[] =
-      JSON.parse(
-        localStorage.getItem('carrito') || '[]'
+    // Busca el producto dentro de favoritos.
+    const indice =
+      favoritos.findIndex(
+        item =>
+          item.id === producto.id
       );
 
+    // Elimina el producto si ya estaba guardado.
+    if (indice >= 0) {
+      // Quita el producto.
+      favoritos.splice(
+        indice,
+        1
+      );
+
+      // Informa el cambio.
+      this.mostrarMensaje(
+        'Producto eliminado de favoritos.',
+        'info'
+      );
+    } else {
+
+      // Crea el producto favorito.
+      const favorito:
+        ProductoFavorito = {
+        id:
+          producto.id,
+        nombre:
+          producto.nombre,
+        marca:
+          producto.marca,
+        precio:
+          producto.precio,
+        imagen:
+          producto.imagen,
+        stock:
+          producto.stock,
+        categoria:
+          producto.categoria
+      };
+
+      // Agrega el producto a favoritos.
+      favoritos.push(
+        favorito
+      );
+
+      // Informa el cambio.
+      this.mostrarMensaje(
+        'Producto agregado a favoritos.',
+        'exito'
+      );
+    }
+
+    // Guarda la lista actualizada.
+    localStorage.setItem(
+      'listaDeseos',
+      JSON.stringify(favoritos)
+    );
+
+    // Actualiza el contador.
+    this.actualizarContadores();
+  }
+
+  // Comprueba si un producto está guardado en favoritos.
+  esFavorito(
+    producto: Producto
+  ): boolean {
+    // Busca el identificador dentro de la lista.
+    return this.obtenerFavoritos()
+      .some(
+        item =>
+          item.id === producto.id
+      );
+  }
+
+  // Obtiene el carrito almacenado en localStorage.
+  private obtenerCarrito():
+    ProductoCarrito[] {
+    // Busca el carrito guardado.
+    const carritoGuardado =
+      localStorage.getItem(
+        'carrito'
+      );
+
+    // Devuelve una lista vacía si no existe.
+    if (!carritoGuardado) {
+      return [];
+    }
+
+    try {
+      // Convierte el JSON nuevamente en una lista.
+      return JSON.parse(
+        carritoGuardado
+      );
+    } catch {
+      // Devuelve una lista vacía si el contenido es inválido.
+      return [];
+    }
+  }
+
+  // Obtiene los favoritos almacenados en localStorage.
+  private obtenerFavoritos():
+    ProductoFavorito[] {
+    // Busca la lista guardada.
+    const favoritosGuardados =
+      localStorage.getItem(
+        'listaDeseos'
+      );
+
+    // Devuelve una lista vacía si no existe.
+    if (!favoritosGuardados) {
+      return [];
+    }
+
+    try {
+      // Convierte el JSON nuevamente en una lista.
+      return JSON.parse(
+        favoritosGuardados
+      );
+    } catch {
+      // Devuelve una lista vacía si el contenido es inválido.
+      return [];
+    }
+  }
+
+  // Actualiza los contadores de carrito y favoritos.
+  actualizarContadores(): void {
+    // Obtiene el carrito actual.
+    const carrito =
+      this.obtenerCarrito();
+
+    // Suma todas las unidades del carrito.
     this.cantidadCarrito =
       carrito.reduce(
         (
-          total: number,
-          item: Producto
+          total,
+          producto
         ) =>
           total +
-          Number(item.cantidad),
+          Number(producto.cantidad),
         0
       );
+
+    // Cuenta los favoritos guardados.
+    this.cantidadDeseos =
+      this.obtenerFavoritos().length;
   }
 
-  cargarListaDeseos(): void {
-
-    this.listaDeseos =
-      JSON.parse(
-        localStorage.getItem('listaDeseos') || '[]'
+  // Consulta cuántos pedidos tiene el cliente.
+  cargarCantidadPedidos(): void {
+    // Obtiene el token guardado.
+    const token =
+      localStorage.getItem(
+        'token'
       );
 
-    this.cantidadDeseos =
-      this.listaDeseos.length;
+    // Termina si no existe una sesión válida.
+    if (!token) {
+      this.cantidadPedidos =
+        0;
+
+      return;
+    }
+
+    // Activa el estado de carga.
+    this.cargandoPedidos =
+      true;
+
+    // Crea los encabezados con el JWT.
+    const headers =
+      new HttpHeaders({
+        Authorization:
+          `Bearer ${token}`
+      });
+
+    // Consulta los pedidos del cliente.
+    this.http.get<any[]>(
+      this.urlMisPedidos,
+      { headers }
+    ).subscribe({
+
+      // Se ejecuta cuando la API responde correctamente.
+      next: (pedidos) => {
+
+        // Guarda la cantidad recibida.
+        this.cantidadPedidos =
+          Array.isArray(pedidos)
+            ? pedidos.length
+            : 0;
+
+        // Finaliza la carga.
+        this.cargandoPedidos =
+          false;
+
+        // Actualiza la pantalla.
+        this.cdr.detectChanges();
+      },
+
+      // Se ejecuta cuando ocurre un error.
+      error: (error) => {
+
+        // Muestra el error durante el desarrollo.
+        console.error(
+          'Error al cargar pedidos:',
+          error
+        );
+
+        // Mantiene el Dashboard funcionando.
+        this.cantidadPedidos =
+          0;
+
+        // Finaliza la carga.
+        this.cargandoPedidos =
+          false;
+
+        // Actualiza la pantalla.
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  estaEnDeseos(
-    idProducto: number
-  ): boolean {
+  // Muestra un mensaje temporal.
+  mostrarMensaje(
+    texto: string,
+    tipo: 'exito' | 'info' | 'error'
+  ): void {
+    // Guarda el contenido y el tipo.
+    this.mensaje =
+      texto;
 
-    return this.listaDeseos.some(
-      producto =>
-        producto.id === idProducto
+    this.tipoMensaje =
+      tipo;
+
+    // Actualiza inmediatamente la pantalla.
+    this.cdr.detectChanges();
+
+    // Limpia el mensaje después de unos segundos.
+    setTimeout(
+      () => {
+        // Borra el mensaje.
+        this.mensaje =
+          '';
+
+        // Actualiza nuevamente la pantalla.
+        this.cdr.detectChanges();
+      },
+      2500
     );
   }
 
-  irADeseos(
-    producto: Producto
-  ): void {
+  // Navega hacia Productos.
+  irAProductos(): void {
+    // Abre el catálogo completo.
+    this.router.navigate([
+      '/productos'
+    ]);
+  }
 
-    if (!this.estaEnDeseos(producto.id)) {
+  // Navega hacia el Carrito.
+  irAlCarrito(): void {
+    // Abre la pantalla Carrito.
+    this.router.navigate([
+      '/carrito'
+    ]);
+  }
 
-      this.listaDeseos.push({
-        ...producto,
-        cantidad: 1
-      });
-
-      localStorage.setItem(
-        'listaDeseos',
-        JSON.stringify(this.listaDeseos)
-      );
-
-      this.cantidadDeseos =
-        this.listaDeseos.length;
-    }
-
+  // Navega hacia Favoritos.
+  irAFavoritos(): void {
+    // Abre Lista de deseos.
     this.router.navigate([
       '/lista-deseos'
     ]);
   }
 
+  // Navega hacia Mis Pedidos.
+  irAMisPedidos(): void {
+    // Abre el historial de pedidos.
+    this.router.navigate([
+      '/mis-pedidos'
+    ]);
+  }
+
+  // Navega hacia Descuentos.
+  irADescuentos(): void {
+    // Abre la pantalla de promociones.
+    this.router.navigate([
+      '/descuentos'
+    ]);
+  }
+
+  // Navega hacia el Perfil.
+  irAPerfil(): void {
+    // Abre los datos del usuario.
+    this.router.navigate([
+      '/perfil'
+    ]);
+  }
+
+  // Cierra la sesión actual.
   cerrarSesion(): void {
+    // Elimina los datos de autenticación.
+    localStorage.removeItem(
+      'token'
+    );
 
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
-    localStorage.removeItem('idUsuario');
-    localStorage.removeItem('nombreUsuario');
-    localStorage.removeItem('correoUsuario');
+    localStorage.removeItem(
+      'rol'
+    );
 
+    localStorage.removeItem(
+      'idUsuario'
+    );
+
+    localStorage.removeItem(
+      'nombreUsuario'
+    );
+
+    localStorage.removeItem(
+      'correoUsuario'
+    );
+
+    // Regresa al Login.
     this.router.navigate([
       '/login'
     ]);
