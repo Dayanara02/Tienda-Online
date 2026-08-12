@@ -1,532 +1,412 @@
-// Importa CommonModule para utilizar directivas
-// como *ngIf y *ngFor dentro del HTML.
+// Importa CommonModule para usar *ngIf, *ngFor y pipes.
 import { CommonModule } from '@angular/common';
 
-// Importa las herramientas necesarias
-// para crear el componente y actualizar la pantalla.
+// Importa las herramientas principales del componente.
 import {
   ChangeDetectorRef,
   Component
 } from '@angular/core';
 
-// ActivatedRoute permite obtener el id del pedido
-// que viene dentro de la dirección URL.
-//
-// Router permite navegar hacia otras páginas.
+// Importa las herramientas para leer el id de la URL y navegar.
 import {
   ActivatedRoute,
   Router
 } from '@angular/router';
 
-// HttpClient permite comunicarse con la API.
-//
-// HttpHeaders permite enviar el token JWT.
-//
-// HttpErrorResponse permite manejar errores HTTP.
+// Importa las herramientas necesarias para consultar la API.
 import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders
 } from '@angular/common/http';
 
+// Importa iconos de Angular Material.
+import { MatIconModule } from '@angular/material/icon';
 
-// =========================================================
-// INTERFAZ DEL MÉTODO DE PAGO
-// =========================================================
+// Importa botones de Angular Material.
+import { MatButtonModule } from '@angular/material/button';
 
-// Representa cada método de pago
-// recibido desde la base de datos.
+// Importa campos de texto de Angular Material.
+import { MatInputModule } from '@angular/material/input';
+
+// Importa formularios de Angular para utilizar ngModel.
+import { FormsModule } from '@angular/forms';
+
+// Importa botones de PrimeNG.
+import { ButtonModule } from 'primeng/button';
+
+// Representa cada método de pago recibido desde la API.
 interface MetodoPago {
-
-  // Identificador del método.
   idMetodoPago: number;
-
-  // Nombre del método.
   nombre: string;
-
-  // Descripción opcional.
   descripcion: string | null;
 }
 
-
-// =========================================================
-// INTERFAZ DEL PEDIDO
-// =========================================================
-
-// Representa la información necesaria
-// para realizar el pago.
+// Representa la información necesaria del pedido.
 interface PedidoPago {
-
-  // Identificador del pedido.
   idPedido: number;
-
-  // Estado general del pedido.
   estado: string;
-
-  // Estado actual del pago.
   estadoPago: string;
-
-  // Total exacto del pedido.
   total: number;
-
-  // Indica si todavía puede pagarse.
   puedePagar: boolean;
 }
 
-
-// =========================================================
-// INTERFAZ DE RESPUESTA DEL PAGO
-// =========================================================
-
-// Representa la información que devuelve
-// el backend después de pagar.
+// Representa la respuesta enviada por el backend después del pago.
 interface RespuestaPago {
-
-  // Mensaje de confirmación.
   mensaje: string;
-
-  // Pedido pagado.
   idPedido: number;
-
-  // Pago creado.
   idPago: number;
-
-  // Estado del pago.
   estadoPago: string;
-
-  // Estado general del pedido.
   estadoPedido: string;
-
-  // Método utilizado.
   metodoPago: string;
-
-  // Monto pagado.
   monto: number;
-
-  // Referencia generada.
   referencia: string;
-
-  // Fecha del pago.
   fechaPago: string;
 }
 
-
-// =========================================================
-// COMPONENTE
-// =========================================================
-
+// Configura la pantalla de Pago de Pedido.
 @Component({
-
-  // Nombre interno del componente.
   selector: 'app-pago-pedido',
 
   // Indica que funciona como componente independiente.
   standalone: true,
 
-  // Permite utilizar directivas comunes de Angular.
+  // Registra los módulos utilizados por el HTML.
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatInputModule,
+    ButtonModule
   ],
 
-  // Archivo HTML relacionado.
+  // Define los archivos visuales del componente.
   templateUrl: './pago-pedido.html',
-
-  // Archivo CSS relacionado.
   styleUrl: './pago-pedido.css'
 })
-
-
-// Clase principal de la pantalla de pago.
 export class PagoPedido {
 
-  // =======================================================
-  // PEDIDO
-  // =======================================================
-
-  // Identificador obtenido desde la URL.
-  idPedido: number = 0;
+  // Guarda el identificador recibido desde la URL.
+  idPedido = 0;
 
   // Guarda la información del pedido.
   pedido: PedidoPago | null = null;
 
-
-  // =======================================================
-  // MÉTODOS DE PAGO
-  // =======================================================
-
-  // Lista de métodos disponibles.
+  // Guarda los métodos de pago permitidos.
   metodosPago: MetodoPago[] = [];
 
-  // Identificador del método seleccionado.
-  idMetodoPagoSeleccionado: number = 0;
+  // Guarda el identificador del método seleccionado.
+  idMetodoPagoSeleccionado = 0;
 
-  // Nombre del método seleccionado.
-  nombreMetodoSeleccionado: string = '';
+  // Guarda el nombre del método seleccionado.
+  nombreMetodoSeleccionado = '';
 
+  // Guarda el dinero que el cliente indica tener disponible.
+  montoDisponible = 0;
 
-  // =======================================================
-  // DINERO DISPONIBLE
-  // =======================================================
+  // Guarda cuánto dinero hace falta.
+  montoFaltante = 0;
 
-  // Dinero que el Cliente indica tener disponible.
-  montoDisponible: number = 0;
+  // Guarda cuánto dinero quedaría después del pago.
+  saldoRestante = 0;
 
-  // Dinero que hace falta si no alcanza.
-  montoFaltante: number = 0;
+  // Indica si el saldo no alcanza.
+  saldoInsuficiente = false;
 
-  // Dinero que quedaría después del pago.
-  saldoRestante: number = 0;
-
-  // Indica si actualmente el dinero no alcanza.
-  saldoInsuficiente: boolean = false;
-
-
-  // =======================================================
-  // SINPE MÓVIL
-  // =======================================================
-
-  // Número SINPE del negocio.
-  readonly numeroSinpeEsencia: string =
-    '6177-2331';
-
-  // Número desde donde el Cliente realiza el SINPE.
-  numeroOrigenSinpe: string = '';
-
-  // Referencia o comprobante del SINPE.
-  referenciaSinpe: string = '';
-
-
-  // =======================================================
-  // TRANSFERENCIA
-  // =======================================================
-
-  // Cuenta utilizada para la simulación
-  // de transferencia bancaria.
-  readonly cuentaTransferenciaEsencia: string =
+  // Guarda la cuenta utilizada para transferencia.
+  readonly cuentaTransferenciaEsencia =
     'CR00 0000 0000 0000 0000 00';
 
-  // Referencia de la transferencia.
-  referenciaTransferencia: string = '';
+  // Guarda la referencia de la transferencia.
+  referenciaTransferencia = '';
 
+  // Guarda el nombre del titular de la tarjeta.
+  nombreTarjeta = '';
 
-  // =======================================================
-  // TARJETA
-  // =======================================================
+  // Guarda el número de la tarjeta.
+  numeroTarjeta = '';
 
-  // Nombre del titular.
-  nombreTarjeta: string = '';
+  // Guarda la fecha de vencimiento.
+  vencimientoTarjeta = '';
 
-  // Número de tarjeta.
-  numeroTarjeta: string = '';
-
-  // Fecha de vencimiento.
-  vencimientoTarjeta: string = '';
-
-  // Código de seguridad.
-  cvvTarjeta: string = '';
-
-
-  // =======================================================
-  // ESTADOS DE LA PANTALLA
-  // =======================================================
+  // Guarda el código de seguridad.
+  cvvTarjeta = '';
 
   // Indica si todavía se están cargando datos.
-  cargando: boolean = true;
+  cargando = true;
 
   // Indica si el pago está siendo procesado.
-  procesandoPago: boolean = false;
+  procesandoPago = false;
 
-  // Guarda errores.
-  mensajeError: string = '';
+  // Guarda mensajes de error.
+  mensajeError = '';
 
   // Guarda mensajes exitosos.
-  mensajeExito: string = '';
+  mensajeExito = '';
 
-
-  // =======================================================
-  // URL DE LA API
-  // =======================================================
-
-  // API de pedidos.
+  // Guarda la dirección del controlador de Pedidos.
   private readonly apiPedidos =
     'https://localhost:7196/api/Pedidos';
 
-  // API de métodos de pago.
+  // Guarda la dirección del controlador de métodos de pago.
   private readonly apiMetodoPagos =
     'https://localhost:7196/api/MetodoPagos';
 
-  // API de pagos.
+  // Guarda la dirección del controlador de Pagos.
   private readonly apiPagos =
     'https://localhost:7196/api/Pagos';
 
-
-  // =======================================================
-  // CONSTRUCTOR
-  // =======================================================
-
+  // Inyecta los servicios utilizados en la pantalla.
   constructor(
-
-    // Permite obtener el id desde la URL.
     private route: ActivatedRoute,
-
-    // Permite realizar peticiones HTTP.
     private http: HttpClient,
-
-    // Permite navegar entre páginas.
     private router: Router,
-
-    // Permite actualizar manualmente la pantalla.
     private changeDetector: ChangeDetectorRef
   ) {
-
-    // Obtiene el pedido cuando abre la página.
+    // Obtiene el pedido al abrir la pantalla.
     this.obtenerIdPedido();
   }
 
-
-  // =========================================================
-  // OBTENER ID DEL PEDIDO
-  // =========================================================
-
+  // Obtiene el identificador del pedido desde la URL.
   obtenerIdPedido(): void {
-
-    // Obtiene el parámetro id.
+    // Lee el parámetro llamado id.
     const idTexto =
-      this.route.snapshot.paramMap.get('id');
+      this.route.snapshot.paramMap.get(
+        'id'
+      );
 
-    // Lo convierte a número.
+    // Convierte el valor recibido a número.
     this.idPedido =
       Number(idTexto);
 
-
-    // Comprueba que sea válido.
+    // Comprueba que el identificador sea válido.
     if (
       !this.idPedido ||
       this.idPedido <= 0
     ) {
-
+      // Muestra un mensaje si el id es incorrecto.
       this.mensajeError =
         'El pedido seleccionado no es válido.';
 
-      this.cargando = false;
+      // Finaliza la carga.
+      this.cargando =
+        false;
 
+      // Actualiza la pantalla.
       this.changeDetector.detectChanges();
 
       return;
     }
 
-
-    // Carga el pedido.
+    // Consulta el pedido.
     this.cargarPedido();
   }
 
-
-  // =========================================================
-  // OBTENER HEADERS
-  // =========================================================
-
-  private obtenerHeaders(): HttpHeaders | null {
+  // Obtiene los encabezados necesarios para la API.
+  private obtenerHeaders():
+    HttpHeaders | null {
 
     // Obtiene el token JWT.
     const token =
-      localStorage.getItem('token');
+      localStorage.getItem(
+        'token'
+      );
 
-
-    // Si no existe sesión, devuelve null.
+    // Devuelve null si no existe sesión.
     if (!token) {
-
       return null;
     }
 
-
-    // Crea el header Authorization.
+    // Crea el encabezado Authorization.
     return new HttpHeaders({
-
       Authorization:
         `Bearer ${token}`
     });
   }
 
-
-  // =========================================================
-  // CARGAR PEDIDO
-  // =========================================================
-
+  // Consulta el pedido que se desea pagar.
   cargarPedido(): void {
+    // Activa el estado de carga.
+    this.cargando =
+      true;
 
-    // Activa la carga.
-    this.cargando = true;
+    // Limpia errores anteriores.
+    this.mensajeError =
+      '';
 
-    // Limpia errores.
-    this.mensajeError = '';
-
-
-    // Obtiene los headers.
+    // Obtiene los encabezados.
     const headers =
       this.obtenerHeaders();
 
-
     // Comprueba que exista sesión.
     if (!headers) {
-
       this.mensajeError =
         'No existe una sesión activa.';
 
-      this.cargando = false;
+      this.cargando =
+        false;
 
       this.changeDetector.detectChanges();
 
       return;
     }
 
-
-    // Consulta el pedido.
+    // Consulta el pedido seleccionado.
     this.http.get<PedidoPago>(
       `${this.apiPedidos}/${this.idPedido}`,
       {
-        headers: headers
+        headers
       }
     ).subscribe({
 
-      // Cuando funciona correctamente.
-      next: (respuesta: PedidoPago) => {
-
-        // Guarda el pedido.
+      // Se ejecuta si la API responde correctamente.
+      next: (
+        respuesta: PedidoPago
+      ) => {
+        // Guarda la información del pedido.
         this.pedido =
           respuesta;
 
-
         // Comprueba que todavía pueda pagarse.
         if (!respuesta.puedePagar) {
-
           this.mensajeError =
             'Este pedido ya no se encuentra disponible para pago.';
 
-          this.cargando = false;
+          this.cargando =
+            false;
 
           this.changeDetector.detectChanges();
 
           return;
         }
 
-
-        // Carga los métodos disponibles.
+        // Carga los métodos permitidos.
         this.cargarMetodosPago();
       },
 
-
-      // Si ocurre un error.
-      error: (error: HttpErrorResponse) => {
-
+      // Se ejecuta si ocurre un error.
+      error: (
+        error: HttpErrorResponse
+      ) => {
+        // Muestra el error durante las pruebas.
         console.error(
           'Error al cargar el pedido:',
           error
         );
 
-
+        // Comprueba si la sesión no es válida.
         if (error.status === 401) {
-
           this.mensajeError =
             'La sesión no es válida. Inicia sesión nuevamente.';
         }
-        else if (error.status === 403) {
 
+        // Comprueba si no tiene permiso.
+        else if (error.status === 403) {
           this.mensajeError =
             'No tienes permiso para pagar este pedido.';
         }
-        else if (error.status === 404) {
 
+        // Comprueba si el pedido no existe.
+        else if (error.status === 404) {
           this.mensajeError =
             'El pedido no existe.';
         }
-        else {
 
+        // Maneja cualquier otro error.
+        else {
           this.mensajeError =
             'No se pudo cargar la información del pedido.';
         }
 
+        // Finaliza la carga.
+        this.cargando =
+          false;
 
-        this.cargando = false;
-
+        // Actualiza la pantalla.
         this.changeDetector.detectChanges();
       }
     });
   }
 
-
-  // =========================================================
-  // CARGAR MÉTODOS
-  // =========================================================
-
+  // Consulta los métodos de pago disponibles.
   cargarMetodosPago(): void {
-
-    // Obtiene el token.
+    // Obtiene los encabezados.
     const headers =
       this.obtenerHeaders();
 
-
     // Comprueba que exista sesión.
     if (!headers) {
-
       this.mensajeError =
         'No existe una sesión activa.';
 
-      this.cargando = false;
+      this.cargando =
+        false;
 
       this.changeDetector.detectChanges();
 
       return;
     }
 
-
     // Consulta los métodos disponibles.
     this.http.get<MetodoPago[]>(
       `${this.apiMetodoPagos}/disponibles`,
       {
-        headers: headers
+        headers
       }
     ).subscribe({
 
-      // Guarda la respuesta.
-      next: (respuesta: MetodoPago[]) => {
-
+      // Guarda únicamente los métodos permitidos.
+      next: (
+        respuesta: MetodoPago[]
+      ) => {
+        // Elimina SINPE de la lista.
         this.metodosPago =
-          respuesta ?? [];
+          (respuesta ?? [])
+            .filter(
+              metodo =>
+                !metodo.nombre
+                  .toLowerCase()
+                  .includes('sinpe')
+            );
 
-        this.cargando = false;
+        // Finaliza la carga.
+        this.cargando =
+          false;
 
+        // Actualiza la pantalla.
         this.changeDetector.detectChanges();
       },
 
-
-      // Maneja errores.
-      error: (error: HttpErrorResponse) => {
-
+      // Maneja errores de la consulta.
+      error: (
+        error: HttpErrorResponse
+      ) => {
+        // Muestra el error durante las pruebas.
         console.error(
           'Error al cargar métodos:',
           error
         );
 
+        // Muestra un mensaje.
         this.mensajeError =
           'No se pudieron cargar los métodos de pago disponibles.';
 
-        this.cargando = false;
+        // Finaliza la carga.
+        this.cargando =
+          false;
 
+        // Actualiza la pantalla.
         this.changeDetector.detectChanges();
       }
     });
   }
 
-
-  // =========================================================
-  // SELECCIONAR MÉTODO
-  // =========================================================
-
+  // Guarda el método seleccionado.
   seleccionarMetodo(
     metodo: MetodoPago
   ): void {
-
-    // Guarda el id seleccionado.
+    // Guarda el identificador.
     this.idMetodoPagoSeleccionado =
       metodo.idMetodoPago;
 
@@ -534,218 +414,164 @@ export class PagoPedido {
     this.nombreMetodoSeleccionado =
       metodo.nombre;
 
-    // Limpia errores.
-    this.mensajeError = '';
+    // Limpia mensajes anteriores.
+    this.mensajeError =
+      '';
 
-    // Reinicia la validación de dinero.
-    this.saldoInsuficiente = false;
+    // Reinicia la validación del saldo.
+    this.saldoInsuficiente =
+      false;
 
-    this.montoFaltante = 0;
+    this.montoFaltante =
+      0;
 
-    this.saldoRestante = 0;
+    this.saldoRestante =
+      0;
   }
 
-
-  // =========================================================
-  // IDENTIFICAR EL MÉTODO
-  // =========================================================
-
-  // Comprueba si se seleccionó SINPE.
-  esSinpe(): boolean {
-
-    return this.nombreMetodoSeleccionado
-      .toLowerCase()
-      .includes('sinpe');
-  }
-
-
-  // Comprueba si se seleccionó transferencia.
+  // Indica si el método seleccionado es transferencia.
   esTransferencia(): boolean {
-
+    // Busca la palabra transferencia en el nombre.
     return this.nombreMetodoSeleccionado
       .toLowerCase()
-      .includes('transferencia');
+      .includes(
+        'transferencia'
+      );
   }
 
-
-  // Comprueba si se seleccionó tarjeta.
+  // Indica si el método seleccionado es tarjeta.
   esTarjeta(): boolean {
-
+    // Busca la palabra tarjeta en el nombre.
     return this.nombreMetodoSeleccionado
       .toLowerCase()
-      .includes('tarjeta');
+      .includes(
+        'tarjeta'
+      );
   }
 
-
-  // =========================================================
-  // MÉTODOS PARA LOS INPUT DEL HTML
-  // =========================================================
-
-  // Recibe el valor escrito en Dinero disponible.
+  // Recibe el monto disponible escrito por el cliente.
   cambiarMontoDisponible(
     event: Event
   ): void {
-
-    // Obtiene el input que generó el evento.
+    // Obtiene el campo que generó el evento.
     const input =
       event.target as HTMLInputElement;
 
-    // Convierte el texto a número.
+    // Convierte el texto recibido a número.
     const valor =
       Number(input.value);
 
-
-    // Si no es válido, utiliza cero.
+    // Guarda cero si el valor no es válido.
     this.montoDisponible =
       isNaN(valor)
         ? 0
         : valor;
 
-
-    // Recalcula inmediatamente.
-    this.validarFondos(false);
+    // Recalcula el saldo.
+    this.validarFondos(
+      false
+    );
   }
 
-
-  // Guarda el número desde donde se hizo el SINPE.
-  cambiarNumeroSinpe(
-    event: Event
-  ): void {
-
-    const input =
-      event.target as HTMLInputElement;
-
-    this.numeroOrigenSinpe =
-      input.value;
-  }
-
-
-  // Guarda la referencia del SINPE.
-  cambiarReferenciaSinpe(
-    event: Event
-  ): void {
-
-    const input =
-      event.target as HTMLInputElement;
-
-    this.referenciaSinpe =
-      input.value;
-  }
-
-
-  // Guarda la referencia de transferencia.
+  // Guarda la referencia de la transferencia.
   cambiarReferenciaTransferencia(
     event: Event
   ): void {
-
+    // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
+    // Guarda el valor escrito.
     this.referenciaTransferencia =
       input.value;
   }
 
-
-  // Guarda el nombre del titular de la tarjeta.
+  // Guarda el nombre del titular.
   cambiarNombreTarjeta(
     event: Event
   ): void {
-
+    // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
+    // Guarda el valor escrito.
     this.nombreTarjeta =
       input.value;
   }
-
 
   // Guarda el número de tarjeta.
   cambiarNumeroTarjeta(
     event: Event
   ): void {
-
+    // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
+    // Guarda el valor escrito.
     this.numeroTarjeta =
       input.value;
   }
 
-
-  // Guarda el vencimiento.
+  // Guarda la fecha de vencimiento.
   cambiarVencimientoTarjeta(
     event: Event
   ): void {
-
+    // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
+    // Guarda el valor escrito.
     this.vencimientoTarjeta =
       input.value;
   }
 
-
-  // Guarda el CVV.
+  // Guarda el código CVV.
   cambiarCvvTarjeta(
     event: Event
   ): void {
-
+    // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
+    // Guarda el valor escrito.
     this.cvvTarjeta =
       input.value;
   }
 
-
-  // =========================================================
-  // OBTENER TOTAL DEL PEDIDO
-  // =========================================================
-
-  // Devuelve el total de forma segura.
-  //
-  // Si por alguna razón el pedido todavía
-  // no existe, devuelve cero.
+  // Devuelve el total del pedido de forma segura.
   obtenerTotalPedido(): number {
-
+    // Devuelve cero si todavía no existe pedido.
     return this.pedido?.total ?? 0;
   }
 
-
-  // =========================================================
-  // VALIDAR FONDOS
-  // =========================================================
-
+  // Comprueba que el cliente indique saldo suficiente.
   validarFondos(
     mostrarMensaje: boolean = true
   ): boolean {
-
-    // Obtiene el total de forma segura.
+    // Obtiene el total real del pedido.
     const total =
       this.obtenerTotalPedido();
 
-
-    // Si no hay pedido válido,
-    // no permite continuar.
+    // No permite continuar si no existe un total válido.
     if (total <= 0) {
-
       return false;
     }
 
+    // Reinicia los resultados anteriores.
+    this.montoFaltante =
+      0;
 
-    // Reinicia los resultados.
-    this.montoFaltante = 0;
+    this.saldoRestante =
+      0;
 
-    this.saldoRestante = 0;
+    this.saldoInsuficiente =
+      false;
 
-    this.saldoInsuficiente = false;
-
-
-    // Comprueba que haya indicado dinero.
-    if (this.montoDisponible <= 0) {
-
+    // Comprueba que haya indicado un monto.
+    if (
+      this.montoDisponible <= 0
+    ) {
       if (mostrarMensaje) {
-
         this.mensajeError =
           'Indica cuánto dinero tienes disponible.';
       }
@@ -753,119 +579,69 @@ export class PagoPedido {
       return false;
     }
 
-
-    // Comprueba si el dinero es insuficiente.
+    // Comprueba si el dinero no alcanza.
     if (
       this.montoDisponible <
       total
     ) {
-
-      // Calcula cuánto falta.
+      // Calcula cuánto dinero hace falta.
       this.montoFaltante =
         total -
         this.montoDisponible;
 
-      // Activa el estado de error.
-      this.saldoInsuficiente = true;
+      // Activa el indicador de saldo insuficiente.
+      this.saldoInsuficiente =
+        true;
 
-
+      // Muestra el mensaje si corresponde.
       if (mostrarMensaje) {
-
         this.mensajeError =
           'Pago no completado. No tienes suficiente saldo para realizar esta compra.';
       }
 
-
       return false;
     }
 
-
-    // Calcula el saldo restante.
+    // Calcula cuánto dinero quedaría disponible.
     this.saldoRestante =
       this.montoDisponible -
       total;
 
-
-    // Limpia el mensaje anterior
-    // relacionado con saldo.
+    // Limpia el mensaje de saldo anterior.
     if (
       this.mensajeError.includes(
         'suficiente saldo'
       )
     ) {
-
-      this.mensajeError = '';
+      this.mensajeError =
+        '';
     }
-
 
     return true;
   }
 
-
-  // =========================================================
-  // SABER SI HAY FONDOS SUFICIENTES
-  // =========================================================
-
-  // Este método será utilizado por el HTML
-  // para mostrar el mensaje verde.
+  // Indica si el saldo disponible alcanza.
   tieneFondosSuficientes(): boolean {
-
+    // Obtiene el total.
     const total =
       this.obtenerTotalPedido();
 
-
+    // Comprueba el saldo.
     return (
       total > 0 &&
       this.montoDisponible >= total
     );
   }
 
-
-  // =========================================================
-  // VALIDAR DATOS DEL MÉTODO
-  // =========================================================
-
+  // Valida los datos según el método seleccionado.
   validarDatosMetodo(): boolean {
-
-    // ---------------------------
-    // SINPE
-    // ---------------------------
-
-    if (this.esSinpe()) {
-
-      if (
-        !this.numeroOrigenSinpe.trim()
-      ) {
-
-        this.mensajeError =
-          'Indica el número desde el que realizaste el SINPE.';
-
-        return false;
-      }
-
-
-      if (
-        !this.referenciaSinpe.trim()
-      ) {
-
-        this.mensajeError =
-          'Ingresa la referencia o comprobante del SINPE.';
-
-        return false;
-      }
-    }
-
-
-    // ---------------------------
-    // TRANSFERENCIA
-    // ---------------------------
-
+    // Valida la transferencia bancaria.
     if (this.esTransferencia()) {
-
+      // Comprueba que exista una referencia.
       if (
-        !this.referenciaTransferencia.trim()
+        !this.referenciaTransferencia
+          .trim()
       ) {
-
         this.mensajeError =
           'Ingresa la referencia de la transferencia bancaria.';
 
@@ -873,66 +649,78 @@ export class PagoPedido {
       }
     }
 
-
-    // ---------------------------
-    // TARJETA
-    // ---------------------------
-
+    // Valida los datos de tarjeta.
     if (this.esTarjeta()) {
-
-      // Comprueba nombre.
+      // Comprueba el nombre del titular.
       if (
-        !this.nombreTarjeta.trim()
+        !this.nombreTarjeta
+          .trim()
       ) {
-
         this.mensajeError =
           'Ingresa el nombre que aparece en la tarjeta.';
 
         return false;
       }
 
-
-      // Elimina espacios.
+      // Elimina espacios del número de tarjeta.
       const numeroLimpio =
         this.numeroTarjeta
-          .replace(/\s/g, '');
+          .replace(
+            /\s/g,
+            ''
+          );
 
-
-      // Valida 16 dígitos.
+      // Comprueba que tenga 16 dígitos.
       if (
         !/^\d{16}$/.test(
           numeroLimpio
         )
       ) {
-
         this.mensajeError =
           'El número de tarjeta debe contener 16 dígitos.';
 
         return false;
       }
 
-
-      // Valida MM/AA.
+      // Comprueba el formato MM/AA.
       if (
         !/^\d{2}\/\d{2}$/.test(
           this.vencimientoTarjeta
         )
       ) {
-
         this.mensajeError =
           'La fecha de vencimiento debe utilizar el formato MM/AA.';
 
         return false;
       }
 
+      // Comprueba que el mes sea válido.
+      const mes =
+        Number(
+          this.vencimientoTarjeta
+            .substring(
+              0,
+              2
+            )
+        );
 
-      // Valida CVV.
+      // Evita meses fuera del rango permitido.
+      if (
+        mes < 1 ||
+        mes > 12
+      ) {
+        this.mensajeError =
+          'El mes de vencimiento de la tarjeta no es válido.';
+
+        return false;
+      }
+
+      // Comprueba el código CVV.
       if (
         !/^\d{3,4}$/.test(
           this.cvvTarjeta
         )
       ) {
-
         this.mensajeError =
           'El CVV debe contener 3 o 4 dígitos.';
 
@@ -940,183 +728,182 @@ export class PagoPedido {
       }
     }
 
-
     return true;
   }
 
-
-  // =========================================================
-  // PAGAR
-  // =========================================================
-
+  // Envía el pago hacia el backend.
   pagar(): void {
-
-    // Comprueba que exista pedido.
+    // Comprueba que exista el pedido.
     if (!this.pedido) {
-
       return;
     }
 
-
-    // Comprueba que seleccionó método.
+    // Comprueba que se haya seleccionado un método.
     if (
       this.idMetodoPagoSeleccionado <= 0
     ) {
-
       this.mensajeError =
         'Selecciona un método de pago antes de continuar.';
 
       return;
     }
 
-
-    // Comprueba el saldo.
-    if (!this.validarFondos(true)) {
-
-      return;
-    }
-
-
-    // Comprueba los datos específicos.
-    if (!this.validarDatosMetodo()) {
+    // Comprueba nuevamente que no se haya seleccionado SINPE.
+    if (
+      this.nombreMetodoSeleccionado
+        .toLowerCase()
+        .includes('sinpe')
+    ) {
+      this.mensajeError =
+        'SINPE no se encuentra disponible como método de pago.';
 
       return;
     }
 
+    // Comprueba el saldo disponible.
+    if (
+      !this.validarFondos(
+        true
+      )
+    ) {
+      return;
+    }
 
-    // Evita doble pago.
+    // Comprueba los datos del método seleccionado.
+    if (
+      !this.validarDatosMetodo()
+    ) {
+      return;
+    }
+
+    // Evita enviar el pago dos veces.
     if (this.procesandoPago) {
-
       return;
     }
 
-
-    // Obtiene autorización.
+    // Obtiene los encabezados de autorización.
     const headers =
       this.obtenerHeaders();
 
-
+    // Comprueba que exista sesión.
     if (!headers) {
-
       this.mensajeError =
         'No existe una sesión activa.';
 
       return;
     }
 
-
-    // Activa procesamiento.
-    this.procesandoPago = true;
+    // Activa el procesamiento.
+    this.procesandoPago =
+      true;
 
     // Limpia mensajes anteriores.
-    this.mensajeError = '';
+    this.mensajeError =
+      '';
 
-    this.mensajeExito = '';
+    this.mensajeExito =
+      '';
 
-
-    // Crea los datos que necesita el backend.
+    // Crea los datos que recibe el backend.
     const datosPago = {
-
-      // Pedido que se pagará.
+      // Envía el pedido seleccionado.
       idPedido:
         this.pedido.idPedido,
 
-      // Método seleccionado.
+      // Envía el método seleccionado.
       idMetodoPago:
         this.idMetodoPagoSeleccionado
     };
-
 
     // Envía el pago al backend.
     this.http.post<RespuestaPago>(
       `${this.apiPagos}/pagar`,
       datosPago,
       {
-        headers: headers
+        headers
       }
     ).subscribe({
 
-      // Pago correcto.
-      next: (respuesta: RespuestaPago) => {
-
+      // Se ejecuta cuando el pago es correcto.
+      next: (
+        respuesta: RespuestaPago
+      ) => {
+        // Muestra la respuesta durante las pruebas.
         console.log(
           'Pago realizado:',
           respuesta
         );
 
-
+        // Informa que el pago fue realizado.
         this.mensajeExito =
           'Pago realizado correctamente.';
 
-        this.procesandoPago = false;
+        // Finaliza el procesamiento.
+        this.procesandoPago =
+          false;
 
+        // Actualiza la pantalla.
         this.changeDetector.detectChanges();
 
-
-        // Por ahora regresa al detalle.
-        //
-        // Después cambiaremos esta navegación
-        // por la pantalla de envío.
+        // Regresa al detalle después de mostrar el mensaje.
         setTimeout(
           () => {
-
             this.router.navigate([
               '/detalle-pedido',
               this.idPedido
             ]);
-
           },
           1200
         );
       },
 
-
-      // Error en el pago.
-      error: (error: HttpErrorResponse) => {
-
+      // Se ejecuta cuando ocurre un error.
+      error: (
+        error: HttpErrorResponse
+      ) => {
+        // Muestra el error durante las pruebas.
         console.error(
           'Error al realizar el pago:',
           error
         );
 
-
+        // Utiliza el mensaje enviado por la API.
         if (
-          typeof error.error === 'string' &&
+          typeof error.error ===
+          'string' &&
           error.error
         ) {
-
           this.mensajeError =
             error.error;
         }
+
+        // Utiliza el campo mensaje si existe.
         else if (
           error.error?.mensaje
         ) {
-
           this.mensajeError =
             error.error.mensaje;
         }
-        else {
 
+        // Utiliza un mensaje general.
+        else {
           this.mensajeError =
             'No se pudo completar el pago.';
         }
 
+        // Finaliza el procesamiento.
+        this.procesandoPago =
+          false;
 
-        this.procesandoPago = false;
-
+        // Actualiza la pantalla.
         this.changeDetector.detectChanges();
       }
     });
   }
 
-
-  // =========================================================
-  // CANCELAR
-  // =========================================================
-
-  // Regresa al detalle sin pagar.
+  // Regresa al detalle del pedido sin realizar el pago.
   cancelar(): void {
-
+    // Navega al detalle del pedido actual.
     this.router.navigate([
       '/detalle-pedido',
       this.idPedido

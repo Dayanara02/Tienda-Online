@@ -153,12 +153,10 @@
         <!-- Muestra la dirección de entrega. -->
         <article class="dato-pedido">
 
-          <!-- Muestra el icono correspondiente. -->
           <mat-icon>
             location_on
           </mat-icon>
 
-          <!-- Agrupa título y dato. -->
           <div>
 
             <span>
@@ -179,12 +177,10 @@
         <!-- Muestra el estado del pago. -->
         <article class="dato-pedido">
 
-          <!-- Muestra el icono correspondiente. -->
           <mat-icon>
             payments
           </mat-icon>
 
-          <!-- Agrupa título y dato. -->
           <div>
 
             <span>
@@ -199,15 +195,13 @@
 
         </article>
 
-        <!-- Muestra el método de pago si existe. -->
+        <!-- Muestra el método de pago. -->
         <article class="dato-pedido">
 
-          <!-- Muestra el icono correspondiente. -->
           <mat-icon>
             credit_card
           </mat-icon>
 
-          <!-- Agrupa título y dato. -->
           <div>
 
             <span>
@@ -225,15 +219,13 @@
 
         </article>
 
-        <!-- Muestra la fecha del pago si existe. -->
+        <!-- Muestra la fecha del pago. -->
         <article class="dato-pedido">
 
-          <!-- Muestra el icono correspondiente. -->
           <mat-icon>
             event_available
           </mat-icon>
 
-          <!-- Agrupa título y dato. -->
           <div>
 
             <span>
@@ -245,7 +237,7 @@
               {{ pedido.fechaPago | date:'dd/MM/yyyy - h:mm a' }}
             </strong>
 
-            <!-- Muestra pendiente cuando todavía no se ha pagado. -->
+            <!-- Muestra pendiente si todavía no existe pago. -->
             <strong *ngIf="!pedido.fechaPago">
               Pendiente
             </strong>
@@ -267,12 +259,10 @@
         <!-- Crea el encabezado de productos. -->
         <div class="panel-titulo">
 
-          <!-- Muestra el icono. -->
           <mat-icon>
             inventory_2
           </mat-icon>
 
-          <!-- Agrupa título y descripción. -->
           <div>
 
             <h2>
@@ -344,7 +334,7 @@
 
                     </div>
 
-                    <!-- Agrupa id y nombre. -->
+                    <!-- Agrupa identificador y nombre. -->
                     <div>
 
                       <strong>
@@ -402,12 +392,10 @@
         <!-- Crea el encabezado del resumen. -->
         <div class="panel-titulo">
 
-          <!-- Muestra un icono. -->
           <mat-icon>
             receipt_long
           </mat-icon>
 
-          <!-- Agrupa título y descripción. -->
           <div>
 
             <h2>
@@ -448,7 +436,7 @@
 
         </div>
 
-        <!-- Muestra la base después del descuento. -->
+        <!-- Muestra la base antes del impuesto. -->
         <div class="fila-resumen">
 
           <span>
@@ -478,7 +466,7 @@
         <div class="separador-resumen">
         </div>
 
-        <!-- Muestra el total final del pedido. -->
+        <!-- Muestra el total final. -->
         <div class="fila-total">
 
           <span>
@@ -491,20 +479,32 @@
 
         </div>
 
-        <!-- Explica cómo se obtiene el total. -->
+        <!-- Explica cómo se calcula el impuesto. -->
         <div class="nota-resumen">
 
-          <!-- Muestra un icono informativo. -->
           <mat-icon>
             info
           </mat-icon>
 
-          <!-- Muestra la explicación. -->
           <span>
             El impuesto se calcula después de aplicar el descuento.
           </span>
 
         </div>
+
+        <!-- Abre el seguimiento mientras el pedido no esté cancelado. -->
+        <button *ngIf="!pedidoCancelado"
+                mat-stroked-button
+                type="button"
+                class="boton-seguimiento"
+                (click)="verSeguimiento()">
+
+          <mat-icon>
+            local_shipping
+          </mat-icon>
+
+          Ver seguimiento
+        </button>
 
         <!-- Permite pagar solamente cuando la API lo autoriza. -->
         <p-button *ngIf="puedePagarPedido"
@@ -549,7 +549,7 @@
     <!-- Crea las acciones inferiores. -->
     <section class="acciones-inferiores">
 
-      <!-- Permite regresar a Mis pedidos. -->
+      <!-- Regresa a Mis pedidos. -->
       <button mat-stroked-button
               type="button"
               (click)="volverMisPedidos()">
@@ -561,7 +561,7 @@
         Volver a Mis pedidos
       </button>
 
-      <!-- Permite regresar al Dashboard. -->
+      <!-- Regresa al Dashboard. -->
       <button mat-button
               type="button"
               (click)="volverInicio()">

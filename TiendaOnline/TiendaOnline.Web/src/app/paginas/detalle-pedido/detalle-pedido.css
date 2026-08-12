@@ -502,4 +502,12 @@
     flex-direction: column;
     align-items: flex-start;
   }
+  /* Configura el botón que abre el seguimiento del pedido. */
+  .boton-seguimiento {
+    width: 100%;
+    margin-bottom: 12px;
+    color: var(--azul-principal) !important;
+    border-color: var(--azul-principal) !important;
+  }
+
 }

@@ -1,954 +1,506 @@
-/* ========================================================= */
-/* PÁGINA GENERAL */
-/* ========================================================= */
+/* Define los colores principales de la pantalla. */
+:host {
+  --azul-principal: #1f4e79;
+  --azul-oscuro: #163a5c;
+  --azul-claro: #eaf2f8;
+  --blanco: #ffffff;
+  --gris-fondo: #f4f6f8;
+  --gris-borde: #dfe5ea;
+  --gris-texto: #66727d;
+  --texto-principal: #24313c;
+  --verde: #2e7d32;
+  --verde-claro: #e8f5e9;
+  --rojo: #b42318;
+  --rojo-claro: #fdecec;
+  --amarillo-claro: #fff7df;
+}
 
-/* Contenedor principal de toda la pantalla de pago. */
+/* Configura la estructura general de la pantalla. */
 .pago-page {
-  /* Fondo claro y cálido usado en Esencia. */
-  background: #f7f3ea;
-  /* Hace que la pantalla ocupe como mínimo toda la altura. */
   min-height: 100vh;
-  /* Define el color principal de los textos. */
-  color: #22352b;
-  /* Usa una tipografía elegante para títulos y textos generales. */
-  font-family: Georgia, 'Times New Roman', serif;
+  padding: 32px;
+  background: var(--gris-fondo);
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--texto-principal);
 }
 
-
-/* ========================================================= */
-/* ENCABEZADO */
-/* ========================================================= */
-
-/* Encabezado superior de la pantalla. */
-.encabezado {
-  /* Coloca el título y el botón en una misma fila. */
+/* Organiza el encabezado superior. */
+.pago-header {
+  max-width: 1300px;
+  margin: 0 auto 24px;
   display: flex;
-  /* Separa ambos elementos hacia los extremos. */
   justify-content: space-between;
-  /* Centra verticalmente los elementos. */
-  align-items: center;
-  /* Agrega espacio interno. */
-  padding: 28px 40px 18px;
-  /* Agrega una línea inferior suave. */
-  border-bottom: 1px solid #d8d0c2;
-  /* Usa un fondo ligeramente diferente. */
-  background: #fbf8f1;
-}
-
-
-  /* Nombre principal Esencia. */
-  .encabezado h1 {
-    /* Elimina márgenes automáticos. */
-    margin: 0;
-    /* Define un tamaño grande. */
-    font-size: 34px;
-    /* Mantiene un peso elegante. */
-    font-weight: 500;
-  }
-
-
-  /* Nombre de la sección actual. */
-  .encabezado p {
-    /* Separa ligeramente del título. */
-    margin: 6px 0 0;
-    /* Usa un color secundario. */
-    color: #6f756f;
-    /* Define un tamaño menor. */
-    font-size: 15px;
-  }
-
-
-/* ========================================================= */
-/* CONTENIDO PRINCIPAL */
-/* ========================================================= */
-
-/* Contenedor principal de la información. */
-.contenido {
-  /* Limita el ancho para que todo quede centrado. */
-  max-width: 1000px;
-  /* Centra horizontalmente. */
-  margin: 0 auto;
-  /* Agrega espacio alrededor. */
-  padding: 35px 40px 50px;
-}
-
-
-/* ========================================================= */
-/* MENSAJES */
-/* ========================================================= */
-
-/* Mensaje mientras se cargan los datos. */
-.mensaje-carga {
-  /* Centra el texto. */
-  text-align: center;
-  /* Agrega espacio interno. */
-  padding: 40px 20px;
-  /* Usa un color secundario. */
-  color: #73776f;
-  /* Define un tamaño legible. */
-  font-size: 16px;
-}
-
-
-/* Mensaje general de error. */
-.mensaje-error {
-  /* Agrega espacio interno. */
-  padding: 14px 16px;
-  /* Fondo rojizo suave. */
-  background: #f8e9e6;
-  /* Borde relacionado con error. */
-  border: 1px solid #e6c3bc;
-  /* Redondea las esquinas. */
-  border-radius: 12px;
-  /* Color del texto. */
-  color: #8b453c;
-  /* Usa una fuente sencilla para mensajes del sistema. */
-  font-family: Arial, sans-serif;
-  /* Define un tamaño legible. */
-  font-size: 14px;
-  /* Separa del contenido inferior. */
-  margin-bottom: 18px;
-}
-
-
-/* Mensaje cuando el pago se realiza correctamente. */
-.mensaje-exito {
-  /* Agrega espacio interno. */
-  padding: 18px;
-  /* Fondo verde suave. */
-  background: #e8f0e7;
-  /* Borde verde claro. */
-  border: 1px solid #c4d6c5;
-  /* Redondea las esquinas. */
-  border-radius: 12px;
-  /* Verde oscuro para el texto. */
-  color: #34543e;
-  /* Centra el mensaje. */
-  text-align: center;
-  /* Usa una fuente sencilla. */
-  font-family: Arial, sans-serif;
-  /* Resalta el texto. */
-  font-weight: 600;
-}
-
-
-/* ========================================================= */
-/* TARJETA PRINCIPAL */
-/* ========================================================= */
-
-/* Contenedor principal del proceso de pago. */
-.pago-card {
-  /* Usa un fondo blanco cálido. */
-  background: #fffdf8;
-  /* Agrega un borde suave. */
-  border: 1px solid #ddd5c7;
-  /* Redondea las esquinas. */
-  border-radius: 18px;
-  /* Evita que algo sobresalga. */
-  overflow: hidden;
-}
-
-
-/* ========================================================= */
-/* RESUMEN DEL PEDIDO */
-/* ========================================================= */
-
-/* Parte superior donde aparece el pedido y el total. */
-.resumen-pedido {
-  /* Coloca ambos bloques en la misma fila. */
-  display: flex;
-  /* Los separa hacia los extremos. */
-  justify-content: space-between;
-  /* Centra verticalmente. */
-  align-items: center;
-  /* Agrega separación. */
+  align-items: flex-start;
   gap: 20px;
-  /* Agrega espacio interno. */
-  padding: 26px 28px;
-  /* Fondo ligeramente diferente. */
-  background: #fbf8f1;
-  /* Separa del contenido inferior. */
-  border-bottom: 1px solid #ece5da;
 }
 
-
-/* Etiqueta Pedido. */
-.etiqueta {
-  /* Usa un color secundario. */
-  color: #777a72;
-  /* Usa una fuente sencilla. */
-  font-family: Arial, sans-serif;
-  /* Define un tamaño pequeño. */
+/* Configura la etiqueta superior. */
+.header-etiqueta {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--azul-principal);
   font-size: 13px;
-}
-
-
-/* Número del pedido. */
-.resumen-pedido h2 {
-  /* Elimina márgenes automáticos. */
-  margin: 5px 0 0;
-  /* Define un tamaño destacado. */
-  font-size: 26px;
-  /* Mantiene un peso elegante. */
-  font-weight: 500;
-}
-
-
-/* Contenedor del total a pagar. */
-.total-pagar {
-  /* Organiza la información verticalmente. */
-  display: flex;
-  /* Coloca los elementos uno debajo del otro. */
-  flex-direction: column;
-  /* Alinea hacia la derecha. */
-  align-items: flex-end;
-  /* Agrega separación. */
-  gap: 5px;
-}
-
-
-  /* Etiqueta Total a pagar. */
-  .total-pagar span {
-    /* Usa un color secundario. */
-    color: #777a72;
-    /* Usa una fuente sencilla. */
-    font-family: Arial, sans-serif;
-    /* Define un tamaño pequeño. */
-    font-size: 13px;
-  }
-
-
-  /* Monto total. */
-  .total-pagar strong {
-    /* Usa el verde principal. */
-    color: #2f493b;
-    /* Define un tamaño destacado. */
-    font-size: 28px;
-    /* Resalta el monto. */
-    font-weight: 700;
-  }
-
-
-/* ========================================================= */
-/* SELECCIÓN DEL MÉTODO */
-/* ========================================================= */
-
-/* Sección que contiene los métodos disponibles. */
-.seccion-metodos {
-  /* Agrega espacio interno. */
-  padding: 28px;
-}
-
-
-  /* Título de la sección. */
-  .seccion-metodos h3 {
-    /* Elimina margen superior. */
-    margin: 0 0 8px;
-    /* Define un tamaño destacado. */
-    font-size: 22px;
-    /* Mantiene un peso elegante. */
-    font-weight: 500;
-  }
-
-
-/* Texto de ayuda. */
-.texto-ayuda {
-  /* Elimina margen superior. */
-  margin: 0 0 22px;
-  /* Usa un color secundario. */
-  color: #777a72;
-  /* Define un tamaño cómodo. */
-  font-size: 14px;
-}
-
-
-/* Mensaje cuando no existen métodos. */
-.sin-metodos {
-  /* Agrega espacio interno. */
-  padding: 18px;
-  /* Fondo suave. */
-  background: #f5f1e8;
-  /* Agrega un borde. */
-  border: 1px solid #e1d9cb;
-  /* Redondea las esquinas. */
-  border-radius: 12px;
-  /* Color secundario. */
-  color: #777a72;
-  /* Usa una fuente sencilla. */
-  font-family: Arial, sans-serif;
-}
-
-
-/* Contenedor de las opciones disponibles. */
-.metodos-grid {
-  /* Organiza las opciones en dos columnas. */
-  display: grid;
-  /* Crea dos columnas iguales. */
-  grid-template-columns: repeat(2, 1fr);
-  /* Agrega separación. */
-  gap: 14px;
-}
-
-
-/* ========================================================= */
-/* TARJETAS DE MÉTODO DE PAGO */
-/* ========================================================= */
-
-/* Cada método funciona como una tarjeta seleccionable. */
-.metodo-card {
-  /* Fondo claro. */
-  background: #fffdf8;
-  /* Borde suave. */
-  border: 1px solid #ddd5c7;
-  /* Redondea las esquinas. */
-  border-radius: 14px;
-  /* Agrega espacio interno. */
-  padding: 18px;
-  /* Alinea el texto a la izquierda. */
-  text-align: left;
-  /* Cambia el cursor. */
-  cursor: pointer;
-  /* Usa el color principal del texto. */
-  color: #22352b;
-  /* Usa una fuente sencilla para controles. */
-  font-family: Arial, sans-serif;
-  /* Suaviza los cambios visuales. */
-  transition: 0.2s ease;
-}
-
-
-  /* Cambio al pasar el mouse. */
-  .metodo-card:hover {
-    /* Fondo ligeramente distinto. */
-    background: #f8f5ee;
-    /* Oscurece un poco el borde. */
-    border-color: #aab8ad;
-  }
-
-
-  /* Estado visual del método seleccionado. */
-  .metodo-card.seleccionado {
-    /* Fondo verde muy suave. */
-    background: #edf2ec;
-    /* Borde verde visible. */
-    border-color: #58715f;
-  }
-
-
-/* Parte superior de cada método. */
-.metodo-superior {
-  /* Coloca selector y nombre en una fila. */
-  display: flex;
-  /* Centra verticalmente. */
-  align-items: center;
-  /* Agrega separación. */
-  gap: 11px;
-}
-
-
-/* Círculo exterior del selector. */
-.selector {
-  /* Define ancho y alto iguales. */
-  width: 20px;
-  height: 20px;
-  /* Evita que se reduzca. */
-  flex-shrink: 0;
-  /* Agrega borde verde. */
-  border: 2px solid #718276;
-  /* Lo convierte en círculo. */
-  border-radius: 50%;
-  /* Centra el punto interior. */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-  /* Punto interior cuando está seleccionado. */
-  .selector span {
-    /* Define su tamaño. */
-    width: 10px;
-    height: 10px;
-    /* Usa el verde principal. */
-    background: #2f493b;
-    /* Lo convierte en círculo. */
-    border-radius: 50%;
-  }
-
-
-/* Nombre del método. */
-.metodo-superior strong {
-  /* Define un tamaño cómodo. */
-  font-size: 15px;
-  /* Resalta ligeramente. */
   font-weight: 700;
 }
 
+/* Configura el título principal. */
+.pago-header h1 {
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 30px;
+}
 
-/* Descripción opcional. */
-.metodo-card p {
-  /* Agrega separación con respecto al nombre. */
-  margin: 10px 0 0 31px;
-  /* Usa un color secundario. */
-  color: #777a72;
-  /* Define un tamaño menor. */
-  font-size: 13px;
-  /* Mejora la lectura. */
+/* Configura la descripción del encabezado. */
+.pago-header p {
+  margin: 8px 0 0;
+  color: var(--gris-texto);
   line-height: 1.5;
 }
 
-
-/* ========================================================= */
-/* DATOS DEL MÉTODO SELECCIONADO */
-/* ========================================================= */
-
-/* Sección que aparece después de elegir un método. */
-.datos-metodo {
-  /* Separa de la sección anterior. */
-  border-top: 1px solid #ece5da;
-  /* Agrega espacio interno. */
-  padding: 28px;
-  /* Usa un fondo muy suave. */
-  background: #fcfaf5;
+/* Define el ancho máximo del contenido. */
+.pago-contenido {
+  max-width: 1300px;
+  margin: 0 auto;
 }
 
+/* Divide el formulario y el resumen. */
+.pago-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
+}
 
-  /* Título de Información del pago. */
-  .datos-metodo > h3 {
-    /* Elimina margen superior. */
-    margin: 0 0 22px;
-    /* Define un tamaño destacado. */
-    font-size: 22px;
-    /* Mantiene un peso elegante. */
-    font-weight: 500;
+/* Crea el estilo general de los paneles. */
+.panel {
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(31, 78, 121, 0.06);
+}
+
+/* Da espacio al panel principal de pago. */
+.panel-pago {
+  padding: 24px;
+}
+
+/* Organiza los títulos internos. */
+.panel-titulo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+  /* Configura el icono del título. */
+  .panel-titulo > mat-icon {
+    color: var(--azul-principal);
   }
 
+  /* Configura los títulos internos. */
+  .panel-titulo h2 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 20px;
+  }
 
-/* ========================================================= */
-/* CAMPOS DEL FORMULARIO */
-/* ========================================================= */
+  /* Configura las descripciones internas. */
+  .panel-titulo p {
+    margin: 4px 0 0;
+    color: var(--gris-texto);
+    font-size: 13px;
+  }
 
-/* Contenedor de cada campo. */
-.campo {
-  /* Organiza la etiqueta y el control verticalmente. */
+/* Organiza los métodos de pago. */
+.metodos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+/* Crea cada opción de método de pago. */
+.metodo-pago {
+  min-height: 110px;
+  padding: 16px;
   display: flex;
-  /* Coloca un elemento debajo del otro. */
   flex-direction: column;
-  /* Agrega separación. */
+  align-items: flex-start;
   gap: 7px;
-  /* Agrega espacio inferior entre campos. */
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+  /* Cambia la apariencia al pasar sobre un método. */
+  .metodo-pago:hover {
+    border-color: var(--azul-principal);
+    background: var(--azul-claro);
+  }
+
+/* Resalta el método seleccionado. */
+.metodo-seleccionado {
+  border: 2px solid var(--azul-principal);
+  background: var(--azul-claro);
+}
+
+/* Configura el icono de cada método. */
+.metodo-pago mat-icon {
+  color: var(--azul-principal);
+}
+
+/* Configura el nombre del método. */
+.metodo-pago strong {
+  color: var(--azul-oscuro);
+  font-size: 14px;
+}
+
+/* Configura la descripción del método. */
+.metodo-pago span {
+  color: var(--gris-texto);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Crea cada bloque de formulario. */
+.formulario-metodo {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--gris-borde);
+}
+
+/* Organiza el subtítulo del formulario. */
+.subtitulo-metodo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   margin-bottom: 18px;
 }
 
-
-  /* Etiqueta de cada campo. */
-  .campo label {
-    /* Usa una fuente sencilla. */
-    font-family: Arial, sans-serif;
-    /* Resalta ligeramente. */
-    font-weight: 600;
-    /* Define un tamaño cómodo. */
-    font-size: 14px;
-    /* Usa el verde oscuro principal. */
-    color: #30473a;
+  /* Configura el icono del subtítulo. */
+  .subtitulo-metodo > mat-icon {
+    color: var(--azul-principal);
   }
 
-
-  /* Campos de texto, número y contraseña. */
-  .campo input {
-    /* Hace que el campo ocupe todo el ancho disponible. */
-    width: 100%;
-    /* Permite que padding y borde no aumenten el ancho final. */
-    box-sizing: border-box;
-    /* Agrega espacio interno. */
-    padding: 13px 14px;
-    /* Agrega un borde suave. */
-    border: 1px solid #d5cdbf;
-    /* Redondea las esquinas. */
-    border-radius: 10px;
-    /* Usa fondo claro. */
-    background: #fffdf8;
-    /* Define el color del texto. */
-    color: #22352b;
-    /* Usa una fuente sencilla. */
-    font-family: Arial, sans-serif;
-    /* Define un tamaño cómodo. */
-    font-size: 15px;
-    /* Elimina el contorno predeterminado. */
-    outline: none;
-    /* Suaviza los cambios. */
-    transition: 0.2s ease;
-  }
-
-
-    /* Cambio cuando el Cliente está escribiendo en el campo. */
-    .campo input:focus {
-      /* Cambia el borde a verde. */
-      border-color: #58715f;
-      /* Agrega una sombra muy suave alrededor. */
-      box-shadow: 0 0 0 3px rgba(88, 113, 95, 0.12);
-    }
-
-
-  /* Texto de ayuda debajo del campo. */
-  .campo small {
-    /* Usa una fuente sencilla. */
-    font-family: Arial, sans-serif;
-    /* Define un tamaño pequeño. */
-    font-size: 12px;
-    /* Usa un color secundario. */
-    color: #777a72;
-  }
-
-
-/* Fila utilizada para vencimiento y CVV. */
-.fila-campos {
-  /* Organiza ambos campos en columnas. */
-  display: grid;
-  /* Crea dos columnas iguales. */
-  grid-template-columns: repeat(2, 1fr);
-  /* Agrega separación. */
-  gap: 16px;
-}
-
-
-/* ========================================================= */
-/* VALIDACIÓN DEL SALDO */
-/* ========================================================= */
-
-/* Caja que aparece cuando el dinero es insuficiente. */
-.saldo-error {
-  /* Agrega espacio interno. */
-  padding: 17px 18px;
-  /* Fondo rojizo suave. */
-  background: #f8e9e6;
-  /* Borde de error. */
-  border: 1px solid #e3bdb5;
-  /* Redondea las esquinas. */
-  border-radius: 12px;
-  /* Agrega espacio inferior. */
-  margin-bottom: 22px;
-  /* Usa una fuente sencilla. */
-  font-family: Arial, sans-serif;
-  /* Color del texto. */
-  color: #82443b;
-}
-
-
-  /* Título del error de saldo. */
-  .saldo-error strong {
-    /* Hace el título más visible. */
-    display: block;
-    /* Define un tamaño cómodo. */
-    font-size: 15px;
-    /* Separa de los datos inferiores. */
-    margin-bottom: 10px;
-  }
-
-
-  /* Líneas de información del saldo insuficiente. */
-  .saldo-error p {
-    /* Reduce márgenes. */
-    margin: 5px 0;
-    /* Define un tamaño cómodo. */
-    font-size: 14px;
-  }
-
-
-/* Caja que aparece cuando sí tiene dinero suficiente. */
-.saldo-correcto {
-  /* Agrega espacio interno. */
-  padding: 17px 18px;
-  /* Fondo verde suave. */
-  background: #e9f1e8;
-  /* Borde verde claro. */
-  border: 1px solid #c5d7c5;
-  /* Redondea las esquinas. */
-  border-radius: 12px;
-  /* Agrega espacio inferior. */
-  margin-bottom: 22px;
-  /* Usa una fuente sencilla. */
-  font-family: Arial, sans-serif;
-  /* Usa verde oscuro. */
-  color: #35543d;
-}
-
-
-  /* Título de fondos suficientes. */
-  .saldo-correcto strong {
-    /* Hace que aparezca en su propia línea. */
-    display: block;
-    /* Separa del texto inferior. */
-    margin-bottom: 8px;
-    /* Define un tamaño cómodo. */
-    font-size: 15px;
-  }
-
-
-  /* Texto del saldo restante. */
-  .saldo-correcto p {
-    /* Elimina margen innecesario. */
+  /* Configura el título pequeño. */
+  .subtitulo-metodo h3 {
     margin: 0;
-    /* Define un tamaño cómodo. */
-    font-size: 14px;
-  }
-
-
-/* ========================================================= */
-/* FORMULARIO ESPECÍFICO DE CADA MÉTODO */
-/* ========================================================= */
-
-/* Contenedor para SINPE, transferencia o tarjeta. */
-.metodo-formulario {
-  /* Agrega una línea superior para separar visualmente. */
-  border-top: 1px solid #e5ddd0;
-  /* Agrega espacio superior. */
-  padding-top: 22px;
-  /* Agrega espacio superior con respecto al bloque anterior. */
-  margin-top: 8px;
-}
-
-
-  /* Título específico del método. */
-  .metodo-formulario h4 {
-    /* Elimina margen superior. */
-    margin: 0 0 18px;
-    /* Define un tamaño destacado. */
-    font-size: 19px;
-    /* Mantiene un peso elegante. */
-    font-weight: 500;
-  }
-
-
-/* ========================================================= */
-/* INSTRUCCIONES SINPE Y TRANSFERENCIA */
-/* ========================================================= */
-
-/* Caja que muestra dónde se debe hacer el pago. */
-.instruccion-pago {
-  /* Organiza la información verticalmente. */
-  display: flex;
-  /* Coloca los elementos uno debajo del otro. */
-  flex-direction: column;
-  /* Agrega separación. */
-  gap: 7px;
-  /* Agrega espacio interno. */
-  padding: 18px;
-  /* Usa fondo verde muy suave. */
-  background: #eef2eb;
-  /* Agrega un borde. */
-  border: 1px solid #d1dbcf;
-  /* Redondea las esquinas. */
-  border-radius: 12px;
-  /* Agrega espacio inferior. */
-  margin-bottom: 20px;
-}
-
-
-  /* Texto informativo de instrucciones. */
-  .instruccion-pago span {
-    /* Usa una fuente sencilla. */
-    font-family: Arial, sans-serif;
-    /* Usa un color secundario. */
-    color: #667168;
-    /* Define un tamaño pequeño. */
-    font-size: 13px;
-  }
-
-
-  /* Número SINPE o cuenta bancaria. */
-  .instruccion-pago strong {
-    /* Usa un tamaño más grande. */
-    font-size: 20px;
-    /* Usa el verde principal. */
-    color: #2f493b;
-    /* Permite partir una cuenta muy larga si fuera necesario. */
-    word-break: break-word;
-  }
-
-
-  /* Monto exacto a transferir. */
-  .instruccion-pago p {
-    /* Elimina margen inferior. */
-    margin: 3px 0 0;
-    /* Usa una fuente sencilla. */
-    font-family: Arial, sans-serif;
-    /* Define un tamaño cómodo. */
-    font-size: 14px;
-    /* Resalta ligeramente. */
-    font-weight: 600;
-  }
-
-
-/* ========================================================= */
-/* RESUMEN FINAL */
-/* ========================================================= */
-
-/* Sección final antes de confirmar. */
-.resumen-final {
-  /* Organiza los datos en columnas. */
-  display: grid;
-  /* Permite hasta tres columnas. */
-  grid-template-columns: repeat(3, 1fr);
-  /* Agrega separación. */
-  gap: 20px;
-  /* Agrega espacio interno. */
-  padding: 22px 28px;
-  /* Separa de la sección anterior. */
-  border-top: 1px solid #ece5da;
-  /* Usa un fondo suave. */
-  background: #f8f4ec;
-}
-
-
-  /* Cada dato del resumen. */
-  .resumen-final > div {
-    /* Organiza título y valor verticalmente. */
-    display: flex;
-    /* Coloca uno debajo del otro. */
-    flex-direction: column;
-    /* Agrega separación. */
-    gap: 6px;
-  }
-
-
-  /* Etiquetas del resumen. */
-  .resumen-final span {
-    /* Usa una fuente sencilla. */
-    font-family: Arial, sans-serif;
-    /* Usa un color secundario. */
-    color: #777a72;
-    /* Define un tamaño pequeño. */
-    font-size: 13px;
-  }
-
-
-  /* Valores del resumen. */
-  .resumen-final strong {
-    /* Define un tamaño cómodo. */
+    color: var(--azul-oscuro);
     font-size: 17px;
-    /* Resalta el valor. */
-    font-weight: 600;
   }
 
+  /* Configura la explicación pequeña. */
+  .subtitulo-metodo p {
+    margin: 4px 0 0;
+    color: var(--gris-texto);
+    font-size: 12px;
+  }
 
-/* ========================================================= */
-/* BOTONES */
-/* ========================================================= */
+/* Hace que los campos Material ocupen todo el ancho. */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 6px;
+}
 
-/* Contenedor inferior de botones. */
-.acciones {
-  /* Coloca los botones en una fila. */
+/* Organiza dos campos en una misma fila. */
+.campos-dobles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Crea la nota informativa de tarjeta. */
+.nota-metodo {
   display: flex;
-  /* Los alinea hacia la derecha. */
-  justify-content: flex-end;
-  /* Centra verticalmente. */
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background: var(--azul-claro);
+  border-radius: 8px;
+  color: var(--azul-oscuro);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+  /* Ajusta el icono de la nota. */
+  .nota-metodo mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+/* Muestra la cuenta para transferencia. */
+.dato-transferencia {
+  margin-bottom: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--azul-claro);
+  border-radius: 9px;
+}
+
+  /* Configura el título de la cuenta. */
+  .dato-transferencia span {
+    color: var(--gris-texto);
+    font-size: 12px;
+  }
+
+  /* Configura el número de cuenta. */
+  .dato-transferencia strong {
+    color: var(--azul-oscuro);
+    font-size: 14px;
+  }
+
+/* Configura el resultado de la validación de saldo. */
+.resultado-saldo {
+  margin-top: 8px;
+  padding: 12px;
+  display: flex;
   align-items: center;
-  /* Agrega separación. */
-  gap: 12px;
-  /* Agrega espacio interno. */
-  padding: 22px 28px;
-  /* Agrega una línea superior. */
-  border-top: 1px solid #ece5da;
-  /* Usa fondo blanco cálido. */
-  background: #fffdf8;
+  gap: 10px;
+  border-radius: 8px;
 }
 
+  /* Organiza el texto del resultado. */
+  .resultado-saldo div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
 
-/* Botón superior Volver al detalle. */
-.btn-volver {
-  /* Fondo transparente. */
-  background: transparent;
-  /* Borde verde oscuro. */
-  border: 1px solid #40584a;
-  /* Verde oscuro en el texto. */
-  color: #40584a;
-  /* Agrega espacio interno. */
-  padding: 11px 18px;
-  /* Redondea las esquinas. */
-  border-radius: 11px;
-  /* Cambia el cursor. */
-  cursor: pointer;
-  /* Define un tamaño cómodo. */
+  /* Configura el texto secundario. */
+  .resultado-saldo span {
+    font-size: 12px;
+  }
+
+  /* Configura el valor principal. */
+  .resultado-saldo strong {
+    font-size: 13px;
+  }
+
+/* Muestra saldo insuficiente en rojo. */
+.saldo-error {
+  background: var(--rojo-claro);
+  color: var(--rojo);
+}
+
+/* Muestra saldo suficiente en verde. */
+.saldo-correcto {
+  background: var(--verde-claro);
+  color: var(--verde);
+}
+
+/* Configura el panel del resumen. */
+.resumen-pago {
+  padding: 24px;
+  position: sticky;
+  top: 20px;
+}
+
+/* Organiza cada fila del resumen. */
+.fila-resumen {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 0;
   font-size: 14px;
-  /* Resalta ligeramente. */
+}
+
+  /* Configura el texto secundario. */
+  .fila-resumen span {
+    color: var(--gris-texto);
+  }
+
+  /* Configura los valores del resumen. */
+  .fila-resumen strong {
+    color: var(--texto-principal);
+    text-align: right;
+  }
+
+/* Crea una línea divisoria. */
+.separador {
+  height: 1px;
+  margin: 10px 0;
+  background: var(--gris-borde);
+}
+
+/* Organiza el total del pedido. */
+.total-pago {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+}
+
+  /* Configura el texto del total. */
+  .total-pago span {
+    color: var(--azul-oscuro);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* Configura el monto total. */
+  .total-pago strong {
+    color: var(--azul-principal);
+    font-size: 24px;
+  }
+
+/* Muestra el método seleccionado en el resumen. */
+.metodo-resumen {
+  margin-top: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--azul-claro);
+  border-radius: 8px;
+}
+
+  /* Configura el icono del método seleccionado. */
+  .metodo-resumen mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Organiza el texto del método seleccionado. */
+  .metodo-resumen div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  /* Configura el texto secundario. */
+  .metodo-resumen span {
+    color: var(--gris-texto);
+    font-size: 11px;
+  }
+
+  /* Configura el nombre del método. */
+  .metodo-resumen strong {
+    color: var(--azul-oscuro);
+    font-size: 13px;
+  }
+
+/* Crea una nota dentro del resumen. */
+.nota-resumen {
+  margin: 14px 0;
+  padding: 11px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--amarillo-claro);
+  border-radius: 8px;
+  color: #765700;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+  /* Ajusta el icono de la nota. */
+  .nota-resumen mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+/* Hace que el botón PrimeNG ocupe todo el ancho. */
+:host ::ng-deep .boton-confirmar-pago {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Ajusta el botón de cancelar. */
+.boton-cancelar {
+  width: 100%;
+  margin-top: 8px;
+  color: var(--gris-texto) !important;
+}
+
+/* Configura los mensajes generales. */
+.mensaje {
+  max-width: 1300px;
+  margin: 0 auto 18px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border-radius: 9px;
+  font-size: 13px;
   font-weight: 600;
-  /* Usa una fuente sencilla. */
-  font-family: Arial, sans-serif;
-  /* Suaviza los cambios. */
-  transition: 0.2s ease;
 }
 
-
-  /* Cambio al pasar el mouse. */
-  .btn-volver:hover {
-    /* Fondo verde suave. */
-    background: #edf1eb;
-  }
-
-
-/* Botón Cancelar. */
-.btn-cancelar {
-  /* Fondo transparente. */
-  background: transparent;
-  /* Borde verde oscuro. */
-  border: 1px solid #40584a;
-  /* Texto verde oscuro. */
-  color: #40584a;
-  /* Agrega espacio interno. */
-  padding: 12px 22px;
-  /* Redondea las esquinas. */
-  border-radius: 11px;
-  /* Cambia el cursor. */
-  cursor: pointer;
-  /* Define tamaño del texto. */
-  font-size: 14px;
-  /* Resalta ligeramente. */
-  font-weight: 600;
-  /* Usa una fuente sencilla. */
-  font-family: Arial, sans-serif;
-  /* Suaviza los cambios. */
-  transition: 0.2s ease;
+/* Configura los mensajes de error. */
+.mensaje-error {
+  background: var(--rojo-claro);
+  color: var(--rojo);
 }
 
-
-  /* Cambio al pasar el mouse. */
-  .btn-cancelar:hover:not(:disabled) {
-    /* Fondo verde suave. */
-    background: #edf1eb;
-  }
-
-
-/* Botón principal Confirmar pago. */
-.btn-confirmar {
-  /* Usa el verde oscuro principal. */
-  background: #2f493b;
-  /* Usa el mismo tono en el borde. */
-  border: 1px solid #2f493b;
-  /* Usa texto claro. */
-  color: #fffdf8;
-  /* Agrega espacio interno. */
-  padding: 12px 26px;
-  /* Redondea las esquinas. */
-  border-radius: 11px;
-  /* Cambia el cursor. */
-  cursor: pointer;
-  /* Define el tamaño del texto. */
-  font-size: 14px;
-  /* Resalta el texto. */
-  font-weight: 700;
-  /* Usa una fuente sencilla. */
-  font-family: Arial, sans-serif;
-  /* Suaviza los efectos. */
-  transition: 0.2s ease;
-  /* Evita que el texto se divida. */
-  white-space: nowrap;
+/* Configura los mensajes exitosos. */
+.mensaje-exito {
+  background: var(--verde-claro);
+  color: var(--verde);
 }
 
+/* Configura la pantalla de carga. */
+.estado-pantalla {
+  max-width: 650px;
+  margin: 80px auto;
+  padding: 45px 30px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  text-align: center;
+}
 
-  /* Cambio al pasar el mouse. */
-  .btn-confirmar:hover:not(:disabled) {
-    /* Oscurece el fondo. */
-    background: #22382c;
-    /* Oscurece el borde. */
-    border-color: #22382c;
-    /* Levanta ligeramente el botón. */
-    transform: translateY(-1px);
+  /* Configura el icono de carga. */
+  .estado-pantalla > mat-icon {
+    width: 52px;
+    height: 52px;
+    color: var(--azul-principal);
+    font-size: 52px;
   }
 
-
-  /* Estilo de botones deshabilitados. */
-  .btn-confirmar:disabled,
-  .btn-cancelar:disabled {
-    /* Reduce la intensidad visual. */
-    opacity: 0.55;
-    /* Cambia el cursor. */
-    cursor: not-allowed;
-    /* Evita movimiento. */
-    transform: none;
+  /* Configura el título del estado. */
+  .estado-pantalla h2 {
+    margin: 15px 0 8px;
+    color: var(--azul-oscuro);
   }
 
-
-/* ========================================================= */
-/* RESPONSIVE PARA TABLET */
-/* ========================================================= */
-
-@media (max-width: 800px) {
-
-  /* Reduce el espacio lateral. */
-  .contenido {
-    padding: 25px 18px 40px;
+  /* Configura la descripción del estado. */
+  .estado-pantalla p {
+    margin: 0;
+    color: var(--gris-texto);
   }
 
-  /* Reduce el espacio del encabezado. */
-  .encabezado {
-    padding: 24px 18px 16px;
+/* Ajusta la pantalla en ventanas medianas. */
+@media (max-width: 1000px) {
+  .pago-grid {
+    grid-template-columns: 1fr;
   }
 
-  /* Cambia los métodos a una columna. */
+  .resumen-pago {
+    position: static;
+  }
+}
+
+/* Ajusta la pantalla en ventanas más pequeñas. */
+@media (max-width: 750px) {
+  .pago-page {
+    padding: 20px;
+  }
+
+  .pago-header {
+    flex-direction: column;
+  }
+
   .metodos-grid {
     grid-template-columns: 1fr;
   }
 
-  /* Reduce el resumen final a dos columnas. */
-  .resumen-final {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-
-/* ========================================================= */
-/* RESPONSIVE PARA CELULAR */
-/* ========================================================= */
-
-@media (max-width: 550px) {
-
-  /* Coloca el encabezado verticalmente. */
-  .encabezado {
-    flex-direction: column;
-    /* Alinea hacia la izquierda. */
-    align-items: flex-start;
-    /* Agrega separación. */
-    gap: 16px;
-  }
-
-  /* Hace que el botón superior ocupe todo el ancho. */
-  .btn-volver {
-    width: 100%;
-  }
-
-  /* Cambia el resumen del pedido a vertical. */
-  .resumen-pedido {
-    flex-direction: column;
-    /* Alinea hacia la izquierda. */
-    align-items: flex-start;
-  }
-
-  /* Alinea el total hacia la izquierda. */
-  .total-pagar {
-    align-items: flex-start;
-  }
-
-  /* Cambia vencimiento y CVV a una sola columna. */
-  .fila-campos {
+  .campos-dobles {
     grid-template-columns: 1fr;
-  }
-
-  /* Cambia el resumen final a una sola columna. */
-  .resumen-final {
-    grid-template-columns: 1fr;
-  }
-
-  /* Coloca los botones verticalmente. */
-  .acciones {
-    flex-direction: column;
-    /* Hace que ocupen todo el ancho. */
-    align-items: stretch;
-  }
-
-  /* Hace que los botones ocupen todo el ancho. */
-  .btn-cancelar,
-  .btn-confirmar {
-    width: 100%;
   }
 }

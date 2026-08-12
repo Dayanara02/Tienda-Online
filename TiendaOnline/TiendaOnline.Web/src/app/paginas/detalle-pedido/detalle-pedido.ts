@@ -65,7 +65,7 @@ interface PedidoDetalle {
 @Component({
   selector: 'app-detalle-pedido',
 
-  // Indica que el componente funciona de forma independiente.
+  // Indica que funciona como componente independiente.
   standalone: true,
 
   // Registra los módulos utilizados en el HTML.
@@ -318,6 +318,20 @@ export class DetallePedido {
     // Navega hacia la pantalla de pago.
     this.router.navigate([
       '/pago-pedido',
+      this.pedido.idPedido
+    ]);
+  }
+
+  // Abre la pantalla de seguimiento del pedido.
+  verSeguimiento(): void {
+    // Comprueba que exista información del pedido.
+    if (!this.pedido) {
+      return;
+    }
+
+    // Navega hacia el seguimiento utilizando el id real.
+    this.router.navigate([
+      '/seguimiento-pedido',
       this.pedido.idPedido
     ]);
   }
