@@ -1,20 +1,70 @@
+// Permite utilizar directivas básicas como *ngIf.
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+
+// Importa las herramientas principales del componente.
+import {
+  ChangeDetectorRef,
+  Component
+} from '@angular/core';
+
+// Permite trabajar con formularios usando ngModel.
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+
+// Permite realizar solicitudes HTTP al backend.
+import {
+  HttpClient,
+  HttpErrorResponse
+} from '@angular/common/http';
+
+// Permite navegar hacia otras páginas.
+import { Router } from '@angular/router';
+
+// Permite utilizar iconos de Angular Material.
+import { MatIconModule } from '@angular/material/icon';
+
+// Permite utilizar botones de Angular Material.
+import { MatButtonModule } from '@angular/material/button';
+
+// Permite utilizar campos de Angular Material.
+import { MatFormFieldModule } from '@angular/material/form-field';
+
+// Permite utilizar inputs de Angular Material.
+import { MatInputModule } from '@angular/material/input';
+
+// Permite utilizar botones de PrimeNG.
+import { ButtonModule } from 'primeng/button';
+
+// Representa los datos enviados al backend.
+interface RegistroUsuario {
+  nombre: string;
+  apellido: string;
+  correo: string;
+  contrasena: string;
+  telefono: string | null;
+}
 
 @Component({
   selector: 'app-registro',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ButtonModule
   ],
   templateUrl: './registro.html',
   styleUrl: './registro.css'
 })
 export class Registro {
+
+  // Dirección del endpoint de registro.
+  private readonly apiUrl =
+    'https://localhost:7196/api/Auth/registrar';
+
+  // Datos del formulario.
   nombre = '';
   apellido = '';
   correo = '';
@@ -22,92 +72,154 @@ export class Registro {
   contrasena = '';
   confirmarContrasena = '';
 
-  cargando = false;
+  // Permite mostrar u ocultar la contraseña.
+  mostrarContrasena = false;
+
+  // Controla el estado del botón.
+  registrando = false;
+
+  // Guarda mensajes mostrados al usuario.
   mensajeError = '';
   mensajeExito = '';
 
-  private readonly urlRegistro =
-    'https://localhost:7196/api/Auth/registrar';
-
   constructor(
     private http: HttpClient,
-    private router: Router
-  ) {}
+    private router: Router,
+    private cd: ChangeDetectorRef
+  ) { }
 
-  registrarse(): void {
+  // Cambia la visibilidad de la contraseña.
+  cambiarVisibilidad(): void {
+    this.mostrarContrasena =
+      !this.mostrarContrasena;
+  }
+
+  // Valida y registra al nuevo cliente.
+  registrar(): void {
+
+    // Limpia mensajes anteriores.
     this.mensajeError = '';
     this.mensajeExito = '';
 
+    // Valida los campos obligatorios.
     if (
       !this.nombre.trim() ||
       !this.apellido.trim() ||
       !this.correo.trim() ||
-      !this.telefono.trim() ||
-      !this.contrasena.trim() ||
-      !this.confirmarContrasena.trim()
+      !this.contrasena
     ) {
       this.mensajeError =
-        'Debe completar todos los campos.';
+        'Complete todos los campos obligatorios.';
+
       return;
     }
 
-    if (this.contrasena !== this.confirmarContrasena) {
+    // Valida el formato básico del correo.
+    if (!this.correo.includes('@')) {
       this.mensajeError =
-        'Las contraseñas no coinciden.';
+        'Ingrese un correo electrónico válido.';
+
       return;
     }
 
+    // Valida la longitud mínima de contraseña.
     if (this.contrasena.length < 6) {
       this.mensajeError =
         'La contraseña debe tener al menos 6 caracteres.';
+
       return;
     }
 
-    this.cargando = true;
+    // Comprueba que ambas contraseñas coincidan.
+    if (
+      this.contrasena !==
+      this.confirmarContrasena
+    ) {
+      this.mensajeError =
+        'Las contraseñas no coinciden.';
 
-    const datosRegistro = {
+      return;
+    }
+
+    // Construye los datos enviados a la API.
+    const usuario: RegistroUsuario = {
       nombre: this.nombre.trim(),
       apellido: this.apellido.trim(),
       correo: this.correo.trim(),
       contrasena: this.contrasena,
-      telefono: this.telefono.trim()
+      telefono:
+        this.telefono.trim() || null
     };
 
+    // Bloquea el botón mientras se registra.
+    this.registrando = true;
+
+    // Envía el registro al backend.
     this.http
-      .post<any>(
-        this.urlRegistro,
-        datosRegistro
+      .post(
+        this.apiUrl,
+        usuario
       )
       .subscribe({
         next: () => {
-          this.cargando = false;
 
+          // Muestra confirmación.
           this.mensajeExito =
-            'Cuenta creada correctamente. Ahora puedes iniciar sesión.';
+            'Cuenta creada correctamente.';
 
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 1500);
+          this.registrando = false;
+
+          this.cd.detectChanges();
+
+          // Envía al usuario al login.
+          setTimeout(
+            () => {
+              this.router.navigate([
+                '/login'
+              ]);
+            },
+            1200
+          );
         },
 
-        error: (error) => {
-          this.cargando = false;
+        error: (
+          error: HttpErrorResponse
+        ) => {
 
-          if (error.status === 0) {
+          this.registrando = false;
+
+          // Correo ya registrado u otro conflicto.
+          if (
+            error.status === 400 ||
+            error.status === 409
+          ) {
             this.mensajeError =
-              'No se pudo conectar con la API. Verifique que esté ejecutándose.';
-          } else if (error.status === 400) {
+              typeof error.error === 'string'
+                ? error.error
+                : 'No fue posible registrar la cuenta.';
+          }
+
+          // Error de conexión.
+          else if (error.status === 0) {
             this.mensajeError =
-              error.error?.mensaje ||
-              error.error ||
-              'No se pudo crear la cuenta. Revise los datos.';
-          } else {
+              'No se pudo conectar con la API.';
+          }
+
+          // Error general.
+          else {
             this.mensajeError =
-              error.error?.mensaje ||
-              error.error ||
               'Ocurrió un error al registrar la cuenta.';
           }
+
+          this.cd.detectChanges();
         }
       });
+  }
+
+  // Regresa a la pantalla de inicio de sesión.
+  volverLogin(): void {
+    this.router.navigate([
+      '/login'
+    ]);
   }
 }

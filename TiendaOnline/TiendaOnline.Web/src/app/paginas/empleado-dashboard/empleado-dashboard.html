@@ -1,282 +1,442 @@
-<div class="empleado-layout">
-  <aside class="menu-lateral">
+<div class="pagina-empleado">
 
-    <div class="logo">
-      esen<span>c</span>ia
-    </div>
+  <!-- Barra superior del empleado. -->
+  <header class="barra-superior">
 
-    <p class="tipo-usuario">
-      Panel de empleado
-    </p>
+    <div class="marca">
 
-    <nav class="menu">
-
-      <a
-        routerLink="/empleado-dashboard"
-        class="activo"
-      >
-        Inicio
-      </a>
-
-      <a routerLink="/productos">
-        Productos
-      </a>
-
-      <a routerLink="/inventario">
-        Inventario
-      </a>
-
-      <a routerLink="/gestion-pedidos">
-        Pedidos
-      </a>
-
-      <a routerLink="/movimientos-inventario">
-        Movimientos
-      </a>
-
-    </nav>
-
-    <button
-      type="button"
-      class="boton-salir"
-      (click)="cerrarSesion()"
-    >
-      Cerrar sesión
-    </button>
-
-  </aside>
-
-
-  <main class="contenido">
-
-    <header class="encabezado">
+      <div class="logo">
+        E
+      </div>
 
       <div>
-
-        <span class="etiqueta">
-          Empleado
-        </span>
-
         <h1>
-          Hola, {{ nombreUsuario }}
+          Panel de Empleado
         </h1>
 
         <p>
-          Bienvenido al panel de trabajo de Esencia.
+          Esencia Tienda Online
         </p>
-
       </div>
 
-      <a
-        routerLink="/perfil"
-        class="boton-perfil"
-      >
-        Mi perfil
-      </a>
+    </div>
 
-    </header>
+    <div class="acciones-superiores">
 
+      <!-- Actualiza la información mostrada. -->
+      <button mat-stroked-button
+              type="button"
+              class="boton-actualizar"
+              (click)="actualizar()">
 
-    <section class="resumen">
+        <mat-icon>
+          refresh
+        </mat-icon>
 
-      <article class="tarjeta-resumen">
+        Actualizar
 
-        <span class="icono">
-          📦
+      </button>
+
+      <!-- Cierra la sesión del empleado. -->
+      <button mat-button
+              type="button"
+              class="boton-salir"
+              (click)="cerrarSesion()">
+
+        <mat-icon>
+          logout
+        </mat-icon>
+
+        Cerrar sesión
+
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="contenido-empleado">
+
+    <!-- Presentación principal. -->
+    <section class="bienvenida">
+
+      <div>
+        <span>
+          EMPLEADO
         </span>
 
-        <div>
-          <small>
-            Productos
-          </small>
+        <h2>
+          Gestión operativa
+        </h2>
 
-          <strong>
-            Consulta del catálogo
-          </strong>
+        <p>
+          Controle pedidos, envíos, inventario
+          y operaciones de la tienda.
+        </p>
+      </div>
+
+      <mat-icon>
+        badge
+      </mat-icon>
+
+    </section>
+
+    <!-- Mensaje mostrado mientras cargan los datos. -->
+    <div class="mensaje-carga"
+         *ngIf="cargando">
+
+      <mat-icon>
+        hourglass_top
+      </mat-icon>
+
+      Cargando información...
+
+    </div>
+
+    <!-- Mensaje mostrado si ocurre un error. -->
+    <div class="mensaje-error"
+         *ngIf="mensajeError && !cargando">
+
+      <mat-icon>
+        error_outline
+      </mat-icon>
+
+      {{ mensajeError }}
+
+    </div>
+
+    <!-- Tarjetas principales del empleado. -->
+    <section class="resumen"
+             *ngIf="!cargando">
+
+      <!-- Total de pedidos. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            shopping_bag
+          </mat-icon>
         </div>
 
-      </article>
-
-
-      <article class="tarjeta-resumen">
-
-        <span class="icono">
-          📋
-        </span>
-
         <div>
-          <small>
-            Inventario
-          </small>
-
-          <strong>
-            Control de existencias
-          </strong>
-        </div>
-
-      </article>
-
-
-      <article class="tarjeta-resumen">
-
-        <span class="icono">
-          🛒
-        </span>
-
-        <div>
-          <small>
+          <span>
             Pedidos
-          </small>
+          </span>
 
           <strong>
-            Gestión de pedidos
+            {{ totalPedidos }}
           </strong>
+
+          <small>
+            Pedidos registrados
+          </small>
         </div>
 
       </article>
 
-
+      <!-- Total de productos. -->
       <article class="tarjeta-resumen">
 
-        <span class="icono">
-          🔄
-        </span>
+        <div class="icono-resumen">
+          <mat-icon>
+            inventory_2
+          </mat-icon>
+        </div>
 
         <div>
-          <small>
-            Movimientos
-          </small>
+          <span>
+            Productos
+          </span>
 
           <strong>
-            Entradas y salidas
+            {{ totalProductos }}
           </strong>
+
+          <small>
+            Productos registrados
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Total de envíos. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            local_shipping
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Envíos
+          </span>
+
+          <strong>
+            {{ totalEnvios }}
+          </strong>
+
+          <small>
+            Envíos registrados
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Cuenta los pedidos pendientes. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            schedule
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Pendientes
+          </span>
+
+          <strong>
+            {{ pedidosPendientes }}
+          </strong>
+
+          <small>
+            Pedidos pendientes
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Cuenta los pedidos enviados. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            delivery_dining
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Enviados
+          </span>
+
+          <strong>
+            {{ pedidosEnviados }}
+          </strong>
+
+          <small>
+            Pedidos enviados
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Cuenta los pedidos entregados. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            task_alt
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Entregados
+          </span>
+
+          <strong>
+            {{ pedidosEntregados }}
+          </strong>
+
+          <small>
+            Pedidos entregados
+          </small>
         </div>
 
       </article>
 
     </section>
 
-
+    <!-- Módulos disponibles para el empleado. -->
     <section class="seccion">
 
       <div class="titulo-seccion">
 
-        <span class="etiqueta">
-          Accesos rápidos
+        <span>
+          MÓDULOS
         </span>
 
-        <h2>
-          ¿Qué deseas gestionar?
-        </h2>
+        <h3>
+          Herramientas del empleado
+        </h3>
+
+        <p>
+          Seleccione el área que desea gestionar.
+        </p>
 
       </div>
 
+      <div class="modulos">
 
-      <div class="acciones-grid">
+        <!-- Genera una tarjeta por cada módulo. -->
+        <article class="tarjeta-modulo"
+                 *ngFor="let modulo of modulos">
 
+          <div class="icono-modulo">
 
-        <a
-          routerLink="/productos"
-          class="tarjeta-accion"
-        >
+            <mat-icon>
+              {{ modulo.icono }}
+            </mat-icon>
 
-          <span class="numero">
-            01
-          </span>
+          </div>
 
-          <h3>
-            Productos
-          </h3>
+          <div class="contenido-modulo">
 
-          <p>
-            Consulta los productos disponibles
-            en el catálogo de la tienda.
-          </p>
+            <h4>
+              {{ modulo.titulo }}
+            </h4>
 
-          <span class="flecha">
-            →
-          </span>
+            <p>
+              {{ modulo.descripcion }}
+            </p>
 
-        </a>
+          </div>
 
+          <!-- Luego se conectará con la ruta de cada módulo. -->
+          <button mat-stroked-button
+                  type="button"
+                  (click)="abrirModulo(modulo)">
 
-        <a
-          routerLink="/inventario"
-          class="tarjeta-accion"
-        >
+            Ir al módulo
 
-          <span class="numero">
-            02
-          </span>
+            <mat-icon>
+              arrow_forward
+            </mat-icon>
 
-          <h3>
-            Inventario
-          </h3>
+          </button>
 
-          <p>
-            Revisa existencias, disponibilidad
-            y productos próximos a agotarse.
-          </p>
+        </article>
 
-          <span class="flecha">
-            →
-          </span>
+      </div>
 
-        </a>
+    </section>
 
+    <!-- Tabla con todos los pedidos registrados. -->
+    <section class="seccion"
+             *ngIf="!cargando">
 
-        <a
-          routerLink="/gestion-pedidos"
-          class="tarjeta-accion"
-        >
+      <div class="titulo-seccion">
 
-          <span class="numero">
-            03
-          </span>
+        <span>
+          PEDIDOS
+        </span>
 
-          <h3>
-            Pedidos
-          </h3>
+        <h3>
+          Pedidos registrados
+        </h3>
 
-          <p>
-            Consulta pedidos y actualiza
-            su estado durante el proceso.
-          </p>
+        <p>
+          Consulte el estado actual de todos los pedidos.
+        </p>
 
-          <span class="flecha">
-            →
-          </span>
+      </div>
 
-        </a>
+      <!-- Tabla mostrada cuando existen pedidos. -->
+      <div class="contenedor-tabla"
+           *ngIf="pedidosOrdenados.length > 0">
 
+        <table>
 
-        <a
-          routerLink="/movimientos-inventario"
-          class="tarjeta-accion"
-        >
+          <thead>
+            <tr>
+              <th>
+                Pedido
+              </th>
 
-          <span class="numero">
-            04
-          </span>
+              <th>
+                Fecha
+              </th>
 
-          <h3>
-            Movimientos de inventario
-          </h3>
+              <th>
+                Estado
+              </th>
 
-          <p>
-            Consulta las entradas y salidas
-            registradas en el inventario.
-          </p>
+              <th>
+                Dirección
+              </th>
 
-          <span class="flecha">
-            →
-          </span>
+              <th>
+                Total
+              </th>
+            </tr>
+          </thead>
 
-        </a>
+          <tbody>
+
+            <!-- Recorre todos los pedidos. -->
+            <tr *ngFor="let pedido of pedidosOrdenados">
+
+              <td class="numero-pedido">
+                #{{ pedido.idPedido }}
+              </td>
+
+              <td>
+                {{ formatearFecha(pedido.fechaPedido) }}
+              </td>
+
+              <td>
+
+                <span class="estado"
+                      [ngClass]="claseEstado(pedido.estado)">
+
+                  {{ pedido.estado }}
+
+                </span>
+
+              </td>
+
+              <td>
+                {{
+                  pedido.direccionEntrega ||
+                  'Sin dirección'
+                }}
+              </td>
+
+              <td class="total">
+                {{
+                  pedido.total |
+                  currency:'CRC':'₡':'1.0-0'
+                }}
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- Mensaje mostrado cuando no hay pedidos. -->
+      <div class="sin-registros"
+           *ngIf="pedidosOrdenados.length === 0">
+
+        <mat-icon>
+          receipt_long
+        </mat-icon>
+
+        <strong>
+          No hay pedidos registrados
+        </strong>
 
       </div>
 
     </section>
 
   </main>
+
 </div>

@@ -1,115 +1,110 @@
-// Permite configurar la autenticación mediante tokens JWT.
+// Configura autenticación JWT.
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-// Permite trabajar con Entity Framework Core
-// y configurar la conexión con SQL Server.
+// Permite usar Entity Framework Core.
 using Microsoft.EntityFrameworkCore;
 
-// Permite validar tokens JWT,
-// incluyendo firma, emisor, audiencia y expiración.
+// Permite validar tokens JWT.
 using Microsoft.IdentityModel.Tokens;
 
 // Permite configurar Swagger.
 using Microsoft.OpenApi;
 
-// Permite convertir la clave JWT de texto
-// a un arreglo de bytes.
+// Permite configurar QuestPDF.
+using QuestPDF.Infrastructure;
+
+// Permite convertir la clave JWT a bytes.
 using System.Text;
 
-// Permite configurar cómo se serializa JSON
-// y evitar problemas con relaciones circulares.
+// Evita ciclos al serializar JSON.
 using System.Text.Json.Serialization;
 
-// Importa las interfaces de lógica de negocio.
-using TiendaOnline.Dominio.InterfacesLN;
-
-// Importa las implementaciones de servicios
-// como JwtServicio, AuthServicio y PedidoServicio.
-using TiendaOnline.LogicaNegocio.Servicios;
-
-// Importa el contexto de la base de datos.
+// Importa el contexto de datos.
 using TiendaOnline.AccesoDatos.Context;
 
-// Importa la clase que representa
-// la configuración JWT del appsettings.json.
-using TiendaOnline.Dominio.Configuracion;
-
-// Importa el manejador global de excepciones.
+// Importa el manejador global de errores.
 using TiendaOnline.API.Manejadores;
 
+// Importa las configuraciones.
+using TiendaOnline.Dominio.Configuracion;
 
-// Define la clase principal del programa.
+// Importa las interfaces de negocio.
+using TiendaOnline.Dominio.InterfacesLN;
+
+// Importa los servicios.
+using TiendaOnline.LogicaNegocio.Servicios;
+
 public partial class Program
 {
-    // Método principal donde se configura
-    // y se inicia la API.
     private static void Main(string[] args)
     {
-        // Crea el constructor principal de la aplicación.
+        // Crea la aplicación.
         var builder =
             WebApplication.CreateBuilder(args);
 
-
-        // =========================================================
-        // MANEJO GLOBAL DE EXCEPCIONES
-        // =========================================================
-
-        // Registra el manejador personalizado de excepciones.
+        // Registra el manejador de errores.
         builder.Services
             .AddExceptionHandler<ManejadorGlobalExcepciones>();
 
-        // Permite utilizar respuestas estándar
-        // para errores de la API.
+        // Agrega respuestas estándar de error.
         builder.Services
             .AddProblemDetails();
 
+        // Lee la configuración JWT.
+        builder.Services
+            .Configure<JwtConfiguracion>(
+                builder.Configuration
+                    .GetSection("Jwt")
+            );
 
-        // =========================================================
-        // CONFIGURACIÓN JWT
-        // =========================================================
+        // Lee la configuración del correo.
+        builder.Services
+            .Configure<CorreoConfiguracion>(
+                builder.Configuration
+                    .GetSection("Correo")
+            );
 
-        // Lee la sección "Jwt" del archivo appsettings.json
-        // y la conecta con la clase JwtConfiguracion.
-        builder.Services.Configure<JwtConfiguracion>(
-            builder.Configuration.GetSection("Jwt")
-        );
-
-
-        // =========================================================
-        // SERVICIOS DE LÓGICA DE NEGOCIO
-        // =========================================================
-
-        // Registra el servicio que genera tokens JWT.
+        // Registra el servicio JWT.
         builder.Services.AddScoped<
             IJwtServicio,
             JwtServicio
         >();
 
-        // Registra el servicio encargado
-        // del login y registro de usuarios.
+        // Registra el servicio de autenticación.
         builder.Services.AddScoped<
             IAuthServicio,
             AuthServicio
         >();
 
-        // Registra el servicio encargado
-        // de crear y confirmar pedidos.
+        // Registra el servicio de pedidos.
         builder.Services.AddScoped<
             IPedidoServicio,
             PedidoServicio
         >();
 
+        // Registra el servicio que genera PDF.
+        builder.Services.AddScoped<
+            IPdfServicio,
+            PdfServicio
+        >();
 
-        // Obtiene directamente la configuración JWT
-        // para utilizarla en la validación de tokens.
+        // Registra el servicio que envía correos.
+        builder.Services.AddScoped<
+            ICorreoServicio,
+            CorreoServicio
+        >();
+
+        // Configura la licencia de QuestPDF.
+        QuestPDF.Settings.License =
+            LicenseType.Community;
+
+        // Obtiene la configuración JWT.
         var jwtConfiguracion =
             builder.Configuration
                 .GetSection("Jwt")
                 .Get<JwtConfiguracion>();
 
-
-        // Comprueba que exista la configuración JWT
-        // y que la clave no esté vacía.
+        // Valida que exista la clave JWT.
         if (
             jwtConfiguracion == null ||
             string.IsNullOrWhiteSpace(
@@ -117,75 +112,53 @@ public partial class Program
             )
         )
         {
-            // Detiene la aplicación si falta
-            // una configuración necesaria.
             throw new InvalidOperationException(
                 "La configuración JWT no está completa."
             );
         }
 
-
-        // Convierte la clave secreta
-        // desde texto hacia bytes.
+        // Convierte la clave a bytes.
         var clave =
             Encoding.UTF8.GetBytes(
                 jwtConfiguracion.Clave
             );
 
-
-        // =========================================================
-        // AUTENTICACIÓN JWT
-        // =========================================================
-
-        // Configura JWT como el sistema principal
-        // de autenticación de la API.
+        // Configura autenticación JWT.
         builder.Services
             .AddAuthentication(options =>
             {
-                // Indica qué esquema se utiliza
-                // para autenticar automáticamente.
+                // Esquema principal.
                 options.DefaultAuthenticateScheme =
                     JwtBearerDefaults
                         .AuthenticationScheme;
 
-                // Indica qué esquema se utiliza
-                // cuando un usuario no está autorizado.
+                // Esquema para autorización.
                 options.DefaultChallengeScheme =
                     JwtBearerDefaults
                         .AuthenticationScheme;
             })
-
-            // Agrega la configuración específica
-            // para tokens Bearer.
             .AddJwtBearer(options =>
             {
-                // Permite conservar el token.
+                // Conserva el token.
                 options.SaveToken = true;
 
-                // Durante desarrollo permite
-                // trabajar sin exigir metadata HTTPS.
+                // Permite trabajar en desarrollo.
                 options.RequireHttpsMetadata = false;
 
-
-                // Define todas las reglas
-                // que debe cumplir un token.
+                // Reglas de validación del token.
                 options.TokenValidationParameters =
                     new TokenValidationParameters
                     {
-                        // Comprueba que el emisor
-                        // del token sea correcto.
+                        // Valida emisor.
                         ValidateIssuer = true,
 
-                        // Comprueba que la audiencia
-                        // del token sea correcta.
+                        // Valida audiencia.
                         ValidateAudience = true,
 
-                        // Comprueba que el token
-                        // todavía no haya expirado.
+                        // Valida expiración.
                         ValidateLifetime = true,
 
-                        // Comprueba que la firma
-                        // del token sea válida.
+                        // Valida firma.
                         ValidateIssuerSigningKey = true,
 
                         // Emisor esperado.
@@ -196,102 +169,50 @@ public partial class Program
                         ValidAudience =
                             jwtConfiguracion.Audiencia,
 
-                        // Clave que se utiliza
-                        // para comprobar la firma del token.
+                        // Clave para validar la firma.
                         IssuerSigningKey =
                             new SymmetricSecurityKey(
                                 clave
                             ),
 
-                        // No agrega minutos adicionales
-                        // de tolerancia a la expiración.
+                        // Sin tiempo extra.
                         ClockSkew =
                             TimeSpan.Zero
                     };
 
-
-                // =================================================
-                // DIAGNÓSTICO TEMPORAL DEL TOKEN
-                // =================================================
-
-                // Estos eventos nos permitirán ver
-                // en la consola de Visual Studio
-                // por qué exactamente falla la autenticación.
+                // Eventos para revisar el JWT.
                 options.Events =
                     new JwtBearerEvents
                     {
-                        // Este evento se ejecuta
-                        // cuando la validación del token falla.
+                        // Muestra errores del token.
                         OnAuthenticationFailed =
                             context =>
                             {
-                                // Imprime un título visible
-                                // para encontrar fácilmente el error.
                                 Console.WriteLine(
-                                    "=================================="
+                                    $"Error JWT: {context.Exception.Message}"
                                 );
 
-                                Console.WriteLine(
-                                    "ERROR JWT"
-                                );
-
-                                // Muestra el tipo exacto
-                                // de excepción que ocurrió.
-                                Console.WriteLine(
-                                    "Tipo: " +
-                                    context.Exception
-                                        .GetType()
-                                        .Name
-                                );
-
-                                // Muestra el mensaje exacto
-                                // de la excepción.
-                                Console.WriteLine(
-                                    "Mensaje: " +
-                                    context.Exception
-                                        .Message
-                                );
-
-                                Console.WriteLine(
-                                    "=================================="
-                                );
-
-
-                                // Finaliza correctamente
-                                // el evento asíncrono.
                                 return Task.CompletedTask;
                             },
 
-
-                        // Este evento se ejecuta
-                        // cuando el token sí es válido.
+                        // Confirma token válido.
                         OnTokenValidated =
                             context =>
                             {
-                                // Muestra en consola
-                                // que el token fue aceptado.
                                 Console.WriteLine(
                                     "JWT validado correctamente."
                                 );
 
-                                // Finaliza el evento.
                                 return Task.CompletedTask;
                             }
                     };
             });
 
-
-        // Activa el sistema de autorización
-        // para poder utilizar [Authorize].
+        // Activa autorización.
         builder.Services
             .AddAuthorization();
 
-
-        // =========================================================
-        // CONEXIÓN CON SQL SERVER
-        // =========================================================
-
-        // Registra el contexto de Entity Framework.
+        // Configura SQL Server.
         builder.Services
             .AddDbContext<TiendaOnlineContext>(
                 options =>
@@ -303,83 +224,61 @@ public partial class Program
                     )
             );
 
-
-        // =========================================================
-        // CONTROLADORES Y JSON
-        // =========================================================
-
-        // Registra los controladores de la API.
+        // Registra controladores.
         builder.Services
             .AddControllers(options =>
             {
-                // Evita que ASP.NET Core obligue
-                // automáticamente a validar como required
-                // todas las propiedades string no anulables.
+                // Evita required automático.
                 options
                     .SuppressImplicitRequiredAttributeForNonNullableReferenceTypes =
                     true;
             })
-
-            // Configura el comportamiento de JSON.
             .AddJsonOptions(options =>
             {
-                // Evita errores cuando existen
-                // relaciones circulares entre entidades.
+                // Evita relaciones circulares.
                 options
                     .JsonSerializerOptions
                     .ReferenceHandler =
                     ReferenceHandler.IgnoreCycles;
             });
 
-
-        // =========================================================
-        // SWAGGER
-        // =========================================================
-
-        // Permite que Swagger detecte los endpoints.
+        // Habilita Swagger.
         builder.Services
             .AddEndpointsApiExplorer();
 
-
-        // Configura Swagger con soporte para JWT.
+        // Configura Swagger con JWT.
         builder.Services
             .AddSwaggerGen(options =>
             {
-                // Define el sistema de seguridad Bearer.
+                // Define autenticación Bearer.
                 options.AddSecurityDefinition(
                     "Bearer",
                     new OpenApiSecurityScheme
                     {
-                        // Nombre del encabezado HTTP.
+                        // Nombre del header.
                         Name = "Authorization",
 
-                        // Indica que se utiliza
-                        // autenticación HTTP.
+                        // Tipo HTTP.
                         Type =
                             SecuritySchemeType.Http,
 
-                        // Define el esquema Bearer.
+                        // Esquema Bearer.
                         Scheme = "bearer",
 
-                        // Indica que el contenido
-                        // corresponde a un JWT.
+                        // Formato JWT.
                         BearerFormat = "JWT",
 
-                        // El token se envía
-                        // dentro del header.
+                        // Va en el header.
                         In =
                             ParameterLocation.Header,
 
-                        // Explicación que aparece
-                        // dentro de Swagger.
+                        // Ayuda para Swagger.
                         Description =
                             "Pegue únicamente el token JWT"
                     }
                 );
 
-
-                // Hace que Swagger utilice
-                // la definición Bearer anterior.
+                // Aplica seguridad Bearer.
                 options.AddSecurityRequirement(
                     document =>
                         new OpenApiSecurityRequirement
@@ -395,101 +294,58 @@ public partial class Program
                 );
             });
 
-
-        // =========================================================
-        // CORS PARA ANGULAR
-        // =========================================================
-
-        // Configura CORS para permitir
-        // peticiones desde el proyecto Angular.
+        // Permite peticiones desde Angular.
         builder.Services
             .AddCors(options =>
             {
-                // Crea una política llamada Angular.
+                // Política para localhost:4200.
                 options.AddPolicy(
                     "Angular",
                     policy =>
                     {
                         policy
-
-                            // Permite peticiones
-                            // desde Angular en localhost:4200.
                             .WithOrigins(
                                 "http://localhost:4200"
                             )
-
-                            // Permite cualquier encabezado.
                             .AllowAnyHeader()
-
-                            // Permite GET, POST, PUT,
-                            // DELETE y otros métodos.
                             .AllowAnyMethod();
                     }
                 );
             });
 
-
-        // =========================================================
-        // CREAR LA APLICACIÓN
-        // =========================================================
-
-        // Construye la aplicación
-        // con todas las configuraciones anteriores.
+        // Construye la aplicación.
         var app =
             builder.Build();
 
-
-        // Activa el manejador global
-        // de excepciones.
+        // Activa manejo de errores.
         app.UseExceptionHandler();
 
-
-        // =========================================================
-        // SWAGGER EN DESARROLLO
-        // =========================================================
-
-        // Swagger solamente se activa
-        // cuando la aplicación está en desarrollo.
-        if (app.Environment.IsDevelopment())
+        // Activa Swagger en desarrollo.
+        if (
+            app.Environment
+                .IsDevelopment()
+        )
         {
-            // Genera el archivo Swagger.
             app.UseSwagger();
-
-            // Muestra la interfaz Swagger UI.
             app.UseSwaggerUI();
         }
 
-
-        // =========================================================
-        // PIPELINE DE LA API
-        // =========================================================
-
-        // Redirige peticiones HTTP hacia HTTPS.
+        // Redirige a HTTPS.
         app.UseHttpsRedirection();
 
-
-        // Lee y valida el token JWT
-        // enviado por el usuario.
+        // Valida el token.
         app.UseAuthentication();
 
-
-        // Activa la política CORS
-        // creada para Angular.
+        // Activa CORS.
         app.UseCors("Angular");
 
-
-        // Comprueba si el usuario
-        // tiene permiso para acceder al endpoint.
+        // Valida permisos.
         app.UseAuthorization();
 
-
-        // Conecta las rutas
-        // con los controladores.
+        // Mapea controladores.
         app.MapControllers();
 
-
-        // Inicia la API
-        // y queda esperando peticiones.
+        // Inicia la API.
         app.Run();
     }
 }

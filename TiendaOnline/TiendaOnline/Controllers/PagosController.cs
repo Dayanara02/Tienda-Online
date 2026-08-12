@@ -1,126 +1,103 @@
-﻿// Permite utilizar atributos como [Authorize]
-// para controlar quién puede utilizar cada endpoint.
+﻿// Permite usar autorización.
 using Microsoft.AspNetCore.Authorization;
 
-// Permite crear controladores de API y devolver
-// respuestas como Ok(), BadRequest(), NotFound(), etc.
+// Permite crear endpoints API.
 using Microsoft.AspNetCore.Mvc;
 
-// Permite realizar consultas con Entity Framework Core,
-// por ejemplo FirstOrDefaultAsync(), AnyAsync() y AsNoTracking().
+// Permite consultar la base de datos.
 using Microsoft.EntityFrameworkCore;
 
-// Permite leer los datos almacenados dentro del token JWT,
-// principalmente el identificador y el rol del usuario.
+// Permite leer datos del token.
 using System.Security.Claims;
 
-// Importa el contexto de la base de datos.
+// Importa el contexto.
 using TiendaOnline.AccesoDatos.Context;
 
-// Importa las entidades como Pago.
+// Importa las entidades.
 using TiendaOnline.Dominio.Entidades;
 
+// Importa los servicios.
+using TiendaOnline.Dominio.InterfacesLN;
 
-// Define el espacio de nombres del controlador.
 namespace TiendaOnline.API.Controllers;
 
-
-// Indica que todos los endpoints de este controlador
-// requieren que el usuario haya iniciado sesión.
+// Requiere usuario autenticado.
 [Authorize]
 
-// Indica que esta clase funciona como controlador de API.
+// Define un controlador API.
 [ApiController]
 
-// Define la dirección principal:
-//
-// api/Pagos
+// Ruta principal del controlador.
 [Route("api/[controller]")]
 public class PagosController : ControllerBase
 {
-    // Guarda el contexto de Entity Framework
-    // utilizado para trabajar con SQL Server.
+    // Contexto de la base de datos.
     private readonly TiendaOnlineContext _context;
 
+    // Servicio para generar PDF.
+    private readonly IPdfServicio _pdfServicio;
 
-    // Constructor del controlador.
+    // Servicio para enviar correo.
+    private readonly ICorreoServicio _correoServicio;
+
+    // Permite registrar errores.
+    private readonly ILogger<PagosController> _logger;
+
+    // Recibe las dependencias.
     public PagosController(
-        TiendaOnlineContext context
-    )
+        TiendaOnlineContext context,
+        IPdfServicio pdfServicio,
+        ICorreoServicio correoServicio,
+        ILogger<PagosController> logger)
     {
-        // Guarda el contexto recibido mediante
-        // inyección de dependencias.
+        // Guarda el contexto.
         _context = context;
+
+        // Guarda el servicio PDF.
+        _pdfServicio = pdfServicio;
+
+        // Guarda el servicio de correo.
+        _correoServicio = correoServicio;
+
+        // Guarda el logger.
+        _logger = logger;
     }
 
-
-    // =========================================================
-    // OBTENER TODOS LOS PAGOS
-    // =========================================================
-
-    // GET: api/Pagos
-    //
-    // Solamente Administrador y Empleado
-    // pueden consultar todos los pagos del sistema.
+    // Obtiene todos los pagos.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Pago>>>
         GetPagos()
     {
-        // Consulta todos los pagos.
+        // Consulta los pagos.
         var pagos =
             await _context.Pagos
-
-                // No se necesita seguimiento porque
-                // solamente se va a leer información.
                 .AsNoTracking()
-
-                // Ordena primero los pagos más recientes.
                 .OrderByDescending(
                     p => p.IdPago
                 )
-
-                // Ejecuta la consulta.
                 .ToListAsync();
 
-
-        // Devuelve código HTTP 200
-        // junto con los pagos encontrados.
+        // Devuelve los resultados.
         return Ok(pagos);
     }
 
-
-    // =========================================================
-    // OBTENER UN PAGO
-    // =========================================================
-
-    // GET: api/Pagos/5
-    //
-    // Administrador y Empleado pueden consultar cualquier pago.
-    // Un Cliente solamente puede consultar pagos de sus pedidos.
+    // Obtiene un pago.
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetPago(
-        int id
-    )
+    public async Task<IActionResult>
+        GetPago(int id)
     {
-        // Busca el pago solicitado y obtiene también
-        // el usuario propietario del pedido.
+        // Busca el pago.
         var pago =
             await _context.Pagos
-
-                // Esta consulta solamente lee información.
                 .AsNoTracking()
-
-                // Busca el pago mediante su identificador.
                 .Where(
                     p => p.IdPago == id
                 )
-
-                // Devuelve únicamente la información necesaria.
                 .Select(
                     p => new
                     {
-                        // Identificador del pago.
+                        // Id del pago.
                         idPago =
                             p.IdPago,
 
@@ -128,15 +105,16 @@ public class PagosController : ControllerBase
                         idPedido =
                             p.IdPedido,
 
-                        // Usuario propietario del pedido.
+                        // Usuario dueño del pedido.
                         idUsuario =
-                            p.IdPedidoNavigation.IdUsuario,
+                            p.IdPedidoNavigation
+                                .IdUsuario,
 
-                        // Método utilizado.
+                        // Método usado.
                         metodoPago =
                             p.MetodoPago,
 
-                        // Referencia del pago.
+                        // Referencia generada.
                         referencia =
                             p.Referencia,
 
@@ -144,7 +122,7 @@ public class PagosController : ControllerBase
                         monto =
                             p.Monto,
 
-                        // Fecha en que se pagó.
+                        // Fecha del pago.
                         fechaPago =
                             p.FechaPago,
 
@@ -152,21 +130,18 @@ public class PagosController : ControllerBase
                         estado =
                             p.Estado,
 
-                        // Identificador del método.
+                        // Id del método.
                         idMetodoPago =
                             p.IdMetodoPago,
 
-                        // Identificador del estado del pago.
+                        // Id del estado.
                         idEstadoPago =
                             p.IdEstadoPago
                     }
                 )
-
-                // Obtiene solamente un resultado.
                 .FirstOrDefaultAsync();
 
-
-        // Comprueba si el pago existe.
+        // Valida que exista.
         if (pago == null)
         {
             return NotFound(
@@ -174,16 +149,13 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // Obtiene el rol del usuario autenticado.
+        // Obtiene el rol.
         var rol =
             User.FindFirstValue(
                 ClaimTypes.Role
             );
 
-
-        // Administrador y Empleado
-        // pueden consultar cualquier pago.
+        // Admin y empleado pueden verlo.
         if (
             rol == "Administrador" ||
             rol == "Empleado"
@@ -192,17 +164,13 @@ public class PagosController : ControllerBase
             return Ok(pago);
         }
 
-
-        // Obtiene el identificador del Cliente
-        // desde el token JWT.
+        // Obtiene el usuario del token.
         var idUsuarioTexto =
             User.FindFirstValue(
                 ClaimTypes.NameIdentifier
             );
 
-
-        // Comprueba que el identificador
-        // recibido desde el token sea válido.
+        // Valida el usuario.
         if (
             !int.TryParse(
                 idUsuarioTexto,
@@ -211,53 +179,36 @@ public class PagosController : ControllerBase
         )
         {
             return Unauthorized(
-                "No se pudo identificar al usuario del token."
+                "No se pudo identificar al usuario."
             );
         }
 
-
-        // El Cliente solamente puede consultar
-        // pagos relacionados con sus propios pedidos.
-        if (pago.idUsuario != idUsuario)
+        // Evita ver pagos ajenos.
+        if (
+            pago.idUsuario != idUsuario
+        )
         {
             return Forbid();
         }
-
 
         // Devuelve el pago.
         return Ok(pago);
     }
 
-
-    // =========================================================
-    // PAGAR UN PEDIDO
-    // =========================================================
-
-    // POST: api/Pagos/pagar
-    //
-    // Este es el endpoint que utilizará
-    // el botón "Pagar pedido" de Angular.
-    //
-    // Solamente los Clientes pueden utilizarlo.
+    // Realiza el pago.
     [Authorize(Roles = "Cliente")]
     [HttpPost("pagar")]
-    public async Task<IActionResult> PagarPedido(
-        [FromBody] PagarPedidoDto dto
-    )
+    public async Task<IActionResult>
+        PagarPedido(
+            [FromBody] PagarPedidoDto dto)
     {
-        // =====================================================
-        // 1. IDENTIFICAR AL CLIENTE
-        // =====================================================
-
-        // Obtiene desde el token JWT
-        // el identificador del Cliente.
+        // Obtiene el usuario del token.
         var idUsuarioTexto =
             User.FindFirstValue(
                 ClaimTypes.NameIdentifier
             );
 
-
-        // Comprueba que pueda convertirse a número.
+        // Valida el usuario.
         if (
             !int.TryParse(
                 idUsuarioTexto,
@@ -266,17 +217,11 @@ public class PagosController : ControllerBase
         )
         {
             return Unauthorized(
-                "No se pudo identificar al usuario del token."
+                "No se pudo identificar al usuario."
             );
         }
 
-
-        // =====================================================
-        // 2. VALIDAR LOS DATOS RECIBIDOS
-        // =====================================================
-
-        // Comprueba que se haya enviado
-        // un pedido válido.
+        // Valida el pedido.
         if (dto.IdPedido <= 0)
         {
             return BadRequest(
@@ -284,9 +229,7 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // Comprueba que se haya seleccionado
-        // un método de pago.
+        // Valida el método.
         if (dto.IdMetodoPago <= 0)
         {
             return BadRequest(
@@ -294,20 +237,16 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // =====================================================
-        // 3. BUSCAR EL PEDIDO
-        // =====================================================
-
-        // Busca el pedido que el Cliente desea pagar.
+        // Busca el pedido.
         var pedido =
             await _context.Pedidos
                 .FirstOrDefaultAsync(
-                    p => p.IdPedido == dto.IdPedido
+                    p =>
+                        p.IdPedido ==
+                        dto.IdPedido
                 );
 
-
-        // Comprueba que el pedido exista.
+        // Valida que exista.
         if (pedido == null)
         {
             return NotFound(
@@ -315,48 +254,38 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // =====================================================
-        // 4. COMPROBAR QUE EL PEDIDO SEA DEL CLIENTE
-        // =====================================================
-
-        // Evita que un Cliente pueda pagar
-        // el pedido de otra persona.
-        if (pedido.IdUsuario != idUsuario)
+        // Valida el propietario.
+        if (
+            pedido.IdUsuario !=
+            idUsuario
+        )
         {
             return Forbid();
         }
 
-
-        // =====================================================
-        // 5. COMPROBAR QUE NO ESTÉ CANCELADO
-        // =====================================================
-
-        // Un pedido cancelado ya no puede pagarse.
-        if (pedido.Estado == "Cancelado")
+        // Evita pagar cancelados.
+        if (
+            pedido.Estado ==
+            "Cancelado"
+        )
         {
             return BadRequest(
                 "No se puede pagar un pedido cancelado."
             );
         }
 
-
-        // =====================================================
-        // 6. COMPROBAR SI YA ESTÁ PAGADO
-        // =====================================================
-
-        // Busca si ya existe un pago aprobado
-        // relacionado con este pedido.
+        // Revisa si ya fue pagado.
         var yaEstaPagado =
             await _context.Pagos
                 .AnyAsync(
                     p =>
-                        p.IdPedido == pedido.IdPedido &&
-                        p.Estado == "Aprobado"
+                        p.IdPedido ==
+                            pedido.IdPedido &&
+                        p.Estado ==
+                            "Aprobado"
                 );
 
-
-        // Evita cobrar dos veces el mismo pedido.
+        // Evita pagos duplicados.
         if (yaEstaPagado)
         {
             return BadRequest(
@@ -364,26 +293,18 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // =====================================================
-        // 7. BUSCAR EL MÉTODO DE PAGO
-        // =====================================================
-
-        // Busca el método seleccionado por el Cliente.
-        //
-        // También comprueba que el método se encuentre activo.
+        // Busca el método de pago.
         var metodoPago =
             await _context.MetodoPagos
                 .AsNoTracking()
                 .FirstOrDefaultAsync(
                     m =>
                         m.IdMetodoPago ==
-                        dto.IdMetodoPago &&
+                            dto.IdMetodoPago &&
                         m.Estado
                 );
 
-
-        // Comprueba que el método exista.
+        // Valida el método.
         if (metodoPago == null)
         {
             return BadRequest(
@@ -391,25 +312,18 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // =====================================================
-        // 8. BUSCAR EL ESTADO APROBADO
-        // =====================================================
-
-        // Busca en la tabla EstadoPago
-        // el estado llamado Aprobado.
+        // Busca el estado Aprobado.
         var estadoPagoAprobado =
             await _context.EstadoPagos
                 .AsNoTracking()
                 .FirstOrDefaultAsync(
                     e =>
-                        e.Nombre == "Aprobado" &&
+                        e.Nombre ==
+                            "Aprobado" &&
                         e.Estado
                 );
 
-
-        // Comprueba que ese estado exista
-        // correctamente en la base de datos.
+        // Valida el estado.
         if (estadoPagoAprobado == null)
         {
             return BadRequest(
@@ -417,24 +331,18 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // =====================================================
-        // 9. BUSCAR EL ESTADO PAGADO DEL PEDIDO
-        // =====================================================
-
-        // Busca en EstadoPedido
-        // el estado general llamado Pagado.
+        // Busca el estado Pagado.
         var estadoPedidoPagado =
             await _context.EstadoPedidos
                 .AsNoTracking()
                 .FirstOrDefaultAsync(
                     e =>
-                        e.Nombre == "Pagado" &&
+                        e.Nombre ==
+                            "Pagado" &&
                         e.Estado
                 );
 
-
-        // Comprueba que exista.
+        // Valida el estado.
         if (estadoPedidoPagado == null)
         {
             return BadRequest(
@@ -442,157 +350,214 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // =====================================================
-        // 10. CREAR EL PAGO
-        // =====================================================
-
-        // Crea una nueva entidad Pago.
+        // Crea el pago.
         var nuevoPago =
             new Pago
             {
-                // Relaciona el pago con el pedido.
+                // Relaciona el pedido.
                 IdPedido =
                     pedido.IdPedido,
 
-                // Guarda también el nombre del método
-                // para conservar la información del pago.
+                // Guarda el método.
                 MetodoPago =
                     metodoPago.Nombre,
 
-                // Crea una referencia sencilla
-                // para identificar esta transacción.
+                // Genera la referencia.
                 Referencia =
                     $"PAGO-{pedido.IdPedido}-{DateTime.UtcNow:yyyyMMddHHmmss}",
 
-                // IMPORTANTE:
-                // El monto NO viene desde Angular.
-                //
-                // Se toma directamente del Total guardado
-                // en el pedido para evitar modificaciones.
+                // Usa el total real.
                 Monto =
                     pedido.Total,
 
-                // Guarda la fecha actual del pago.
+                // Guarda la fecha.
                 FechaPago =
                     DateTime.UtcNow,
 
-                // Como este proyecto simula el proceso de pago,
-                // el pago se registra directamente como Aprobado.
+                // Marca como aprobado.
                 Estado =
                     estadoPagoAprobado.Nombre,
 
-                // Guarda la relación con MetodoPago.
+                // Relaciona el método.
                 IdMetodoPago =
                     metodoPago.IdMetodoPago,
 
-                // Guarda la relación con EstadoPago.
+                // Relaciona el estado.
                 IdEstadoPago =
-                    estadoPagoAprobado.IdEstadoPago
+                    estadoPagoAprobado
+                        .IdEstadoPago
             };
 
-
-        // Agrega el nuevo pago al contexto.
+        // Agrega el pago.
         _context.Pagos.Add(
             nuevoPago
         );
 
-
-        // =====================================================
-        // 11. CAMBIAR EL PEDIDO A PAGADO
-        // =====================================================
-
-        // Actualiza el identificador
-        // del estado general del pedido.
+        // Cambia el estado del pedido.
         pedido.IdEstadoPedido =
-            estadoPedidoPagado.IdEstadoPedido;
+            estadoPedidoPagado
+                .IdEstadoPedido;
 
-        // Actualiza también el nombre
-        // guardado directamente en Pedido.
+        // Guarda el nombre Pagado.
         pedido.Estado =
-            estadoPedidoPagado.Nombre;
+            estadoPedidoPagado
+                .Nombre;
 
+        // Guarda primero el pago.
+        await _context
+            .SaveChangesAsync();
 
-        // =====================================================
-        // 12. GUARDAR TODO EN LA BASE DE DATOS
-        // =====================================================
+        // Indica si se envió el correo.
+        var correoEnviado =
+            false;
 
-        // Guarda el Pago y el cambio del Pedido
-        // en SQL Server.
-        await _context.SaveChangesAsync();
+        // Mensaje para Angular.
+        var mensajeCorreo =
+            "Comprobante enviado al correo.";
 
+        try
+        {
+            // Busca los datos para el PDF.
+            var pedidoComprobante =
+                await _context.Pedidos
+                    .AsNoTracking()
 
-        // =====================================================
-        // 13. DEVOLVER LA RESPUESTA
-        // =====================================================
+                    // Incluye el cliente.
+                    .Include(
+                        p =>
+                            p.IdUsuarioNavigation
+                    )
 
-        // Devuelve la información necesaria
-        // para que Angular sepa que el pago funcionó.
+                    // Incluye los productos.
+                    .Include(
+                        p =>
+                            p.DetallePedidos
+                    )
+                    .ThenInclude(
+                        d =>
+                            d.IdProductoNavigation
+                    )
+
+                    // Busca el pedido pagado.
+                    .FirstOrDefaultAsync(
+                        p =>
+                            p.IdPedido ==
+                            pedido.IdPedido
+                    );
+
+            // Valida los datos.
+            if (
+                pedidoComprobante != null
+            )
+            {
+                // Genera el PDF.
+                var pdf =
+                    _pdfServicio
+                        .GenerarComprobante(
+                            pedidoComprobante,
+                            nuevoPago
+                        );
+
+                // Obtiene el cliente.
+                var usuario =
+                    pedidoComprobante
+                        .IdUsuarioNavigation;
+
+                // Forma el nombre completo.
+                var nombreCliente =
+                    $"{usuario.Nombre} {usuario.Apellido}";
+
+                // Envía el correo.
+                await _correoServicio
+                    .EnviarComprobanteAsync(
+                        usuario.Correo,
+                        nombreCliente,
+                        pedido.IdPedido,
+                        pdf
+                    );
+
+                // Confirma el envío.
+                correoEnviado =
+                    true;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Registra el error del correo.
+            _logger.LogError(
+                ex,
+                "No se pudo enviar el comprobante del pedido {IdPedido}.",
+                pedido.IdPedido
+            );
+
+            // El pago sigue aprobado.
+            mensajeCorreo =
+                "El pago fue aprobado, pero el comprobante no pudo enviarse.";
+        }
+
+        // Devuelve el resultado.
         return Ok(
             new
             {
-                // Mensaje para mostrar al Cliente.
+                // Mensaje principal.
                 mensaje =
                     "Pago realizado correctamente.",
 
-                // Pedido que acaba de pagarse.
+                // Pedido pagado.
                 idPedido =
                     pedido.IdPedido,
 
-                // Identificador generado para el pago.
+                // Pago generado.
                 idPago =
                     nuevoPago.IdPago,
 
-                // Estado mostrado al Cliente.
+                // Estado del pago.
                 estadoPago =
                     "Pagado",
 
-                // Estado general del pedido.
+                // Estado del pedido.
                 estadoPedido =
                     pedido.Estado,
 
-                // Método seleccionado.
+                // Método utilizado.
                 metodoPago =
                     nuevoPago.MetodoPago,
 
-                // Monto realmente cobrado.
+                // Monto pagado.
                 monto =
                     nuevoPago.Monto,
 
-                // Referencia generada.
+                // Referencia.
                 referencia =
                     nuevoPago.Referencia,
 
-                // Fecha del pago.
+                // Fecha.
                 fechaPago =
-                    nuevoPago.FechaPago
+                    nuevoPago.FechaPago,
+
+                // Resultado del correo.
+                correoEnviado,
+
+                // Mensaje del correo.
+                mensajeCorreo
             }
         );
     }
 
-
-    // =========================================================
-    // MODIFICAR UN PAGO
-    // =========================================================
-
-    // PUT: api/Pagos/5
-    //
-    // Solamente Administrador y Empleado
-    // pueden modificar manualmente un pago.
+    // Modifica un pago.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> PutPago(
-        int id,
-        Pago pago
-    )
+    public async Task<IActionResult>
+        PutPago(
+            int id,
+            Pago pago)
     {
-        // Busca el pago actual.
+        // Busca el pago.
         var pagoActual =
             await _context.Pagos
                 .FindAsync(id);
 
-
-        // Comprueba que exista.
+        // Valida que exista.
         if (pagoActual == null)
         {
             return NotFound(
@@ -600,64 +565,58 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // Actualiza la información permitida.
+        // Actualiza el pedido.
         pagoActual.IdPedido =
             pago.IdPedido;
 
+        // Actualiza el método.
         pagoActual.MetodoPago =
             pago.MetodoPago;
 
+        // Actualiza la referencia.
         pagoActual.Referencia =
             pago.Referencia;
 
+        // Actualiza el monto.
         pagoActual.Monto =
             pago.Monto;
 
+        // Actualiza la fecha.
         pagoActual.FechaPago =
             pago.FechaPago;
 
+        // Actualiza el estado.
         pagoActual.Estado =
             pago.Estado;
 
+        // Actualiza el método relacionado.
         pagoActual.IdMetodoPago =
             pago.IdMetodoPago;
 
+        // Actualiza el estado relacionado.
         pagoActual.IdEstadoPago =
             pago.IdEstadoPago;
 
-
         // Guarda los cambios.
-        await _context.SaveChangesAsync();
+        await _context
+            .SaveChangesAsync();
 
-
-        // HTTP 204 indica que la actualización
-        // terminó correctamente.
+        // Devuelve respuesta vacía.
         return NoContent();
     }
 
-
-    // =========================================================
-    // ELIMINAR UN PAGO
-    // =========================================================
-
-    // DELETE: api/Pagos/5
-    //
-    // Solamente Administrador
-    // puede eliminar pagos.
+    // Elimina un pago.
     [Authorize(Roles = "Administrador")]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeletePago(
-        int id
-    )
+    public async Task<IActionResult>
+        DeletePago(int id)
     {
         // Busca el pago.
         var pago =
             await _context.Pagos
                 .FindAsync(id);
 
-
-        // Comprueba que exista.
+        // Valida que exista.
         if (pago == null)
         {
             return NotFound(
@@ -665,35 +624,26 @@ public class PagosController : ControllerBase
             );
         }
 
-
-        // Marca el pago para eliminarlo.
+        // Elimina el pago.
         _context.Pagos.Remove(
             pago
         );
 
+        // Guarda el cambio.
+        await _context
+            .SaveChangesAsync();
 
-        // Guarda la eliminación.
-        await _context.SaveChangesAsync();
-
-
-        // Devuelve HTTP 204.
+        // Devuelve respuesta vacía.
         return NoContent();
     }
 }
 
-
-// =============================================================
-// DTO PARA PAGAR UN PEDIDO
-// =============================================================
-
-// Esta clase representa únicamente
-// lo que Angular debe enviar al pagar.
-// Esa información se controla desde el backend.
+// Datos necesarios para pagar.
 public class PagarPedidoDto
 {
-    // Pedido que se desea pagar.
+    // Pedido seleccionado.
     public int IdPedido { get; set; }
 
-    // Método seleccionado por el Cliente.
+    // Método seleccionado.
     public int IdMetodoPago { get; set; }
 }
