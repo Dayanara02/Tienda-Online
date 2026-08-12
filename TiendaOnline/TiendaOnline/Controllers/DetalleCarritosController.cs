@@ -104,12 +104,12 @@ public class DetalleCompraProveedorsController : ControllerBase
     {   //  Busca el detalle que se desea eliminar utilizando su ID
         var detalle =
             await _context.DetalleCompraProveedors.FindAsync(id);
-       //Si no encuentra el detalle, devuelve una respuesta 404 Not
+        //Si no encuentra el detalle, devuelve una respuesta 404 Not
         if (detalle == null)
         {
             return NotFound();
         }
-         
+
         _context.DetalleCompraProveedors.Remove(detalle);
         //Guarda los cambios y ejecuta la eliminacion en la base de datos 
         await _context.SaveChangesAsync();
