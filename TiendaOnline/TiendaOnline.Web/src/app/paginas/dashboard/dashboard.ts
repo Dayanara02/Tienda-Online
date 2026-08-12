@@ -783,6 +783,14 @@ export class Dashboard {
     ]);
   }
 
+  // Navega hacia Notificaciones.
+  irANotificaciones(): void {
+    // Abre las notificaciones del cliente.
+    this.router.navigate([
+      '/notificaciones'
+    ]);
+  }
+
   // Navega hacia Descuentos.
   irADescuentos(): void {
     // Abre la pantalla de promociones.

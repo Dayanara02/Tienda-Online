@@ -407,6 +407,48 @@ public class PagosController : ControllerBase
         await _context
             .SaveChangesAsync();
 
+        // Crea una notificación del pago.
+        var notificacionPago =
+            new Notificacion
+            {
+                // Usuario que recibirá la notificación.
+                IdUsuario =
+                    pedido.IdUsuario,
+
+                // Título mostrado en la pantalla.
+                Titulo =
+                    "Pago aprobado",
+
+                // Mensaje para el cliente.
+                Mensaje =
+                    $"El pago del pedido #{pedido.IdPedido} fue aprobado correctamente.",
+
+                // Tipo de notificación.
+                Tipo =
+                    "Pago",
+
+                // Guarda la fecha actual.
+                FechaCreacion =
+                    DateTime.UtcNow,
+
+                // Inicia como no leída.
+                Leida =
+                    false,
+
+                // Mantiene la notificación activa.
+                Estado =
+                    true
+            };
+
+        // Agrega la notificación.
+        _context.Notificacions.Add(
+            notificacionPago
+        );
+
+        // Guarda la notificación.
+        await _context
+            .SaveChangesAsync();
+
         // Indica si se envió el correo.
         var correoEnviado =
             false;
