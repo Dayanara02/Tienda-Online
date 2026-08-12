@@ -1,0 +1,398 @@
+/* Configuración general de la pantalla. */
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  color: #263746;
+}
+
+/* Contenedor principal. */
+.pagina-seguimiento {
+  width: min(1100px, 90%);
+  margin: 0 auto;
+  padding: 35px 0 50px;
+}
+
+/* Encabezado superior. */
+.encabezado {
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Etiqueta superior. */
+.etiqueta {
+  color: #1f4e79;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+/* Título. */
+.encabezado h1 {
+  margin: 5px 0;
+  color: #163a5c;
+  font-size: 28px;
+}
+
+/* Descripción. */
+.encabezado p {
+  margin: 0;
+  color: #6d7c88;
+  font-size: 14px;
+}
+
+/* Botón volver. */
+.boton-volver {
+  color: #1f4e79 !important;
+  border-color: #b8cbd9 !important;
+}
+
+/* Mensajes generales. */
+.mensaje {
+  padding: 18px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+  /* Texto interno de mensajes. */
+  .mensaje div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+/* Cargando. */
+.mensaje-carga {
+  background: #eaf2f8;
+  color: #1f4e79;
+}
+
+/* Error. */
+.mensaje-error {
+  background: #ffffff;
+  color: #5c6c77;
+  border: 1px solid #dde4e9;
+}
+
+/* Área principal. */
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Tarjeta superior. */
+.tarjeta-principal {
+  padding: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e0e6eb;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 4px 14px rgba(31, 78, 121, 0.06);
+}
+
+/* Icono del envío. */
+.icono-envio {
+  min-width: 58px;
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  background: #eaf2f8;
+  color: #1f4e79;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+  /* Tamaño del icono. */
+  .icono-envio mat-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+  }
+
+/* Ocupa el espacio disponible. */
+.informacion-principal {
+  flex: 1;
+}
+
+/* Texto pequeño. */
+.subtitulo {
+  color: #1f4e79;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Estado principal. */
+.informacion-principal h2 {
+  margin: 5px 0;
+  color: #163a5c;
+  font-size: 24px;
+}
+
+/* Descripción del estado. */
+.informacion-principal p {
+  margin: 0;
+  color: #71808a;
+  font-size: 13px;
+}
+
+/* Número de seguimiento. */
+.numero-seguimiento {
+  padding-left: 25px;
+  border-left: 1px solid #e2e7eb;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+  /* Etiqueta del seguimiento. */
+  .numero-seguimiento span {
+    color: #788791;
+    font-size: 11px;
+  }
+
+  /* Valor del seguimiento. */
+  .numero-seguimiento strong {
+    margin-top: 5px;
+    color: #1f4e79;
+    font-size: 15px;
+  }
+
+/* Tarjeta del proceso. */
+.tarjeta-seguimiento {
+  padding: 27px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e0e6eb;
+}
+
+/* Título de sección. */
+.titulo-seccion span {
+  color: #1f4e79;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Segundo título. */
+.titulo-seccion h3 {
+  margin: 5px 0 28px;
+  color: #163a5c;
+  font-size: 19px;
+}
+
+/* Contenedor horizontal de pasos. */
+.pasos {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Cada paso. */
+.paso {
+  width: 180px;
+  text-align: center;
+}
+
+/* Círculo del paso. */
+.circulo {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: #edf1f4;
+  color: #9ba7ae;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Paso completado. */
+.paso.completado .circulo {
+  background: #1f4e79;
+  color: #ffffff;
+}
+
+/* Texto de cada paso. */
+.texto-paso {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+  /* Nombre del paso. */
+  .texto-paso strong {
+    color: #53636e;
+    font-size: 13px;
+  }
+
+/* Paso activo. */
+.paso.completado strong {
+  color: #163a5c;
+}
+
+/* Descripción del paso. */
+.texto-paso span {
+  color: #85929b;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Línea entre los pasos. */
+.linea {
+  flex: 1;
+  height: 3px;
+  margin-top: 24px;
+  background: #dde4e8;
+}
+
+  /* Línea completada. */
+  .linea.completada {
+    background: #1f4e79;
+  }
+
+/* Dos tarjetas inferiores. */
+.informacion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+/* Información del envío y dirección. */
+.tarjeta-informacion {
+  padding: 23px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e0e6eb;
+}
+
+/* Título de cada tarjeta. */
+.encabezado-tarjeta {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #1f4e79;
+}
+
+  /* Título interior. */
+  .encabezado-tarjeta h3 {
+    margin: 0;
+    color: #163a5c;
+    font-size: 17px;
+  }
+
+/* Fila de información. */
+.dato {
+  padding: 11px 0;
+  border-bottom: 1px solid #edf0f2;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+  /* Último dato sin borde. */
+  .dato:last-child {
+    border-bottom: 0;
+  }
+
+  /* Etiquetas. */
+  .dato span {
+    color: #74838d;
+    font-size: 12px;
+  }
+
+  /* Valores. */
+  .dato strong {
+    color: #344955;
+    font-size: 12px;
+    text-align: right;
+  }
+
+/* Dirección completa. */
+.direccion {
+  margin: 0;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f6f8fa;
+  color: #485a65;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* Botones inferiores. */
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Botón principal. */
+.boton-inicio {
+  background: #1f4e79 !important;
+  color: #ffffff !important;
+}
+
+  /* Coloca el encabezado en columna. */
+  .encabezado {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Coloca la tarjeta principal en columna. */
+  .tarjeta-principal {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Ajusta el número de seguimiento. */
+  .numero-seguimiento {
+    width: 100%;
+    padding: 15px 0 0;
+    border-left: 0;
+    border-top: 1px solid #e2e7eb;
+    text-align: left;
+  }
+
+  /* Cambia los pasos a formato vertical. */
+  .pasos {
+    flex-direction: column;
+  }
+
+  /* Ajusta cada paso al formato vertical. */
+  .paso {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+  }
+
+  /* Ajusta el círculo en formato vertical. */
+  .circulo {
+    min-width: 50px;
+    margin: 0;
+  }
+
+  /* Cambia las líneas horizontales a verticales. */
+  .linea {
+    width: 3px;
+    height: 35px;
+    flex: none;
+    margin: 0 0 0 24px;
+  }
+
+  /* Coloca las tarjetas inferiores en una sola columna. */
+  .informacion-grid {
+    grid-template-columns: 1fr;
+  }
+}

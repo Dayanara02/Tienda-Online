@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 // Importa Entity Framework Core para consultar la base de datos.
 using Microsoft.EntityFrameworkCore;
 
-// Importa el contexto de la base de datos.
+// Importa el contexto principal de la aplicación.
 using TiendaOnline.AccesoDatos.Context;
 
 // Importa autorización para proteger los endpoints.
@@ -167,33 +167,25 @@ public class EnviosController : ControllerBase
                         estado =
                             e.Estado,
 
-                        // Identificador de la dirección.
+                        // Identificador de la dirección relacionada.
                         idDireccion =
                             e.IdDireccion,
 
-                        // Obtiene la dirección exacta relacionada.
+                        // Usa la misma dirección guardada en el pedido.
                         direccion =
-                            e.IdDireccionNavigation != null
-                                ? e.IdDireccionNavigation.DireccionExacta
-                                : null,
+                            e.IdPedidoNavigation.DireccionEntrega,
 
-                        // Obtiene la provincia relacionada.
+                        // Usa la provincia de la dirección registrada.
                         provincia =
-                            e.IdDireccionNavigation != null
-                                ? e.IdDireccionNavigation.Provincia
-                                : null,
+                            e.IdDireccionNavigation.Provincia,
 
-                        // Obtiene el cantón relacionado.
+                        // Usa el cantón de la dirección registrada.
                         canton =
-                            e.IdDireccionNavigation != null
-                                ? e.IdDireccionNavigation.Canton
-                                : null,
+                            e.IdDireccionNavigation.Canton,
 
-                        // Obtiene el distrito relacionado.
+                        // Usa el distrito de la dirección registrada.
                         distrito =
-                            e.IdDireccionNavigation != null
-                                ? e.IdDireccionNavigation.Distrito
-                                : null
+                            e.IdDireccionNavigation.Distrito
                     }
                 )
                 .FirstOrDefaultAsync();
@@ -206,7 +198,7 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Devuelve la información necesaria para seguimiento.
+        // Devuelve la información de seguimiento.
         return Ok(envio);
     }
 
@@ -217,17 +209,17 @@ public class EnviosController : ControllerBase
     public async Task<ActionResult<Envio>>
         PostEnvio(Envio envio)
     {
-        // Comprueba que el pedido exista.
-        var pedidoExiste =
+        // Busca el pedido relacionado.
+        var pedido =
             await _context.Pedidos
-                .AnyAsync(
+                .FirstOrDefaultAsync(
                     p =>
                         p.IdPedido ==
                         envio.IdPedido
                 );
 
-        // Informa si el pedido no existe.
-        if (!pedidoExiste)
+        // Comprueba que el pedido exista.
+        if (pedido == null)
         {
             return BadRequest(
                 "El pedido no existe."
@@ -251,7 +243,7 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Evita registrar dos envíos para el mismo pedido.
+        // Evita crear dos envíos para el mismo pedido.
         var pedidoYaTieneEnvio =
             await _context.Envios
                 .AnyAsync(
@@ -260,7 +252,7 @@ public class EnviosController : ControllerBase
                         envio.IdPedido
                 );
 
-        // Informa si ya existe un envío.
+        // Informa si ya existe otro envío.
         if (pedidoYaTieneEnvio)
         {
             return Conflict(
@@ -272,7 +264,7 @@ public class EnviosController : ControllerBase
         envio.IdEnvio =
             0;
 
-        // Asigna Pendiente si no se envía ningún estado.
+        // Asigna Pendiente si no se envía un estado.
         if (
             string.IsNullOrWhiteSpace(
                 envio.Estado
@@ -303,7 +295,7 @@ public class EnviosController : ControllerBase
     }
 
     // PUT: api/Envios/5
-    // Permite actualizar los datos del envío.
+    // Permite actualizar el estado y los datos del envío.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult>
@@ -311,12 +303,12 @@ public class EnviosController : ControllerBase
             int id,
             Envio envio)
     {
-        // Busca el envío existente.
+        // Busca el envío actual.
         var envioActual =
             await _context.Envios
                 .FindAsync(id);
 
-        // Devuelve 404 si no existe.
+        // Devuelve 404 si el envío no existe.
         if (envioActual == null)
         {
             return NotFound(
@@ -324,17 +316,17 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Comprueba que el pedido exista.
-        var pedidoExiste =
+        // Busca el pedido relacionado.
+        var pedido =
             await _context.Pedidos
-                .AnyAsync(
+                .FirstOrDefaultAsync(
                     p =>
                         p.IdPedido ==
                         envio.IdPedido
                 );
 
-        // Informa si el pedido no existe.
-        if (!pedidoExiste)
+        // Comprueba que el pedido exista.
+        if (pedido == null)
         {
             return BadRequest(
                 "El pedido no existe."
@@ -368,7 +360,7 @@ public class EnviosController : ControllerBase
                         e.IdEnvio != id
                 );
 
-        // Informa si el pedido ya tiene otro envío.
+        // Informa si ya existe otro envío.
         if (otroEnvioDelPedido)
         {
             return Conflict(
@@ -400,11 +392,35 @@ public class EnviosController : ControllerBase
         envioActual.FechaEntrega =
             envio.FechaEntrega;
 
-        // Actualiza el estado actual.
+        // Actualiza el estado del envío.
         envioActual.Estado =
             envio.Estado;
 
-        // Guarda los cambios realizados.
+        // Si el envío está Enviado, actualiza también el pedido.
+        if (
+            envio.Estado.Equals(
+                "Enviado",
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            pedido.Estado =
+                "Enviado";
+        }
+
+        // Si el envío está Entregado, actualiza también el pedido.
+        if (
+            envio.Estado.Equals(
+                "Entregado",
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            pedido.Estado =
+                "Entregado";
+        }
+
+        // Guarda todos los cambios.
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -430,7 +446,7 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Elimina el registro.
+        // Elimina el envío.
         _context.Envios.Remove(
             envio
         );
