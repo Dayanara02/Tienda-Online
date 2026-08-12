@@ -1,941 +1,975 @@
+/* Define variables de color para reutilizarlas en todo el Dashboard. */
+:host {
+  display: block;
+  --azul-principal: #1f4e79;
+  --azul-oscuro: #163a5c;
+  --azul-claro: #eaf2f8;
+  --dorado: #c79b42;
+  --blanco: #ffffff;
+  --gris-suave: #f4f6f8;
+  --texto: #24313d;
+  --texto-secundario: #6d7882;
+  --borde: #d8e0e7;
+}
+
+
+/* Hace que el tamaño de los elementos sea más fácil de controlar. */
 * {
   box-sizing: border-box;
 }
 
-:host {
-  display: block;
+
+/* Crea la estructura general del Dashboard. */
+.dashboard-layout {
   min-height: 100vh;
-  background: #e9eee1;
-  color: #1e2e22;
+  display: flex;
+  background-color: var(--gris-suave);
+  color: var(--texto);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-html {
-  scroll-behavior: smooth;
-}
 
-.contenedor {
-  width: min(1180px, calc(100% - 48px));
-  margin: 0 auto;
-}
-
-/* NAVEGACIÓN */
-
-.navegacion {
-  position: sticky;
+/* Crea la barra lateral izquierda. */
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
   top: 0;
-  z-index: 100;
-
-  background: rgba(233, 238, 225, 0.97);
-  backdrop-filter: blur(12px);
-
-  border-bottom:
-    1px solid rgba(30, 46, 34, 0.14);
-}
-
-.barra-navegacion {
-  min-height: 82px;
-
-  display: grid;
-  grid-template-columns:
-    auto 1fr auto;
-
-  align-items: center;
-
-  gap: 24px;
-}
-
-.logo {
-  color: #1e2e22;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 1.65rem;
-  font-weight: 700;
-
-  text-decoration: none;
-
-  white-space: nowrap;
-}
-
-.logo span {
-  color: #c89b3c;
-}
-
-/* BOTONES DEL MENÚ CENTRAL */
-
-.enlaces {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 20px;
-}
-
-.enlace-menu {
-  border: 0;
-
-  background: transparent;
-
-  color: #1e2e22;
-
-  padding: 8px 2px;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 0.9rem;
-
-  cursor: pointer;
-
-  white-space: nowrap;
-
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.enlace-menu:hover {
-  color: #b85c6b;
-
-  transform: translateY(-1px);
-}
-
-/* BOTONES DERECHA */
-
-.acciones {
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  flex-wrap: nowrap;
-}
-
-.boton-nav {
-  min-height: 40px;
-
-  padding: 0 13px;
-
-  border: 1px solid #1e2e22;
-  border-radius: 0;
-
-  background: transparent;
-  color: #1e2e22;
-
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 14px;
-
-  text-decoration: none;
-
-  white-space: nowrap;
-
-  cursor: pointer;
-
-  appearance: none;
-  -webkit-appearance: none;
-
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.boton-nav:hover {
-  background: #1e2e22;
-
-  color: white;
-
-  transform: translateY(-1px);
-}
-
-.boton-descuentos {
-  border-color: #c89b3c;
-
-  background: #c89b3c;
-
-  color: white;
-
-  font-weight: 600;
-}
-
-.boton-descuentos:hover {
-  border-color: #b85c6b;
-
-  background: #b85c6b;
-}
-
-/* HERO */
-
-.hero {
-  scroll-margin-top: 100px;
-
-  padding: 90px 0 80px;
-
-  overflow: hidden;
-}
-
-.contenido-hero {
-  display: grid;
-
-  grid-template-columns:
-    1.05fr 0.95fr;
-
-  gap: 40px;
-
-  align-items: center;
-}
-
-.etiqueta {
-  color: #b85c6b;
-
-  font-family: monospace;
-
-  font-size: 0.72rem;
-
-  letter-spacing: 0.14em;
-
-  text-transform: uppercase;
-}
-
-.saludo {
-  margin: 18px 0 0;
-
-  color:
-    rgba(30, 46, 34, 0.65);
-
-  font-size: 0.92rem;
-}
-
-.texto-hero h1 {
-  margin: 10px 0 22px;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:
-    clamp(2.8rem, 5vw, 4.5rem);
-
-  font-weight: 500;
-
-  line-height: 1.02;
-}
-
-.texto-hero h1 em {
-  color: #c89b3c;
-}
-
-.descripcion-hero {
-  max-width: 510px;
-
-  margin-bottom: 32px;
-
-  color:
-    rgba(30, 46, 34, 0.75);
-
-  font-size: 1.05rem;
-
-  line-height: 1.7;
-}
-
-.botones-hero {
-  display: flex;
-
-  align-items: center;
-
-  gap: 18px;
-
-  flex-wrap: wrap;
-}
-
-.boton-principal {
-  display: inline-flex;
-
-  align-items: center;
-
-  padding: 14px 26px;
-
-  border: 0;
-  border-radius: 999px;
-
-  background: #1e2e22;
-
-  color: white;
-
-  font: inherit;
-
-  cursor: pointer;
-}
-
-.boton-principal:hover {
-  background: #b85c6b;
-}
-
-.boton-enlace {
-  border: 0;
-  border-bottom:
-    1px solid #1e2e22;
-
-  background: transparent;
-
-  color: #1e2e22;
-
-  padding: 4px 0;
-
-  font: inherit;
-
-  cursor: pointer;
-}
-
-.boton-enlace:hover {
-  color: #b85c6b;
-
-  border-bottom-color: #b85c6b;
-}
-
-.beneficios {
-  display: flex;
-
-  gap: 25px;
-
-  flex-wrap: wrap;
-
-  margin-top: 42px;
-
-  color:
-    rgba(30, 46, 34, 0.65);
-
-  font-family: monospace;
-
-  font-size: 0.72rem;
-}
-
-/* VISUAL HERO */
-
-.visual-hero {
-  position: relative;
-
-  min-height: 480px;
-}
-
-.forma {
-  position: absolute;
-}
-
-.forma-dorada {
-  top: 10px;
-  right: 35px;
-
-  width: 300px;
-  height: 300px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle at 30% 25%,
-      #e8d4a0,
-      #c89b3c
-    );
-}
-
-.forma-rosa {
-  bottom: 28px;
-  left: 8px;
-
-  width: 210px;
-  height: 245px;
-
-  border-radius:
-    44% 56% 60% 40%;
-
-  background:
-    radial-gradient(
-      circle at 30% 25%,
-      #dfa2ac,
-      #b85c6b
-    );
-}
-
-.forma-clara {
-  top: 230px;
-  right: 145px;
-
-  width: 150px;
-  height: 150px;
-
-  border-radius: 50%;
-
-  background: #f5f7ef;
-
-  border:
-    1px solid rgba(30, 46, 34, 0.14);
-}
-
-.hoja {
-  position: absolute;
-
-  color: #3f5a44;
-
-  font-size: 90px;
-}
-
-.hoja-uno {
-  top: 50px;
-  left: 50px;
-}
-
-.hoja-dos {
-  right: 55px;
-  bottom: 55px;
-}
-
-.tarjeta-flotante {
-  position: absolute;
-
-  padding: 14px 17px;
-
-  border-radius: 15px;
-
-  background: #fffdf8;
-
-  box-shadow:
-    0 18px 40px
-    rgba(30, 46, 34, 0.14);
-
-  font-family: monospace;
-
-  font-size: 0.72rem;
-}
-
-.tarjeta-superior {
-  top: 25px;
   left: 0;
+  background-color: var(--azul-oscuro);
+  color: var(--blanco);
 }
 
-.tarjeta-inferior {
-  right: 0;
-  bottom: 20px;
-}
 
-/* CATEGORÍAS */
-
-.seccion-categorias {
-  scroll-margin-top: 100px;
-
-  padding: 70px 0 45px;
-}
-
-.encabezado-seccion,
-.encabezado-productos {
-  display: flex;
-
-  align-items: flex-end;
-
-  justify-content: space-between;
-
-  gap: 24px;
-
-  margin-bottom: 38px;
-}
-
-.encabezado-seccion h2,
-.encabezado-productos h2,
-.seccion-rutina h2 {
-  margin: 7px 0 0;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:
-    clamp(1.9rem, 3vw, 2.7rem);
-
-  font-weight: 500;
-}
-
-.lista-categorias {
-  display: flex;
-
-  gap: 18px;
-
-  overflow-x: auto;
-
-  padding-bottom: 20px;
-}
-
-.tarjeta-categoria {
-  flex: 0 0 215px;
-
-  min-height: 170px;
-
-  padding: 24px 17px;
-
-  border:
-    1px solid rgba(30, 46, 34, 0.14);
-
-  border-radius: 22px;
-
-  background: #f5f7ef;
-
-  color: #1e2e22;
-
+/* Estiliza la marca ESENCIA. */
+.sidebar-marca {
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   text-align: center;
-
-  cursor: pointer;
 }
 
-.tarjeta-categoria.activa,
-.tarjeta-categoria:hover {
-  background: #fffdf8;
 
-  border-color: #c89b3c;
-}
+  /* Estiliza el título ESENCIA. */
+  .sidebar-marca h2 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 4px;
+  }
 
-.icono-categoria {
+
+  /* Estiliza el texto Tienda Online. */
+  .sidebar-marca span {
+    display: block;
+    margin-top: 5px;
+    color: #c8d7e5;
+    font-size: 12px;
+  }
+
+
+/* Organiza la información del usuario. */
+.usuario-sidebar {
+  margin: 22px 0;
   display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
+
+/* Crea el círculo del usuario. */
+.avatar-sidebar {
+  width: 42px;
+  height: 42px;
+  display: flex;
   align-items: center;
   justify-content: center;
-
-  width: 50px;
-  height: 50px;
-
-  margin: 0 auto 14px;
-
   border-radius: 50%;
-
-  background: #e9eee1;
-
-  font-size: 1.4rem;
+  background-color: var(--azul-principal);
 }
 
-.tarjeta-categoria strong {
+
+  /* Estiliza el icono del usuario. */
+  .avatar-sidebar mat-icon {
+    color: var(--blanco);
+  }
+
+
+/* Hace que el nombre del usuario aparezca separado. */
+.usuario-sidebar strong {
   display: block;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
+  font-size: 14px;
 }
 
-.ver-todos {
-  padding: 10px 18px;
 
-  border:
-    1px solid rgba(30, 46, 34, 0.25);
-
-  border-radius: 999px;
-
-  background: transparent;
-
-  cursor: pointer;
+/* Estiliza el texto Cliente. */
+.usuario-sidebar span {
+  display: block;
+  margin-top: 3px;
+  color: #b8c9d8;
+  font-size: 12px;
 }
 
-.ver-todos:hover,
-.ver-todos.activo {
-  background: #1e2e22;
 
-  color: white;
+/* Organiza verticalmente las opciones del menú. */
+.menu-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
-/* PRODUCTOS */
 
-.seccion-productos {
-  scroll-margin-top: 100px;
-
-  padding: 20px 0 90px;
-}
-
-.cuadricula-productos {
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, 1fr);
-
-  gap: 22px;
-}
-
-.tarjeta-producto {
-  overflow: hidden;
-
-  border:
-    1px solid rgba(30, 46, 34, 0.14);
-
-  border-radius: 20px;
-
-  background: #fffdf8;
-}
-
-.contenedor-imagen {
-  position: relative;
-
-  height: 220px;
-
-  overflow: hidden;
-}
-
-.contenedor-imagen img {
+/* Estiliza cada botón del menú lateral. */
+.menu-item {
   width: 100%;
-  height: 100%;
-
-  object-fit: cover;
-}
-
-.disponibles {
-  position: absolute;
-
-  top: 12px;
-  right: 12px;
-
-  padding: 6px 10px;
-
-  border-radius: 999px;
-
-  background:
-    rgba(255, 253, 248, 0.95);
-
-  font-size: 0.66rem;
-}
-
-.boton-corazon {
-  position: absolute;
-
-  top: 12px;
-  left: 12px;
-
-  width: 38px;
-  height: 38px;
-
-  border:
-    1px solid rgba(30, 46, 34, 0.15);
-
-  border-radius: 50%;
-
-  background: #fffdf8;
-
-  color: #1e2e22;
-
-  font-size: 1.25rem;
-
+  min-height: 44px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #e9f0f6;
+  font-size: 14px;
+  text-align: left;
   cursor: pointer;
 }
 
-.boton-corazon.activo {
-  background: #b85c6b;
 
-  color: white;
+  /* Cambia el fondo al pasar el mouse. */
+  .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.10);
+  }
+
+
+  /* Marca la opción Inicio como seleccionada. */
+  .menu-item.activo {
+    background-color: var(--azul-principal);
+    color: var(--blanco);
+  }
+
+
+  /* Ajusta los iconos del menú. */
+  .menu-item mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+
+/* Crea el contador pequeño del menú. */
+.contador-menu {
+  min-width: 22px;
+  height: 22px;
+  margin-left: auto;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background-color: var(--dorado);
+  color: var(--blanco);
+  font-size: 11px;
+  font-weight: bold;
 }
 
-.informacion-producto {
-  padding: 18px;
+
+/* Coloca el botón de cerrar sesión al final. */
+.cerrar-sesion {
+  width: 100%;
+  min-height: 44px;
+  margin-top: auto;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  border-radius: 7px;
+  background-color: transparent;
+  color: #f0f4f7;
+  cursor: pointer;
 }
 
-.marca-producto {
-  display: block;
 
-  margin-bottom: 5px;
+  /* Cambia el fondo de cerrar sesión al pasar el mouse. */
+  .cerrar-sesion:hover {
+    background-color: rgba(255, 255, 255, 0.10);
+  }
 
-  color:
-    rgba(30, 46, 34, 0.55);
 
-  font-family: monospace;
+/* Crea el contenido principal del Dashboard. */
+.contenido-dashboard {
+  width: calc(100% - 240px);
+  margin-left: 240px;
+  padding: 28px;
+}
 
-  font-size: 0.68rem;
 
+/* Organiza la parte superior del Dashboard. */
+.topbar {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+
+/* Estiliza el texto pequeño del encabezado. */
+.topbar-etiqueta {
+  margin: 0 0 4px;
+  color: var(--azul-principal);
+  font-size: 12px;
+  font-weight: bold;
   text-transform: uppercase;
 }
 
-.informacion-producto h3 {
-  min-height: 46px;
 
-  margin: 0 0 6px;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
+/* Estiliza el saludo principal. */
+.topbar h1 {
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 28px;
 }
 
-.precio {
-  margin-bottom: 16px;
 
-  color: #c89b3c;
-
-  font-family: monospace;
-
-  font-weight: 700;
+/* Estiliza la descripción del encabezado. */
+.topbar-descripcion {
+  margin: 6px 0 0;
+  color: var(--texto-secundario);
+  font-size: 14px;
 }
 
-.fila-cantidad {
+
+/* Organiza los botones superiores. */
+.topbar-acciones {
   display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  margin-bottom: 14px;
+  gap: 10px;
 }
 
-.control-cantidad {
+
+/* Estiliza el mensaje temporal del Dashboard. */
+.mensaje-dashboard {
+  margin-bottom: 20px;
+  padding: 12px 14px;
   display: flex;
-
   align-items: center;
-
-  border:
-    1px solid rgba(30, 46, 34, 0.18);
-
-  border-radius: 999px;
-
-  overflow: hidden;
+  gap: 8px;
+  border-radius: 7px;
+  font-size: 13px;
 }
 
-.control-cantidad button {
-  width: 32px;
-  height: 32px;
 
-  border: 0;
-
-  background: #f5f7ef;
-
-  cursor: pointer;
+/* Estilo para mensaje de éxito. */
+.mensaje-exito {
+  background-color: #e7f4ea;
+  color: #2f6d3d;
 }
 
-.control-cantidad strong {
-  min-width: 32px;
 
-  text-align: center;
+/* Estilo para mensaje informativo. */
+.mensaje-info {
+  background-color: var(--azul-claro);
+  color: var(--azul-oscuro);
 }
 
-.boton-agregar {
-  width: 100%;
 
-  padding: 12px;
-
-  border: 0;
-
-  border-radius: 999px;
-
-  background: #1e2e22;
-
-  color: white;
-
-  cursor: pointer;
+/* Estilo para mensaje de error. */
+.mensaje-error {
+  background-color: #fbe8e8;
+  color: #8a3030;
 }
 
-.boton-agregar:hover:not(:disabled) {
-  background: #b85c6b;
-}
 
-.boton-agregar:disabled {
-  opacity: 0.55;
-
-  cursor: not-allowed;
-}
-
-.mensaje {
-  margin-bottom: 22px;
-
-  padding: 13px 16px;
-
-  border-left:
-    4px solid #c89b3c;
-
-  background: #fffdf8;
-}
-
-/* RUTINA */
-
-.seccion-rutina {
-  scroll-margin-top: 90px;
-
-  padding: 90px 0;
-
-  background: #1e2e22;
-
-  color: #f5f7ef;
-}
-
-.etiqueta-clara {
-  color: #c89b3c;
-}
-
-.introduccion-rutina {
-  max-width: 520px;
-
-  color:
-    rgba(245, 247, 239, 0.67);
-}
-
-.pasos {
+/* Crea las cuatro tarjetas de resumen. */
+.resumen-dashboard {
+  margin-bottom: 24px;
   display: grid;
-
-  grid-template-columns:
-    repeat(5, 1fr);
-
-  gap: 20px;
-
-  margin-top: 55px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
-.paso {
-  text-align: center;
-}
 
-.paso > span {
+/* Estiliza cada tarjeta de resumen. */
+.tarjeta-resumen {
+  padding: 18px;
   display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
 
+
+/* Permite hacer clic en algunas tarjetas. */
+.tarjeta-clickeable {
+  cursor: pointer;
+}
+
+
+  /* Agrega un pequeño efecto al pasar el mouse. */
+  .tarjeta-clickeable:hover {
+    border-color: var(--azul-principal);
+  }
+
+
+/* Crea el cuadro azul del icono. */
+.icono-resumen {
+  width: 45px;
+  height: 45px;
+  display: flex;
   align-items: center;
   justify-content: center;
-
-  width: 58px;
-  height: 58px;
-
-  margin: 0 auto 20px;
-
-  border:
-    1px solid rgba(255, 255, 255, 0.3);
-
-  border-radius: 50%;
-
-  color: #c89b3c;
+  border-radius: 8px;
+  background-color: var(--azul-claro);
 }
 
-/* FOOTER */
 
-.pie-pagina {
-  padding: 45px 0;
+  /* Estiliza el icono del resumen. */
+  .icono-resumen mat-icon {
+    color: var(--azul-principal);
+  }
 
-  border-top:
-    1px solid rgba(30, 46, 34, 0.14);
+
+/* Estiliza el texto pequeño de las tarjetas. */
+.tarjeta-resumen span {
+  display: block;
+  color: var(--texto-secundario);
+  font-size: 12px;
 }
 
-.contenido-pie {
+
+/* Estiliza el número grande de las tarjetas. */
+.tarjeta-resumen strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--azul-oscuro);
+  font-size: 22px;
+}
+
+
+/* Estiliza el banner principal. */
+.banner-principal {
+  margin-bottom: 24px;
+  padding: 28px;
   display: flex;
-
-  align-items: center;
-
   justify-content: space-between;
-
-  gap: 20px;
-
-  flex-wrap: wrap;
+  align-items: center;
+  border-radius: 10px;
+  background-color: var(--azul-principal);
+  color: var(--blanco);
 }
 
-.enlaces-pie {
+
+/* Limita el ancho del texto del banner. */
+.banner-contenido {
+  max-width: 650px;
+}
+
+
+/* Estiliza la palabra ESENCIA del banner. */
+.banner-etiqueta {
+  color: #d9e6f1;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+
+/* Estiliza el título del banner. */
+.banner-principal h2 {
+  margin: 8px 0;
+  font-size: 26px;
+}
+
+
+/* Estiliza el texto del banner. */
+.banner-principal p {
+  margin: 0;
+  color: #e5edf4;
+  font-size: 14px;
+}
+
+
+/* Organiza los botones del banner. */
+.banner-botones {
+  margin-top: 18px;
   display: flex;
-
-  gap: 20px;
+  gap: 10px;
 }
 
-.enlaces-pie a {
-  color: #1e2e22;
 
-  text-decoration: none;
+/* Estiliza el botón principal del banner. */
+.boton-banner-principal {
+  background-color: var(--blanco) !important;
+  color: var(--azul-principal) !important;
 }
 
-.enlaces-pie a:hover {
-  color: #b85c6b;
+
+/* Estiliza el segundo botón del banner. */
+.boton-banner-secundario {
+  border-color: var(--blanco) !important;
+  color: var(--blanco) !important;
 }
 
-/* RESPONSIVE */
 
-@media (max-width: 1250px) {
+/* Crea el icono grande del banner. */
+.banner-icono {
+  padding-right: 25px;
+}
 
-  .barra-navegacion {
-    grid-template-columns:
-      auto 1fr;
+
+  /* Aumenta el tamaño del icono. */
+  .banner-icono mat-icon {
+    width: 90px;
+    height: 90px;
+    color: rgba(255, 255, 255, 0.20);
+    font-size: 90px;
   }
 
-  .acciones {
-    grid-column: 1 / -1;
 
-    justify-content: flex-end;
+/* Crea los bloques blancos principales. */
+.bloque-dashboard {
+  margin-bottom: 24px;
+  padding: 22px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
 
-    padding-bottom: 8px;
+
+/* Organiza el encabezado de cada bloque. */
+.encabezado-bloque {
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+
+  /* Estiliza los títulos de los bloques. */
+  .encabezado-bloque h2 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 20px;
+  }
+
+
+  /* Estiliza las descripciones de los bloques. */
+  .encabezado-bloque p {
+    margin: 5px 0 0;
+    color: var(--texto-secundario);
+    font-size: 13px;
+  }
+
+
+/* Crea la cuadrícula de accesos rápidos. */
+.accesos-rapidos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+
+/* Estiliza cada acceso rápido. */
+.acceso-rapido {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background-color: var(--gris-suave);
+  color: var(--texto);
+  text-align: left;
+  cursor: pointer;
+}
+
+
+  /* Cambia el borde al pasar el mouse. */
+  .acceso-rapido:hover {
+    border-color: var(--azul-principal);
+    background-color: var(--azul-claro);
+  }
+
+
+  /* Estiliza el icono del acceso rápido. */
+  .acceso-rapido mat-icon {
+    color: var(--azul-principal);
+  }
+
+
+  /* Estiliza el título del acceso rápido. */
+  .acceso-rapido strong {
+    color: var(--azul-oscuro);
+    font-size: 14px;
+  }
+
+
+  /* Estiliza el texto pequeño. */
+  .acceso-rapido span {
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+
+/* Organiza el encabezado de productos y el buscador. */
+.encabezado-productos {
+  align-items: flex-end;
+}
+
+
+/* Crea el buscador. */
+.buscador-productos {
+  width: 280px;
+  height: 42px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  background-color: var(--blanco);
+}
+
+
+  /* Estiliza el icono del buscador. */
+  .buscador-productos mat-icon {
+    color: var(--texto-secundario);
+  }
+
+
+  /* Estiliza el input del buscador. */
+  .buscador-productos input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--texto);
+    font-size: 13px;
+  }
+
+
+/* Organiza los botones de categorías. */
+.categorias-dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+
+/* Estiliza cada categoría. */
+.categoria-dashboard {
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  background-color: var(--blanco);
+  color: var(--texto);
+  cursor: pointer;
+}
+
+
+  /* Cambia la categoría al pasar el mouse. */
+  .categoria-dashboard:hover {
+    border-color: var(--azul-principal);
+  }
+
+
+/* Marca la categoría seleccionada. */
+.categoria-activa {
+  border-color: var(--azul-principal);
+  background-color: var(--azul-principal);
+  color: var(--blanco);
+}
+
+
+/* Ajusta el icono de categorías. */
+.categoria-dashboard mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+
+/* Organiza la información del filtro. */
+.estado-filtro {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--texto-secundario);
+  font-size: 12px;
+}
+
+
+  /* Estiliza el botón para limpiar filtros. */
+  .estado-filtro button {
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: transparent;
+    color: var(--azul-principal);
+    cursor: pointer;
+  }
+
+
+  /* Ajusta el icono del botón de limpiar. */
+  .estado-filtro mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+
+
+/* Crea la cuadrícula de productos. */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+
+/* Estiliza cada tarjeta de producto. */
+.producto-card {
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+
+  /* Cambia ligeramente la tarjeta al pasar el mouse. */
+  .producto-card:hover {
+    border-color: var(--azul-principal);
+  }
+
+
+/* Crea la zona de la imagen. */
+.producto-imagen {
+  height: 190px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--gris-suave);
+}
+
+
+  /* Ajusta la imagen del producto. */
+  .producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+
+/* Estiliza el botón de favoritos. */
+.boton-favorito {
+  position: absolute !important;
+  top: 10px;
+  right: 10px;
+  background-color: var(--blanco) !important;
+  color: var(--azul-principal) !important;
+}
+
+
+/* Cambia el color si el producto está en favoritos. */
+.es-favorito {
+  color: #c94a58 !important;
+}
+
+
+/* Crea la etiqueta Destacado. */
+.etiqueta-destacado {
+  padding: 5px 9px;
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  border-radius: 5px;
+  background-color: var(--dorado);
+  color: var(--blanco);
+  font-size: 11px;
+}
+
+
+/* Crea el contenido interno del producto. */
+.producto-contenido {
+  padding: 15px;
+}
+
+
+/* Estiliza la categoría del producto. */
+.producto-categoria {
+  color: var(--azul-principal);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+
+/* Estiliza el nombre del producto. */
+.producto-contenido h3 {
+  margin: 6px 0;
+  color: var(--azul-oscuro);
+  font-size: 16px;
+}
+
+
+/* Estiliza la descripción. */
+.producto-descripcion {
+  min-height: 38px;
+  margin: 0 0 10px;
+  color: var(--texto-secundario);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* Organiza el stock. */
+.producto-stock {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+
+  /* Ajusta el icono del stock. */
+  .producto-stock mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+
+
+/* Estiliza el precio. */
+.producto-precio {
+  margin: 12px 0;
+}
+
+
+  /* Hace destacar el precio. */
+  .producto-precio strong {
+    color: var(--azul-oscuro);
+    font-size: 18px;
+  }
+
+
+/* Organiza los botones de cantidad. */
+.cantidad-producto {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+  /* Estiliza los botones de aumentar y disminuir. */
+  .cantidad-producto button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--borde);
+    border-radius: 5px;
+    background-color: var(--blanco);
+    color: var(--azul-principal);
+    cursor: pointer;
+  }
+
+
+  /* Ajusta los iconos de cantidad. */
+  .cantidad-producto mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+
+  /* Estiliza la cantidad seleccionada. */
+  .cantidad-producto span {
+    min-width: 20px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+
+/* Personaliza el botón PrimeNG del carrito. */
+:host ::ng-deep .boton-carrito-producto {
+  width: 100%;
+}
+
+
+  /* Hace que el botón interno ocupe todo el ancho. */
+  :host ::ng-deep .boton-carrito-producto .p-button {
+    width: 100%;
+    justify-content: center;
+    background-color: var(--azul-principal);
+    border-color: var(--azul-principal);
+  }
+
+
+    /* Cambia el botón al pasar el mouse. */
+    :host ::ng-deep .boton-carrito-producto .p-button:hover {
+      background-color: var(--azul-oscuro);
+      border-color: var(--azul-oscuro);
+    }
+
+
+/* Estiliza la pantalla cuando no hay resultados. */
+.sin-resultados {
+  padding: 45px 20px;
+  text-align: center;
+  color: var(--texto-secundario);
+}
+
+
+  /* Aumenta el icono de sin resultados. */
+  .sin-resultados > mat-icon {
+    width: 55px;
+    height: 55px;
+    color: #9eaab4;
+    font-size: 55px;
+  }
+
+
+  /* Estiliza el título de sin resultados. */
+  .sin-resultados h3 {
+    margin: 10px 0 5px;
+    color: var(--azul-oscuro);
+  }
+
+
+/* Estiliza el pie de página. */
+.footer-dashboard {
+  padding: 15px 0 5px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+
+/* Adapta el Dashboard a pantallas medianas. */
+@media (max-width: 1150px) {
+
+  /* Muestra dos tarjetas por fila. */
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Muestra dos accesos rápidos por fila. */
+  .accesos-rapidos {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 1000px) {
 
-  .enlaces {
+/* Adapta el Dashboard a tabletas. */
+@media (max-width: 900px) {
+
+  /* Reduce el ancho del sidebar. */
+  .sidebar {
+    width: 200px;
+  }
+
+  /* Ajusta el contenido al nuevo ancho. */
+  .contenido-dashboard {
+    width: calc(100% - 200px);
+    margin-left: 200px;
+    padding: 20px;
+  }
+
+  /* Muestra dos tarjetas de resumen por fila. */
+  .resumen-dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Oculta la parte decorativa del banner. */
+  .banner-icono {
     display: none;
   }
 
-  .barra-navegacion {
-    grid-template-columns:
-      auto 1fr;
-  }
-
-  .acciones {
-    grid-column: auto;
-  }
-
-  .contenido-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .cuadricula-productos {
-    grid-template-columns:
-      repeat(2, 1fr);
-  }
-
-  .pasos {
-    grid-template-columns:
-      repeat(2, 1fr);
+  /* Organiza el topbar verticalmente. */
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
+
+/* Adapta el Dashboard a teléfonos. */
 @media (max-width: 700px) {
 
-  .contenedor {
-    width:
-      min(100% - 28px, 1180px);
+  /* Convierte el sidebar en una barra normal. */
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    position: relative;
   }
 
-  .barra-navegacion {
-    display: flex;
+  /* Ajusta el contenido al ancho completo. */
+  .contenido-dashboard {
+    width: 100%;
+    margin-left: 0;
+    padding: 15px;
+  }
 
+  /* Cambia la estructura principal a vertical. */
+  .dashboard-layout {
     flex-direction: column;
-
-    padding: 15px 0;
   }
 
-  .acciones {
-    justify-content: center;
+  /* Muestra una sola tarjeta por fila. */
+  .resumen-dashboard {
+    grid-template-columns: 1fr;
+  }
 
+  /* Muestra un acceso rápido por fila. */
+  .accesos-rapidos {
+    grid-template-columns: 1fr;
+  }
+
+  /* Muestra un producto por fila. */
+  .productos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Organiza el encabezado de productos verticalmente. */
+  .encabezado-productos {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  /* Hace que el buscador ocupe todo el ancho. */
+  .buscador-productos {
+    width: 100%;
+  }
+
+  /* Organiza el banner verticalmente. */
+  .banner-principal {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Organiza los botones del encabezado. */
+  .topbar-acciones {
+    width: 100%;
     flex-wrap: wrap;
   }
 
-  .boton-nav {
-    font-size: 13px;
-
-    padding: 0 10px;
-  }
-
-  .cuadricula-productos {
-    grid-template-columns: 1fr;
-  }
-
-  .pasos {
-    grid-template-columns: 1fr;
+  /* Organiza el pie de página verticalmente. */
+  .footer-dashboard {
+    gap: 5px;
+    flex-direction: column;
   }
 }

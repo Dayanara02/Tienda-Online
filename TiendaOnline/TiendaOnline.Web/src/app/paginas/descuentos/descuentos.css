@@ -1,377 +1,436 @@
+/* Define el bloque principal del componente y sus variables de color. */
+:host {
+  display: block;
+  /* Color azul principal utilizado en botones, iconos y elementos destacados. */
+  --azul-principal: #1f4e79;
+  /* Azul más oscuro utilizado principalmente en títulos. */
+  --azul-oscuro: #163a5c;
+  /* Azul claro utilizado para fondos suaves y promociones seleccionadas. */
+  --azul-claro: #eaf2f8;
+  /* Color blanco utilizado para tarjetas y fondos internos. */
+  --blanco: #ffffff;
+  /* Gris suave utilizado como fondo general de la página. */
+  --gris-suave: #f4f6f8;
+  /* Color principal de los textos. */
+  --texto: #24313d;
+  /* Color utilizado para textos secundarios y explicaciones. */
+  --texto-secundario: #6d7882;
+  /* Color utilizado para los bordes de tarjetas y divisiones. */
+  --borde: #d8e0e7;
+}
+
+/* Hace que padding y border formen parte del tamaño total de los elementos. */
 * {
   box-sizing: border-box;
 }
 
-:host {
-  display: block;
-  min-height: 100vh;
-  background: #e9eee1;
-  color: #1e2e22;
-}
-
+/* Crea el fondo y espacio general de toda la pantalla de descuentos. */
 .pagina-descuentos {
   min-height: 100vh;
+  padding: 28px;
+  background-color: var(--gris-suave);
+  color: var(--texto);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.barra-superior {
-  min-height: 76px;
-  padding: 0 5%;
-
+/* Coloca el título a la izquierda y los botones a la derecha. */
+.encabezado-descuentos {
+  margin-bottom: 22px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-
-  border-bottom:
-    1px solid rgba(30, 46, 34, 0.14);
-
-  background:
-    rgba(233, 238, 225, 0.96);
-}
-
-.logo {
-  color: #1e2e22;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 1.6rem;
-  font-weight: 700;
-
-  text-decoration: none;
-}
-
-.logo span {
-  color: #c89b3c;
-}
-
-.acciones {
-  display: flex;
-  gap: 12px;
-}
-
-.boton-nav {
-  min-height: 40px;
-  padding: 0 16px;
-
-  border: 1px solid #1e2e22;
-
-  background: transparent;
-  color: #1e2e22;
-
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 16px;
-
-  text-decoration: none;
+  gap: 20px;
 }
 
-.boton-nav:hover {
-  background: #1e2e22;
-  color: white;
-}
-
-.contenido {
-  width: min(1180px, 92%);
-
-  margin: 0 auto;
-
-  padding: 55px 0 80px;
-}
-
-.encabezado {
-  max-width: 720px;
-
-  margin-bottom: 38px;
-}
-
+/* Da formato a la palabra pequeña que aparece arriba del título. */
 .etiqueta {
-  color: #b85c6b;
-
-  font-family: monospace;
-  font-size: 0.72rem;
-
-  letter-spacing: 0.14em;
+  display: block;
+  margin-bottom: 5px;
+  color: var(--azul-principal);
+  font-size: 11px;
+  font-weight: bold;
   text-transform: uppercase;
 }
 
-.encabezado h1 {
-  margin: 8px 0 12px;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 2.8rem;
-  font-weight: 500;
-}
-
-.encabezado p {
+/* Define el tamaño y color del título principal Descuentos. */
+.encabezado-descuentos h1 {
   margin: 0;
-
-  color:
-    rgba(30, 46, 34, 0.65);
-
-  line-height: 1.7;
+  color: var(--azul-oscuro);
+  font-size: 28px;
 }
 
-.grid-promociones {
-  display: grid;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  gap: 22px;
+/* Da formato a la descripción que aparece debajo del título. */
+.encabezado-descuentos p {
+  margin: 7px 0 0;
+  color: var(--texto-secundario);
+  font-size: 14px;
 }
 
-.tarjeta {
-  position: relative;
-
-  padding: 28px;
-
-  border:
-    1px solid rgba(30, 46, 34, 0.14);
-
-  background: #fffdf8;
-
-  transition: 0.25s;
-}
-
-.tarjeta:hover {
-  transform: translateY(-5px);
-
-  box-shadow:
-    0 20px 40px
-    rgba(30, 46, 34, 0.12);
-}
-
-.tarjeta.activa {
-  border:
-    2px solid #c89b3c;
-}
-
-.icono {
-  margin-bottom: 18px;
-
-  font-size: 2.5rem;
-}
-
-.beneficio {
-  display: inline-block;
-
-  margin-bottom: 12px;
-
-  padding: 5px 8px;
-
-  background: #b85c6b;
-  color: white;
-
-  font-family: monospace;
-  font-size: 0.68rem;
-}
-
-.tarjeta h2 {
-  margin: 0 0 10px;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 1.55rem;
-  font-weight: 500;
-}
-
-.descripcion {
-  min-height: 60px;
-
-  color:
-    rgba(30, 46, 34, 0.65);
-
-  line-height: 1.5;
-}
-
-.condicion {
-  margin-top: 22px;
-
-  padding: 15px 0;
-
-  border-top:
-    1px solid rgba(30, 46, 34, 0.1);
-
-  border-bottom:
-    1px solid rgba(30, 46, 34, 0.1);
-
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-}
-
-.condicion span {
-  color:
-    rgba(30, 46, 34, 0.6);
-
-  font-size: 0.78rem;
-}
-
-.condicion strong {
-  color: #c89b3c;
-
-  font-family: monospace;
-}
-
-.resultado {
-  min-height: 68px;
-
-  margin: 18px 0;
-
-  padding: 13px;
-
-  background: #f5f7ef;
-
-  color:
-    rgba(30, 46, 34, 0.72);
-
-  font-size: 0.8rem;
-  line-height: 1.5;
-}
-
-.boton-activar,
-.boton-activo {
-  width: 100%;
-
-  min-height: 43px;
-
-  border: 0;
-
-  padding: 0 15px;
-
-  font: inherit;
-}
-
-.boton-activar {
-  background: #1e2e22;
-  color: white;
-
-  cursor: pointer;
-}
-
-.boton-activar:hover {
-  background: #b85c6b;
-}
-
-.boton-activo {
-  background: #c89b3c;
-  color: white;
-
-  cursor: default;
-}
-
-.promocion-seleccionada {
-  margin-top: 35px;
-
-  padding: 28px;
-
-  border:
-    1px solid rgba(30, 46, 34, 0.15);
-
-  background: #1e2e22;
-  color: white;
-
+/* Coloca juntos los botones Volver e Ir al carrito. */
+.acciones-superiores {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-}
-
-.promocion-seleccionada h2 {
-  margin: 6px 0 8px;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-weight: 500;
-}
-
-.promocion-seleccionada p {
-  margin: 0;
-
-  color:
-    rgba(255, 255, 255, 0.7);
-}
-
-.acciones-promocion {
-  display: flex;
-  flex-direction: column;
   gap: 10px;
-
-  min-width: 190px;
 }
 
-.boton-carrito,
-.boton-quitar {
-  min-height: 42px;
-
-  padding: 0 16px;
-
-  font: inherit;
-
+/* Da formato visual al botón utilizado para regresar al Dashboard. */
+.boton-volver {
+  min-height: 40px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  background-color: var(--blanco);
+  color: var(--azul-principal);
   cursor: pointer;
 }
 
-.boton-carrito {
-  border: 0;
+  /* Ajusta el tamaño del icono Material que aparece dentro del botón Volver. */
+  .boton-volver mat-icon {
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+  }
 
-  background: #c89b3c;
-  color: white;
+/* Crea el cuadro donde aparecen los mensajes después de seleccionar una promoción. */
+.mensaje {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #bdd2e3;
+  border-radius: 7px;
+  background-color: var(--azul-claro);
+  color: var(--azul-oscuro);
+  font-size: 13px;
 }
 
+/* Crea la sección azul donde se explica brevemente cómo funcionan los descuentos. */
+.introduccion {
+  margin-bottom: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-radius: 9px;
+  background-color: var(--azul-principal);
+  color: var(--blanco);
+}
+
+  /* Define la apariencia del título Beneficios disponibles. */
+  .introduccion h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+  }
+
+  /* Define la apariencia del texto explicativo de la introducción. */
+  .introduccion p {
+    max-width: 700px;
+    margin: 0;
+    color: #e4edf5;
+    font-size: 13px;
+  }
+
+/* Aumenta el tamaño del icono de oferta que aparece en la introducción. */
+.icono-introduccion mat-icon {
+  width: 50px;
+  height: 50px;
+  font-size: 50px;
+}
+
+/* Crea el contenedor blanco que funciona como tabla de promociones. */
+.panel-promociones {
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background-color: var(--blanco);
+}
+
+/* Divide cada fila en Promoción, Compra mínima, Descuento y Acción. */
+.fila {
+  display: grid;
+  grid-template-columns: minmax(300px, 2fr) 180px 130px 170px;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Da formato al encabezado superior de la tabla. */
+.encabezado-tabla {
+  padding: 13px 18px;
+  background-color: #edf2f6;
+  color: var(--texto-secundario);
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Da espacio y separa visualmente cada promoción. */
+.fila-promocion {
+  padding: 18px;
+  border-top: 1px solid var(--borde);
+}
+
+  /* Cambia ligeramente el fondo cuando el mouse pasa sobre una promoción. */
+  .fila-promocion:hover {
+    background-color: #fafcfd;
+  }
+
+/* Destaca con azul la promoción que el cliente seleccionó. */
+.promocion-activa {
+  background-color: #f2f7fb;
+  border-left: 4px solid var(--azul-principal);
+}
+
+/* Coloca el icono y la información principal en una misma fila. */
+.datos-promocion {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Crea el cuadro azul claro donde aparece el icono de cada promoción. */
+.icono-promocion {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 7px;
+  background-color: var(--azul-claro);
+  color: var(--azul-principal);
+}
+
+  /* Ajusta el tamaño del icono de Angular Material. */
+  .icono-promocion mat-icon {
+    width: 23px;
+    height: 23px;
+    font-size: 23px;
+  }
+
+/* Da formato al nombre principal de cada promoción. */
+.datos-promocion strong {
+  color: var(--azul-oscuro);
+  font-size: 14px;
+}
+
+/* Da formato a la explicación que aparece debajo del nombre. */
+.datos-promocion p {
+  max-width: 430px;
+  margin: 4px 0 0;
+  color: var(--texto-secundario);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* Organiza los datos como la cantidad mínima de productos. */
+.dato-tabla {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--texto);
+  font-size: 12px;
+}
+
+  /* Ajusta los iconos que acompañan los datos de la tabla. */
+  .dato-tabla mat-icon {
+    width: 19px;
+    height: 19px;
+    color: var(--azul-principal);
+    font-size: 19px;
+  }
+
+/* Hace más visible el porcentaje de descuento. */
+.porcentaje strong {
+  color: var(--azul-principal);
+  font-size: 20px;
+}
+
+/* Organiza la columna donde aparece el botón Seleccionar. */
+.accion-promocion {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Da formato al texto que indica que una promoción está seleccionada. */
+.estado-activo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #367447;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+  /* Ajusta el icono verde de confirmación de la promoción activa. */
+  .estado-activo mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+
+/* Crea el bloque informativo cuando existe una promoción seleccionada. */
+.promocion-seleccionada {
+  margin-top: 20px;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid #bdd2e3;
+  border-radius: 9px;
+  background-color: var(--azul-claro);
+}
+
+/* Coloca el icono y el texto de la promoción seleccionada juntos. */
+.seleccion-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+  /* Cambia a azul el icono de la promoción seleccionada. */
+  .seleccion-info > mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Da formato al título de la promoción seleccionada. */
+  .seleccion-info h3 {
+    margin: 0 0 5px;
+    color: var(--azul-oscuro);
+    font-size: 15px;
+  }
+
+  /* Da formato al texto explicativo de la promoción seleccionada. */
+  .seleccion-info p {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+/* Coloca los botones Revisar carrito y Quitar promoción juntos. */
+.acciones-seleccion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Da formato al botón que elimina la promoción seleccionada. */
 .boton-quitar {
-  border:
-    1px solid rgba(255, 255, 255, 0.4);
-
-  background: transparent;
-  color: white;
+  min-height: 39px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #d7a9a9;
+  border-radius: 6px;
+  background-color: var(--blanco);
+  color: #9a3e3e;
+  cursor: pointer;
 }
 
-@media (max-width: 950px) {
+  /* Ajusta el tamaño del icono del botón Quitar promoción. */
+  .boton-quitar mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
 
-  .grid-promociones {
-    grid-template-columns:
-      repeat(2, 1fr);
+/* Agrega espacio antes de la sección que explica el funcionamiento. */
+.como-funciona {
+  margin-top: 24px;
+}
+
+  /* Da formato al título de la sección ¿Cómo funciona?. */
+  .como-funciona h2 {
+    margin: 0 0 14px;
+    color: var(--azul-oscuro);
+    font-size: 18px;
+  }
+
+/* Divide los pasos en tres columnas iguales. */
+.pasos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+/* Crea la tarjeta visual de cada paso. */
+.paso {
+  padding: 17px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background-color: var(--blanco);
+}
+
+  /* Crea el círculo donde aparece el número de cada paso. */
+  .paso > span {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: var(--azul-claro);
+    color: var(--azul-principal);
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  /* Da formato al nombre de cada paso. */
+  .paso h3 {
+    margin: 11px 0 5px;
+    color: var(--azul-oscuro);
+    font-size: 14px;
+  }
+
+  /* Da formato a la explicación de cada paso. */
+  .paso p {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+/* Ajusta un poco las columnas cuando la ventana es más pequeña. */
+@media (max-width: 1000px) {
+
+  /* Reduce el ancho de las columnas sin cambiar la estructura principal. */
+  .fila {
+    grid-template-columns: minmax(250px, 2fr) 150px 100px 140px;
   }
 }
 
-@media (max-width: 650px) {
+/* Ajusta la organización cuando la ventana tiene un tamaño parecido a una tableta. */
+@media (max-width: 800px) {
 
-  .barra-superior {
-    padding: 15px;
-
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .grid-promociones {
-    grid-template-columns: 1fr;
-  }
-
+  /* Coloca el encabezado y la promoción seleccionada de forma vertical. */
+  .encabezado-descuentos,
   .promocion-seleccionada {
-    flex-direction: column;
     align-items: flex-start;
+    flex-direction: column;
   }
 
-  .acciones-promocion {
-    width: 100%;
+  /* Oculta los títulos de la tabla cuando no existe suficiente espacio. */
+  .encabezado-tabla {
+    display: none;
+  }
+
+  /* Organiza cada promoción en dos columnas. */
+  .fila-promocion {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Mantiene la acción alineada hacia la izquierda. */
+  .accion-promocion {
+    justify-content: flex-start;
+  }
+
+  /* Coloca los pasos uno debajo del otro. */
+  .pasos {
+    grid-template-columns: 1fr;
   }
 }

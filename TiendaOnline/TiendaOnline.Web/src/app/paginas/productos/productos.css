@@ -1,0 +1,577 @@
+/* Define los colores principales de la pantalla de Productos. */
+:host {
+  display: block;
+  /* Azul principal de Esencia. */
+  --azul-principal: #1f4e79;
+  /* Azul oscuro para títulos y botones importantes. */
+  --azul-oscuro: #163a5c;
+  /* Azul claro para fondos suaves. */
+  --azul-claro: #eaf2f8;
+  /* Dorado para pequeños detalles. */
+  --dorado: #c79b42;
+  /* Blanco para tarjetas. */
+  --blanco: #ffffff;
+  /* Gris claro para el fondo general. */
+  --gris-suave: #f4f6f8;
+  /* Color principal de texto. */
+  --texto: #24313d;
+  /* Color para textos secundarios. */
+  --texto-secundario: #6d7882;
+  /* Color utilizado en los bordes. */
+  --borde: #d8e0e7;
+}
+
+
+/* Hace más sencillo controlar el tamaño de todos los elementos. */
+* {
+  box-sizing: border-box;
+}
+
+
+/* Crea la estructura principal de la página. */
+.pagina-productos {
+  min-height: 100vh;
+  padding: 28px;
+  background-color: var(--gris-suave);
+  color: var(--texto);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* Organiza el encabezado superior. */
+.encabezado-productos {
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+
+  /* Estiliza el título principal. */
+  .encabezado-productos h1 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 28px;
+  }
+
+
+  /* Estiliza la descripción debajo del título. */
+  .encabezado-productos p {
+    margin: 6px 0 0;
+    color: var(--texto-secundario);
+    font-size: 14px;
+  }
+
+
+/* Organiza los botones del encabezado. */
+.acciones-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* Crea la zona de tarjetas de resumen. */
+.resumen-productos {
+  margin-bottom: 22px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+
+/* Estiliza cada tarjeta de resumen. */
+.tarjeta-resumen {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+
+  /* Estiliza el icono de cada tarjeta. */
+  .tarjeta-resumen > mat-icon {
+    width: 42px;
+    height: 42px;
+    padding: 9px;
+    border-radius: 8px;
+    background-color: var(--azul-claro);
+    color: var(--azul-principal);
+    font-size: 24px;
+  }
+
+
+  /* Estiliza el texto pequeño de la tarjeta. */
+  .tarjeta-resumen span {
+    display: block;
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+
+  /* Estiliza el número de la tarjeta. */
+  .tarjeta-resumen strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--azul-oscuro);
+    font-size: 22px;
+  }
+
+
+/* Estiliza el mensaje temporal. */
+.mensaje-productos {
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 7px;
+  font-size: 13px;
+}
+
+
+/* Define el color del mensaje de éxito. */
+.mensaje-exito {
+  background-color: #e7f4ea;
+  color: #2f6d3d;
+}
+
+
+/* Define el color del mensaje informativo. */
+.mensaje-info {
+  background-color: var(--azul-claro);
+  color: var(--azul-oscuro);
+}
+
+
+/* Define el color del mensaje de error. */
+.mensaje-error {
+  background-color: #fbe8e8;
+  color: #8a3030;
+}
+
+
+/* Crea el bloque de búsqueda y filtros. */
+.filtros-productos {
+  margin-bottom: 22px;
+  padding: 20px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+
+/* Crea el buscador. */
+.buscador {
+  width: 100%;
+  height: 44px;
+  margin-bottom: 16px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  background-color: var(--blanco);
+}
+
+
+  /* Estiliza el icono del buscador. */
+  .buscador mat-icon {
+    color: var(--texto-secundario);
+  }
+
+
+  /* Estiliza el campo de búsqueda. */
+  .buscador input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--texto);
+    font-size: 13px;
+  }
+
+
+/* Organiza los botones de categorías. */
+.lista-categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+
+  /* Estiliza cada botón de categoría. */
+  .lista-categorias button {
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--borde);
+    border-radius: 7px;
+    background-color: var(--blanco);
+    color: var(--texto);
+    cursor: pointer;
+  }
+
+
+    /* Cambia el borde al pasar el mouse. */
+    .lista-categorias button:hover {
+      border-color: var(--azul-principal);
+    }
+
+
+    /* Marca la categoría seleccionada. */
+    .lista-categorias button.categoria-activa {
+      border-color: var(--azul-principal);
+      background-color: var(--azul-principal);
+      color: var(--blanco);
+    }
+
+
+  /* Ajusta los iconos de categorías. */
+  .lista-categorias mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+
+/* Organiza la información del filtro seleccionado. */
+.estado-filtro {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--texto-secundario);
+  font-size: 12px;
+}
+
+
+  /* Estiliza el botón para limpiar filtros. */
+  .estado-filtro button {
+    padding: 6px 9px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: transparent;
+    color: var(--azul-principal);
+    cursor: pointer;
+  }
+
+
+    /* Ajusta el icono del botón limpiar. */
+    .estado-filtro button mat-icon {
+      width: 17px;
+      height: 17px;
+      font-size: 17px;
+    }
+
+
+/* Crea la cuadrícula de productos. */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+
+/* Estiliza cada tarjeta de producto. */
+.producto-card {
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+
+  /* Cambia ligeramente la tarjeta al pasar el mouse. */
+  .producto-card:hover {
+    border-color: var(--azul-principal);
+  }
+
+
+/* Crea la zona donde aparece la imagen. */
+.producto-imagen {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--gris-suave);
+}
+
+
+  /* Ajusta la imagen del producto. */
+  .producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+
+/* Estiliza el botón de favoritos. */
+.boton-favorito {
+  position: absolute !important;
+  top: 10px;
+  right: 10px;
+  background-color: var(--blanco) !important;
+  color: var(--azul-principal) !important;
+}
+
+
+  /* Cambia el corazón cuando el producto es favorito. */
+  .boton-favorito.es-favorito {
+    color: #c94a58 !important;
+  }
+
+
+/* Estiliza la etiqueta de producto destacado. */
+.producto-destacado {
+  padding: 5px 9px;
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  border-radius: 5px;
+  background-color: var(--dorado);
+  color: var(--blanco);
+  font-size: 11px;
+}
+
+
+/* Crea el contenido interno de cada producto. */
+.producto-contenido {
+  padding: 16px;
+}
+
+
+/* Estiliza la categoría del producto. */
+.producto-categoria {
+  color: var(--azul-principal);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+
+/* Estiliza el nombre del producto. */
+.producto-contenido h2 {
+  margin: 6px 0 3px;
+  color: var(--azul-oscuro);
+  font-size: 17px;
+}
+
+
+/* Estiliza la marca del producto. */
+.producto-marca {
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+
+/* Estiliza la descripción. */
+.producto-descripcion {
+  min-height: 40px;
+  margin: 10px 0;
+  color: var(--texto-secundario);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* Organiza la información del stock. */
+.producto-stock {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+
+  /* Ajusta el icono del stock. */
+  .producto-stock mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+
+
+/* Estiliza el precio. */
+.producto-precio {
+  margin: 12px 0;
+  color: var(--azul-oscuro);
+  font-size: 19px;
+  font-weight: bold;
+}
+
+
+/* Organiza el selector de cantidad. */
+.selector-cantidad {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+  /* Estiliza los botones de sumar y restar. */
+  .selector-cantidad button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--borde);
+    border-radius: 5px;
+    background-color: var(--blanco);
+    color: var(--azul-principal);
+    cursor: pointer;
+  }
+
+
+    /* Cambia el botón cuando está deshabilitado. */
+    .selector-cantidad button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+
+  /* Ajusta los iconos del selector. */
+  .selector-cantidad mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+
+  /* Estiliza la cantidad seleccionada. */
+  .selector-cantidad span {
+    min-width: 22px;
+    color: var(--texto);
+    font-weight: bold;
+    text-align: center;
+  }
+
+
+/* Hace que el botón PrimeNG ocupe todo el ancho. */
+:host ::ng-deep .boton-agregar {
+  width: 100%;
+}
+
+
+  /* Personaliza el botón interno de PrimeNG. */
+  :host ::ng-deep .boton-agregar .p-button {
+    width: 100%;
+    justify-content: center;
+    background-color: var(--azul-principal);
+    border-color: var(--azul-principal);
+  }
+
+
+    /* Cambia el botón PrimeNG al pasar el mouse. */
+    :host ::ng-deep .boton-agregar .p-button:hover {
+      background-color: var(--azul-oscuro);
+      border-color: var(--azul-oscuro);
+    }
+
+
+/* Estiliza la pantalla cuando no hay productos. */
+.sin-productos {
+  padding: 60px 20px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+  text-align: center;
+}
+
+
+  /* Estiliza el icono cuando no hay resultados. */
+  .sin-productos > mat-icon {
+    width: 55px;
+    height: 55px;
+    color: #9eaab4;
+    font-size: 55px;
+  }
+
+
+  /* Estiliza el título de sin resultados. */
+  .sin-productos h2 {
+    margin: 12px 0 5px;
+    color: var(--azul-oscuro);
+  }
+
+
+  /* Estiliza el texto de sin resultados. */
+  .sin-productos p {
+    margin: 0 0 18px;
+    color: var(--texto-secundario);
+    font-size: 13px;
+  }
+
+
+/* Adapta los productos a pantallas medianas. */
+@media (max-width: 1150px) {
+
+  /* Muestra tres productos por fila. */
+  .productos-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+/* Adapta la pantalla a tabletas. */
+@media (max-width: 900px) {
+
+  /* Muestra dos productos por fila. */
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Coloca el encabezado de manera vertical. */
+  .encabezado-productos {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Muestra los resúmenes en dos columnas. */
+  .resumen-productos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* Adapta la pantalla a teléfonos. */
+@media (max-width: 600px) {
+
+  /* Reduce el espacio exterior. */
+  .pagina-productos {
+    padding: 15px;
+  }
+
+  /* Muestra una tarjeta de resumen por fila. */
+  .resumen-productos {
+    grid-template-columns: 1fr;
+  }
+
+  /* Muestra un producto por fila. */
+  .productos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Permite que los botones superiores se acomoden. */
+  .acciones-encabezado {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  /* Organiza el filtro de manera vertical. */
+  .estado-filtro {
+    align-items: flex-start;
+    gap: 10px;
+    flex-direction: column;
+  }
+}

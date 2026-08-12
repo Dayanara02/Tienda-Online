@@ -1,227 +1,394 @@
-<!-- Contenedor principal de la página de pedidos del cliente. -->
-<div class="pedidos-page">
+<!-- Crea la página completa de Mis Pedidos. -->
+<section class="pagina-pedidos">
 
-  <!-- Encabezado superior de la pantalla. -->
-  <header class="encabezado">
+  <!-- Crea el encabezado principal. -->
+  <header class="encabezado-pedidos">
 
-    <!-- Nombre principal de la tienda. -->
+    <!-- Agrupa el título y la descripción. -->
     <div>
 
-      <!-- Título principal de la marca. -->
-      <h1>Esencia</h1>
+      <!-- Muestra una etiqueta pequeña. -->
+      <span class="etiqueta">
+        Mi cuenta
+      </span>
 
-      <!-- Texto que indica la sección actual. -->
-      <p>Mis pedidos</p>
+      <!-- Muestra el título principal. -->
+      <h1>
+        Mis pedidos
+      </h1>
+
+      <!-- Muestra una descripción corta. -->
+      <p>
+        Consulta tus compras y revisa el estado de cada pedido.
+      </p>
 
     </div>
 
+    <!-- Agrupa los botones superiores. -->
+    <div class="acciones-encabezado">
 
-    <!-- Botón para regresar al dashboard principal. -->
-    <button type="button"
-            class="btn-volver"
-            (click)="volverDashboard()">
+      <!-- Botón para volver al Dashboard. -->
+      <button mat-stroked-button
+              type="button"
+              (click)="volverDashboard()">
 
-      Volver al inicio
+        <!-- Muestra el icono de regresar. -->
+        <mat-icon>
+          arrow_back
+        </mat-icon>
 
-    </button>
+        Volver
+      </button>
+
+      <!-- Botón PrimeNG para ir a Productos. -->
+      <p-button label="Productos"
+                icon="pi pi-shopping-bag"
+                severity="secondary"
+                (onClick)="irAProductos()">
+      </p-button>
+
+      <!-- Botón PrimeNG para volver a cargar los pedidos. -->
+      <p-button label="Actualizar"
+                icon="pi pi-refresh"
+                (onClick)="actualizarPedidos()">
+      </p-button>
+
+    </div>
 
   </header>
 
+  <!-- Muestra un mensaje de éxito. -->
+  <div class="mensaje mensaje-exito"
+       *ngIf="mensajeExito">
 
-  <!-- Contenido principal de la página. -->
-  <main class="contenido">
+    <!-- Muestra un icono de éxito. -->
+    <mat-icon>
+      check_circle
+    </mat-icon>
 
-    <!-- Título de la sección. -->
-    <section class="titulo-seccion">
+    <!-- Muestra el mensaje recibido. -->
+    <span>
+      {{ mensajeExito }}
+    </span>
 
-      <!-- Título principal del historial de compras. -->
-      <h2>Historial de pedidos</h2>
+  </div>
 
-      <!-- Texto de apoyo para el cliente. -->
-      <p>
-        Aquí puedes consultar las compras que has realizado.
-      </p>
+  <!-- Muestra un mensaje de error. -->
+  <div class="mensaje mensaje-error"
+       *ngIf="mensajeError && !cargando">
 
-    </section>
+    <!-- Muestra un icono de error. -->
+    <mat-icon>
+      error_outline
+    </mat-icon>
 
-
-    <!-- Este bloque aparece mientras se están consultando los pedidos. -->
-    <div class="estado-mensaje"
-         *ngIf="cargando">
-
-      Cargando pedidos...
-
-    </div>
-
-
-    <!-- Este mensaje aparece si ocurrió algún problema al consultar la API. -->
-    <div class="mensaje-error"
-         *ngIf="mensajeError">
-
+    <!-- Muestra el mensaje de error. -->
+    <span>
       {{ mensajeError }}
+    </span>
 
-    </div>
+  </div>
 
+  <!-- Muestra las tarjetas de resumen. -->
+  <section class="resumen-pedidos"
+           *ngIf="!cargando">
 
-    <!-- Este bloque aparece cuando ya terminó la carga
-         y el cliente todavía no tiene pedidos registrados. -->
-    <div class="sin-pedidos"
-         *ngIf="
-        !cargando &&
-        !mensajeError &&
-        pedidos.length === 0
-      ">
+    <!-- Muestra la cantidad total de pedidos. -->
+    <article class="tarjeta-resumen">
 
-      <!-- Título del mensaje. -->
-      <h3>Aún no tienes pedidos</h3>
+      <!-- Muestra el icono de pedidos. -->
+      <mat-icon>
+        receipt_long
+      </mat-icon>
 
-      <!-- Explicación para el cliente. -->
-      <p>
-        Cuando realices una compra aparecerá en esta sección.
-      </p>
+      <!-- Agrupa la información. -->
+      <div>
 
-      <!-- Botón para regresar al catálogo principal. -->
-      <button type="button"
-              class="btn-principal"
-              (click)="volverDashboard()">
+        <!-- Muestra el nombre del dato. -->
+        <span>
+          Total de pedidos
+        </span>
 
-        Ver productos
+        <!-- Muestra la cantidad. -->
+        <strong>
+          {{ cantidadPedidos }}
+        </strong>
 
-      </button>
+      </div>
 
-    </div>
+    </article>
 
+    <!-- Muestra el total acumulado de compras. -->
+    <article class="tarjeta-resumen">
 
-    <!-- Este contenedor aparece solamente
-         cuando existen pedidos para mostrar. -->
-    <section class="lista-pedidos"
-             *ngIf="
-             !cargando &&
-             !mensajeError &&
-             pedidos.length>
-      0
-      ">
+      <!-- Muestra un icono de pago. -->
+      <mat-icon>
+        payments
+      </mat-icon>
 
-      <!-- Recorre todos los pedidos recibidos desde la API. -->
-      <article class="pedido-card"
-               *ngFor="let pedido of pedidos">
+      <!-- Agrupa la información. -->
+      <div>
 
-        <!-- Parte superior de cada tarjeta de pedido. -->
-        <div class="pedido-header">
+        <!-- Muestra el nombre del dato. -->
+        <span>
+          Total en compras
+        </span>
 
-          <!-- Información principal del pedido. -->
-          <div>
+        <!-- Muestra el monto total. -->
+        <strong>
+          ₡{{ totalPedidos | number:'1.0-0' }}
+        </strong>
 
-            <!-- Muestra el número o identificador del pedido. -->
-            <h3>
-              Pedido #{{ pedido.idPedido }}
-            </h3>
+      </div>
 
-            <!-- Muestra la fecha en que se realizó la compra.
-                 date es un pipe de Angular que permite dar formato a fechas. -->
-            <p>
-              Realizado el
-              {{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}
-            </p>
+    </article>
 
-          </div>
+  </section>
 
+  <!-- Muestra el estado de carga. -->
+  <section class="estado-carga"
+           *ngIf="cargando">
 
-          <!-- Muestra el estado actual del pedido. -->
-          <span class="estado-pedido">
+    <!-- Muestra un icono mientras carga. -->
+    <mat-icon>
+      sync
+    </mat-icon>
 
+    <!-- Muestra el título. -->
+    <h2>
+      Cargando pedidos...
+    </h2>
+
+    <!-- Muestra una explicación. -->
+    <p>
+      Estamos consultando tus compras.
+    </p>
+
+  </section>
+
+  <!-- Muestra un estado vacío si no existen pedidos. -->
+  <section class="sin-pedidos"
+           *ngIf="
+      !cargando &&
+      !mensajeError &&
+      pedidos.length === 0
+    ">
+
+    <!-- Muestra un icono grande. -->
+    <mat-icon>
+      shopping_bag
+    </mat-icon>
+
+    <!-- Muestra el título. -->
+    <h2>
+      Aún no tienes pedidos
+    </h2>
+
+    <!-- Muestra una explicación. -->
+    <p>
+      Cuando realices una compra podrás verla aquí.
+    </p>
+
+    <!-- Botón para ir a Productos. -->
+    <button mat-flat-button
+            type="button"
+            class="boton-principal"
+            (click)="irAProductos()">
+
+      <!-- Muestra el icono. -->
+      <mat-icon>
+        storefront
+      </mat-icon>
+
+      Ver productos
+    </button>
+
+  </section>
+
+  <!-- Crea la lista de pedidos. -->
+  <section class="lista-pedidos"
+           *ngIf="
+           !cargando &&
+           pedidos.length>
+    0
+    ">
+
+    <!-- Recorre todos los pedidos recibidos. -->
+    <article class="pedido-card"
+             *ngFor="let pedido of pedidos">
+
+      <!-- Crea la parte superior del pedido. -->
+      <div class="pedido-superior">
+
+        <!-- Agrupa el número y la fecha. -->
+        <div>
+
+          <!-- Muestra el número del pedido. -->
+          <span class="numero-pedido">
+            Pedido #{{ pedido.idPedido }}
+          </span>
+
+          <!-- Muestra la fecha del pedido. -->
+          <p>
+            {{ pedido.fechaPedido | date:'dd/MM/yyyy - h:mm a' }}
+          </p>
+
+        </div>
+
+        <!-- Muestra el estado general del pedido. -->
+        <div class="estado-pedido"
+             [ngClass]="obtenerClaseEstado(pedido.estado)">
+
+          <!-- Muestra el icono según el estado. -->
+          <mat-icon>
+            {{ obtenerIconoEstado(pedido.estado) }}
+          </mat-icon>
+
+          <!-- Muestra el nombre del estado. -->
+          <span>
             {{ pedido.estado }}
-
           </span>
 
         </div>
 
+      </div>
 
-        <!-- Información económica y de entrega del pedido. -->
-        <div class="pedido-info">
+      <!-- Crea la cuadrícula con los montos. -->
+      <div class="pedido-datos">
 
-          <!-- Muestra la dirección registrada para la entrega. -->
-          <div class="dato">
+        <!-- Muestra el subtotal. -->
+        <div class="dato-pedido">
+          <span>
+            Subtotal
+          </span>
 
-            <!-- Nombre del dato. -->
-            <span>Dirección de entrega</span>
+          <strong>
+            ₡{{ pedido.subtotal | number:'1.0-0' }}
+          </strong>
+        </div>
 
-            <!-- Valor correspondiente. -->
+        <!-- Muestra el impuesto. -->
+        <div class="dato-pedido">
+          <span>
+            Impuesto
+          </span>
+
+          <strong>
+            ₡{{ pedido.impuesto | number:'1.0-0' }}
+          </strong>
+        </div>
+
+        <!-- Muestra el descuento. -->
+        <div class="dato-pedido">
+          <span>
+            Descuento
+          </span>
+
+          <strong>
+            ₡{{ pedido.descuento | number:'1.0-0' }}
+          </strong>
+        </div>
+
+        <!-- Muestra el total final. -->
+        <div class="dato-pedido dato-total">
+          <span>
+            Total
+          </span>
+
+          <strong>
+            ₡{{ pedido.total | number:'1.0-0' }}
+          </strong>
+        </div>
+
+      </div>
+
+      <!-- Muestra información adicional. -->
+      <div class="pedido-informacion">
+
+        <!-- Muestra la dirección de entrega. -->
+        <div class="informacion-item">
+
+          <!-- Muestra un icono de ubicación. -->
+          <mat-icon>
+            location_on
+          </mat-icon>
+
+          <!-- Agrupa el dato. -->
+          <div>
+            <span>
+              Dirección de entrega
+            </span>
+
             <strong>
-              {{ pedido.direccionEntrega }}
+              {{
+                pedido.direccionEntrega ||
+                'No disponible'
+              }}
             </strong>
-
-          </div>
-
-
-          <!-- Muestra el subtotal del pedido. -->
-          <div class="dato">
-
-            <span>Subtotal</span>
-
-            <strong>
-              ₡{{ pedido.subtotal | number:'1.0-2' }}
-            </strong>
-
-          </div>
-
-
-          <!-- Muestra el impuesto aplicado. -->
-          <div class="dato">
-
-            <span>Impuesto</span>
-
-            <strong>
-              ₡{{ pedido.impuesto | number:'1.0-2' }}
-            </strong>
-
-          </div>
-
-
-          <!-- Muestra el descuento aplicado. -->
-          <div class="dato">
-
-            <span>Descuento</span>
-
-            <strong>
-              -₡{{ pedido.descuento | number:'1.0-2' }}
-            </strong>
-
           </div>
 
         </div>
 
+        <!-- Muestra el estado del pago. -->
+        <div class="informacion-item"
+             *ngIf="pedido.estadoPago">
 
-        <!-- Parte inferior de la tarjeta. -->
-        <div class="pedido-footer">
+          <!-- Muestra un icono de pago. -->
+          <mat-icon>
+            credit_card
+          </mat-icon>
 
-          <!-- Muestra el monto final del pedido. -->
-          <div class="total-pedido">
-
-            <span>Total</span>
+          <!-- Agrupa el dato. -->
+          <div>
+            <span>
+              Estado del pago
+            </span>
 
             <strong>
-              ₡{{ pedido.total | number:'1.0-2' }}
+              {{ pedido.estadoPago }}
             </strong>
-
           </div>
-
-
-          <!-- Abre la pantalla de detalle del pedido seleccionado. -->
-          <button type="button"
-                  class="btn-detalle"
-                  (click)="verDetalle(pedido.idPedido)">
-
-            Ver detalle
-
-          </button>
 
         </div>
 
-      </article>
+      </div>
 
-    </section>
+      <!-- Crea la zona inferior de acciones. -->
+      <div class="pedido-acciones">
 
-  </main>
+        <!-- Botón para ver el detalle del pedido. -->
+        <p-button label="Ver detalle"
+                  icon="pi pi-eye"
+                  severity="secondary"
+                  (onClick)="verDetalle(pedido.idPedido)">
+        </p-button>
 
-</div>
+        <!-- Muestra Cancelar solo si el pedido cumple las reglas. -->
+        <button mat-flat-button
+                type="button"
+                class="boton-cancelar"
+                *ngIf="puedeCancelar(pedido)"
+                [disabled]="estaCancelando(pedido.idPedido)"
+                (click)="cancelarPedido(pedido)">
+
+          <!-- Muestra un icono de cancelar. -->
+          <mat-icon>
+            cancel
+          </mat-icon>
+
+          <!-- Cambia el texto mientras se procesa. -->
+          {{
+            estaCancelando(pedido.idPedido)
+              ? 'Cancelando...'
+              : 'Cancelar pedido'
+          }}
+
+        </button>
+
+      </div>
+
+    </article>
+
+  </section>
+
+</section>

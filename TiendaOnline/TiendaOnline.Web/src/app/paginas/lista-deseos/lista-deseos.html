@@ -1,122 +1,335 @@
+<!-- Crea la página completa de Lista de deseos. -->
 <section class="pagina-deseos">
 
+
+  <!-- Crea el encabezado principal de la pantalla. -->
   <header class="encabezado">
 
+
+    <!-- Agrupa el título y la descripción. -->
     <div>
+
+
+      <!-- Muestra una etiqueta pequeña. -->
       <span class="etiqueta">
         Tus favoritos
       </span>
 
+
+      <!-- Muestra el título principal. -->
       <h1>
         Lista de deseos
       </h1>
 
+
+      <!-- Muestra una descripción corta. -->
       <p>
-        Guarda aquí los productos que quieras
-        comprar más adelante.
+        Guarda aquí los productos que quieras comprar más adelante.
       </p>
+
     </div>
 
-    <a
-      routerLink="/dashboard"
-      class="boton-volver"
-    >
-      ← Volver a la tienda
-    </a>
+
+    <!-- Agrupa los botones superiores. -->
+    <div class="acciones-encabezado">
+
+
+      <!-- Botón Material para volver al Dashboard. -->
+      <button mat-stroked-button
+              type="button"
+              (click)="volverDashboard()">
+
+
+        <!-- Muestra el icono de regreso. -->
+        <mat-icon>
+          arrow_back
+        </mat-icon>
+
+
+        <!-- Muestra el texto del botón. -->
+        Volver
+
+      </button>
+
+
+      <!-- Botón PrimeNG para abrir Productos. -->
+      <p-button label="Productos"
+                icon="pi pi-shopping-bag"
+                severity="secondary"
+                (onClick)="irAProductos()">
+      </p-button>
+
+
+      <!-- Botón PrimeNG para abrir el carrito. -->
+      <p-button label="Carrito"
+                icon="pi pi-shopping-cart"
+                (onClick)="irAlCarrito()">
+      </p-button>
+
+    </div>
 
   </header>
 
 
-  <div
-    class="lista-vacia"
-    *ngIf="productosDeseados.length === 0"
-  >
+  <!-- Muestra un mensaje temporal cuando ocurre una acción. -->
+  <div class="mensaje-deseos"
+       [class.mensaje-exito]="tipoMensaje === 'exito'"
+       [class.mensaje-info]="tipoMensaje === 'info'"
+       [class.mensaje-error]="tipoMensaje === 'error'"
+       *ngIf="mensaje">
 
-    <div class="corazon-grande">
-      ♡
-    </div>
 
-    <h2>
-      Tu lista de deseos está vacía
-    </h2>
+    <!-- Muestra un icono informativo. -->
+    <mat-icon>
+      info
+    </mat-icon>
 
-    <p>
-      Agrega productos desde la tienda
-      usando el corazón.
-    </p>
 
-    <a
-      routerLink="/dashboard"
-      class="boton-principal"
-    >
-      Explorar productos
-    </a>
+    <!-- Muestra el texto del mensaje. -->
+    <span>
+      {{ mensaje }}
+    </span>
 
   </div>
 
 
-  <div
-    class="grid-productos"
-    *ngIf="productosDeseados.length > 0"
-  >
-
-    <article
-      class="tarjeta-producto"
-      *ngFor="let producto of productosDeseados"
-    >
-
-      <div class="imagen-producto">
-
-        <img
-          [src]="producto.imagen"
-          [alt]="producto.nombre"
-        />
-
-        <button
-          type="button"
-          class="boton-eliminar"
-          (click)="eliminarDeseo(producto.id)"
-        >
-          ♥
-        </button>
-
-      </div>
+  <!-- Crea una pequeña tarjeta de resumen. -->
+  <section class="resumen-deseos">
 
 
-      <div class="contenido-producto">
+    <!-- Muestra la cantidad de favoritos. -->
+    <article class="tarjeta-resumen">
 
-        <span class="marca">
-          {{ producto.marca }}
+
+      <!-- Muestra el icono de favoritos. -->
+      <mat-icon>
+        favorite
+      </mat-icon>
+
+
+      <!-- Agrupa la información. -->
+      <div>
+
+
+        <!-- Muestra el nombre del dato. -->
+        <span>
+          Productos favoritos
         </span>
 
-        <h3>
-          {{ producto.nombre }}
-        </h3>
 
-        <p class="precio">
-          {{
-            producto.precio
-              | currency:'CRC':'symbol-narrow':'1.0-0'
-          }}
-        </p>
-
-        <p class="stock">
-          Disponibles:
-          {{ producto.disponibles }}
-        </p>
-
-        <button
-          type="button"
-          class="boton-carrito"
-          (click)="agregarAlCarrito(producto)"
-        >
-          Añadir al carrito
-        </button>
+        <!-- Muestra la cantidad de productos guardados. -->
+        <strong>
+          {{ productosDeseados.length }}
+        </strong>
 
       </div>
 
     </article>
 
-  </div>
+
+    <!-- Muestra la cantidad actual del carrito. -->
+    <article class="tarjeta-resumen">
+
+
+      <!-- Muestra el icono del carrito. -->
+      <mat-icon>
+        shopping_cart
+      </mat-icon>
+
+
+      <!-- Agrupa la información. -->
+      <div>
+
+
+        <!-- Muestra el nombre del dato. -->
+        <span>
+          En carrito
+        </span>
+
+
+        <!-- Muestra la cantidad de productos del carrito. -->
+        <strong>
+          {{ cantidadCarrito }}
+        </strong>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- Muestra esta sección cuando no existen favoritos. -->
+  <section class="lista-vacia"
+           *ngIf="productosDeseados.length === 0">
+
+
+    <!-- Muestra un icono grande de corazón. -->
+    <mat-icon>
+      favorite_border
+    </mat-icon>
+
+
+    <!-- Muestra el título del estado vacío. -->
+    <h2>
+      Tu lista de deseos está vacía
+    </h2>
+
+
+    <!-- Muestra una explicación. -->
+    <p>
+      Agrega productos usando el corazón desde el Dashboard o Productos.
+    </p>
+
+
+    <!-- Botón Material para ir a Productos. -->
+    <button mat-flat-button
+            type="button"
+            class="boton-explorar"
+            (click)="irAProductos()">
+
+
+      <!-- Muestra un icono de productos. -->
+      <mat-icon>
+        shopping_bag
+      </mat-icon>
+
+
+      <!-- Muestra el texto del botón. -->
+      Explorar productos
+
+    </button>
+
+  </section>
+
+
+  <!-- Crea la cuadrícula de favoritos cuando existen productos. -->
+  <section class="grid-productos"
+           *ngIf="productosDeseados.length > 0">
+
+
+    <!-- Recorre todos los productos guardados. -->
+    <article class="tarjeta-producto"
+             *ngFor="let producto of productosDeseados">
+
+
+      <!-- Crea la zona de imagen del producto. -->
+      <div class="imagen-producto">
+
+
+        <!-- Muestra la imagen guardada del producto. -->
+        <img [src]="producto.imagen"
+             [alt]="producto.nombre">
+
+
+        <!-- Botón Material para eliminar el favorito. -->
+        <button mat-icon-button
+                type="button"
+                class="boton-eliminar"
+                matTooltip="Eliminar de favoritos"
+                (click)="eliminarDeseo(producto.id)">
+
+
+          <!-- Muestra un corazón lleno. -->
+          <mat-icon>
+            favorite
+          </mat-icon>
+
+        </button>
+
+      </div>
+
+
+      <!-- Crea el contenido de la tarjeta. -->
+      <div class="contenido-producto">
+
+
+        <!-- Muestra la marca. -->
+        <span class="marca">
+          {{ producto.marca }}
+        </span>
+
+
+        <!-- Muestra el nombre del producto. -->
+        <h3>
+          {{ producto.nombre }}
+        </h3>
+
+
+        <!-- Muestra la categoría cuando está disponible. -->
+        <span class="categoria-producto"
+              *ngIf="producto.categoria">
+          {{ producto.categoria }}
+        </span>
+
+
+        <!-- Muestra el precio del producto. -->
+        <p class="precio">
+          ₡{{ producto.precio | number:'1.0-0' }}
+        </p>
+
+
+        <!-- Muestra el stock si el favorito lo tiene guardado. -->
+        <p class="stock"
+           *ngIf="producto.stock !== undefined">
+
+          <!-- Muestra la cantidad disponible. -->
+          Disponibles:
+          {{ producto.stock }}
+
+        </p>
+
+
+        <!-- Mantiene compatibilidad con favoritos antiguos. -->
+        <p class="stock"
+           *ngIf="
+            producto.stock === undefined &&
+            producto.disponibles !== undefined
+          ">
+
+          <!-- Muestra la cantidad disponible antigua. -->
+          Disponibles:
+          {{ producto.disponibles }}
+
+        </p>
+
+
+        <!-- Agrupa los botones del producto. -->
+        <div class="acciones-producto">
+
+
+          <!-- Botón PrimeNG para agregar una unidad al carrito. -->
+          <p-button label="Agregar al carrito"
+                    icon="pi pi-shopping-cart"
+                    styleClass="boton-carrito-deseo"
+                    (onClick)="agregarAlCarrito(producto)">
+          </p-button>
+
+
+          <!-- Botón Material para eliminar el producto. -->
+          <button mat-stroked-button
+                  type="button"
+                  class="boton-quitar"
+                  (click)="eliminarDeseo(producto.id)">
+
+
+            <!-- Muestra el icono de eliminar. -->
+            <mat-icon>
+              delete_outline
+            </mat-icon>
+
+
+            <!-- Muestra el texto del botón. -->
+            Quitar
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  </section>
 
 </section>
