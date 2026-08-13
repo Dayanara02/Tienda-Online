@@ -5,17 +5,19 @@ using Microsoft.AspNetCore.Authorization;
 using TiendaOnline.Dominio.Entidades;
 
 namespace TiendaOnline.API.Controllers;
-
+// que el usuario esté autenticado para poder acceder
 [Authorize]
+// Indica que esta clase funciona como un controlador de una API
 [ApiController]
 [Route("api/[controller]")]
 public class DireccionUsuariosController : ControllerBase
-{
+{   // Variable privada que contiene el contexto de la base de datos.
+    // Permite realizar consultas y modificaciones mediante Entity Framework.
     private readonly TiendaOnlineContext _context;
 
     public DireccionUsuariosController(
         TiendaOnlineContext context)
-    {
+    {  // Se asigna el contexto recibido a la variable _context.
         _context = context;
     }
 
@@ -24,6 +26,10 @@ public class DireccionUsuariosController : ControllerBase
     public async Task<ActionResult<IEnumerable<DireccionUsuario>>>
         GetDireccionUsuarios()
     {
+        // Consulta la tabla DireccionUsuarios.
+        // AsNoTracking() indica que los registros solamente se
+        // están consultando y no serán modificados.
+        // ToListAsync() obtiene todos los registros de forma asíncrona.
         return await _context.DireccionUsuarios
             .AsNoTracking()
             .ToListAsync();
@@ -36,7 +42,8 @@ public class DireccionUsuariosController : ControllerBase
     {
         var direccion =
             await _context.DireccionUsuarios.FindAsync(id);
-
+        // Si no existe una dirección con ese ID,
+        // se devuelve una respuesta HTTP 404 (Not Found).
         if (direccion == null)
         {
             return NotFound();

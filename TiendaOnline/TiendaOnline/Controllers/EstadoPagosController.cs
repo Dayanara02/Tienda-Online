@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.Authorization;
 using TiendaOnline.Dominio.Entidades;
 
 namespace TiendaOnline.API.Controllers;
-
+// Indica que solamente los usuarios que tengan el rol
+// "Administrador" pueden acceder a este controlador.
 [Authorize(Roles = "Administrador")]
 [ApiController]
+// Define la ruta principal del controlador.
+// [controller] será reemplazado por "EstadoPagos"
 [Route("api/[controller]")]
 public class EstadoPagosController : ControllerBase
 {
@@ -29,6 +32,7 @@ public class EstadoPagosController : ControllerBase
     }
 
     // GET: api/EstadoPagos/5
+    // Permite eliminar un estado de pago
     [HttpGet("{id}")]
     public async Task<ActionResult<EstadoPago>>
         GetEstadoPago(int id)
@@ -117,7 +121,7 @@ public class EstadoPagosController : ControllerBase
         {
             return NotFound();
         }
-
+        // Comprueba si existen pagos relacionados con el estado de pago que se intenta eliminar
         var tienePagos = await _context.Pagos
             .AnyAsync(p => p.IdEstadoPago == id);
 
@@ -127,10 +131,11 @@ public class EstadoPagosController : ControllerBase
                 "No se puede eliminar porque existen pagos relacionados."
             );
         }
-
+        
         _context.EstadoPagos.Remove(estadoPago);
+        // Guarda la eliminación en la base de datos
         await _context.SaveChangesAsync();
-
+        // que la eliminación se realizó correctamente
         return NoContent();
     }
 }

@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using TiendaOnline.Dominio.Entidades;
 namespace TiendaOnline.API.Controllers;
 
-    // Define que esta clase pertenece al controlador de descuentos de la API.
+// Define que esta clase pertenece al controlador de descuentos de la API.
 
-    [Route("api/[controller]")]
+[Route("api/[controller]")]
 
 // Indica que esta clase es un controlador de una API.
 
