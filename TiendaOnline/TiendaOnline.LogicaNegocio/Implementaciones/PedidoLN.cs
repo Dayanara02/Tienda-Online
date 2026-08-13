@@ -15,213 +15,275 @@ using TiendaOnline.Utilidades;
 
 namespace TiendaOnline.LogicaNegocio.Implementaciones
 {
-    // Contiene la lógica de negocio de las notificaciones.
-    public class NotificacionLN : INotificacionLN
+    // Contiene la lógica de negocio de los pedidos.
+    public class PedidoLN : IPedidoLN
     {
         // Permite acceder a los repositorios.
         private readonly IUnidadTrabajoEF _unidadDeTrabajo;
 
         // Permite registrar errores.
-        private readonly ILogger<NotificacionLN> _logger;
+        private readonly ILogger<PedidoLN> _logger;
 
 
         // Recibe las dependencias necesarias.
-        public NotificacionLN(
+        public PedidoLN(
             IUnidadTrabajoEF unidadDeTrabajo,
-            ILogger<NotificacionLN> logger)
+            ILogger<PedidoLN> logger)
         {
             _unidadDeTrabajo = unidadDeTrabajo;
             _logger = logger;
         }
 
 
-        // Registra una nueva notificación.
-        public async Task<Respuesta<Notificacion>> InsertarAsync(
-            Notificacion datos)
+        // Registra un nuevo pedido.
+        public async Task<Respuesta<Pedido>> InsertarAsync(
+            Pedido datos)
         {
-            var resultado = new Respuesta<Notificacion>();
+            // Crea la respuesta de la operación.
+            var resultado = new Respuesta<Pedido>();
 
             try
             {
-                // Valida que exista un usuario.
+                // Valida el usuario.
                 if (datos.IdUsuario <= 0)
                 {
                     resultado.Error =
-                        "Debe indicar un usuario válido.";
+                        "Debe indicar un usuario válido para realizar el pedido.";
 
                     return resultado;
                 }
 
-                // Valida el título.
-                if (string.IsNullOrWhiteSpace(datos.Titulo))
+
+                // Valida el subtotal.
+                if (datos.Subtotal < 0)
                 {
                     resultado.Error =
-                        "Debe indicar el título de la notificación.";
+                        "El subtotal del pedido no puede ser negativo.";
 
                     return resultado;
                 }
 
-                // Valida el mensaje.
-                if (string.IsNullOrWhiteSpace(datos.Mensaje))
+
+                // Valida el impuesto.
+                if (datos.Impuesto < 0)
                 {
                     resultado.Error =
-                        "Debe indicar el mensaje de la notificación.";
+                        "El impuesto del pedido no puede ser negativo.";
 
                     return resultado;
                 }
 
-                // Asigna la fecha actual si no viene definida.
-                if (datos.FechaCreacion == default)
+
+                // Valida el descuento.
+                if (datos.Descuento < 0)
                 {
-                    datos.FechaCreacion = DateTime.Now;
+                    resultado.Error =
+                        "El descuento del pedido no puede ser negativo.";
+
+                    return resultado;
                 }
 
-                // Guarda la notificación.
+
+                // Valida el total.
+                if (datos.Total < 0)
+                {
+                    resultado.Error =
+                        "El total del pedido no puede ser negativo.";
+
+                    return resultado;
+                }
+
+
+                // Asigna la fecha actual si viene vacía.
+                if (datos.FechaPedido == default)
+                {
+                    datos.FechaPedido = DateTime.Now;
+                }
+
+
+                // Asigna un estado inicial.
+                if (string.IsNullOrWhiteSpace(datos.Estado))
+                {
+                    datos.Estado = "Pendiente";
+                }
+
+
+                // Guarda el pedido.
                 var respuestaRepositorio =
-                    await _unidadDeTrabajo.TNotificacion.InsertarAsync(datos);
+                    await _unidadDeTrabajo.TPedido.InsertarAsync(
+                        datos);
+
 
                 // Comprueba si ocurrió un error.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
-                    resultado.Error = respuestaRepositorio.Error;
+                    resultado.Error =
+                        respuestaRepositorio.Error;
 
                     return resultado;
                 }
 
-                resultado.Data = respuestaRepositorio.Data;
+
+                // Guarda el pedido registrado.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al insertar una notificación.");
+                    "Error al insertar un pedido para el usuario {IdUsuario}",
+                    datos.IdUsuario);
 
                 resultado.Error = ex.Message;
             }
 
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Obtiene todas las notificaciones.
-        public async Task<Respuesta<IEnumerable<Notificacion>>> ListarAsync()
+        // Obtiene todos los pedidos.
+        public async Task<Respuesta<IEnumerable<Pedido>>> ListarAsync()
         {
+            // Crea la respuesta con varios pedidos.
             var resultado =
-                new Respuesta<IEnumerable<Notificacion>>();
+                new Respuesta<IEnumerable<Pedido>>();
 
             try
             {
-                // Consulta las notificaciones.
+                // Consulta todos los pedidos.
                 var respuestaRepositorio =
-                    await _unidadDeTrabajo.TNotificacion.ListarAsync();
+                    await _unidadDeTrabajo.TPedido.ListarAsync();
+
 
                 // Comprueba si ocurrió un error.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
-                    resultado.Error = respuestaRepositorio.Error;
+                    resultado.Error =
+                        respuestaRepositorio.Error;
 
                     return resultado;
                 }
 
-                resultado.Data = respuestaRepositorio.Data;
+
+                // Guarda los pedidos encontrados.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al listar las notificaciones.");
+                    "Error al listar los pedidos.");
 
                 resultado.Error = ex.Message;
             }
 
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Modifica una notificación existente.
-        public async Task<Respuesta<Notificacion>> ModificarAsync(
-            Notificacion datos)
+        // Modifica un pedido existente.
+        public async Task<Respuesta<Pedido>> ModificarAsync(
+            Pedido datos)
         {
-            var resultado = new Respuesta<Notificacion>();
+            // Crea la respuesta de la operación.
+            var resultado = new Respuesta<Pedido>();
 
             try
             {
-                // Busca primero la notificación.
-                var notificacionActual =
-                    await _unidadDeTrabajo.TNotificacion.ObtenerEntidadAsync(
-                        x => x.IdNotificacion == datos.IdNotificacion);
+                // Busca el pedido.
+                var pedidoActual =
+                    await _unidadDeTrabajo.TPedido.ObtenerEntidadAsync(
+                        x => x.IdPedido ==
+                             datos.IdPedido);
+
 
                 // Comprueba que exista.
-                if (notificacionActual.Data == null)
+                if (pedidoActual.Data == null)
                 {
                     resultado.Error =
-                        "No existe la notificación que desea modificar.";
+                        "No existe el pedido que desea modificar.";
 
                     return resultado;
                 }
+
 
                 // Valida el usuario.
                 if (datos.IdUsuario <= 0)
                 {
                     resultado.Error =
-                        "El usuario no es válido.";
+                        "El usuario relacionado con el pedido no es válido.";
 
                     return resultado;
                 }
 
-                // Valida el título.
-                if (string.IsNullOrWhiteSpace(datos.Titulo))
+
+                // Valida los valores monetarios.
+                if (datos.Subtotal < 0 ||
+                    datos.Impuesto < 0 ||
+                    datos.Descuento < 0 ||
+                    datos.Total < 0)
                 {
                     resultado.Error =
-                        "Debe indicar el título de la notificación.";
+                        "Los valores monetarios del pedido no pueden ser negativos.";
 
                     return resultado;
                 }
 
-                // Valida el mensaje.
-                if (string.IsNullOrWhiteSpace(datos.Mensaje))
-                {
-                    resultado.Error =
-                        "Debe indicar el mensaje de la notificación.";
-
-                    return resultado;
-                }
 
                 // Actualiza el usuario.
-                notificacionActual.Data.IdUsuario =
+                pedidoActual.Data.IdUsuario =
                     datos.IdUsuario;
 
-                // Actualiza el título.
-                notificacionActual.Data.Titulo =
-                    datos.Titulo;
-
-                // Actualiza el mensaje.
-                notificacionActual.Data.Mensaje =
-                    datos.Mensaje;
-
-                // Actualiza el tipo.
-                notificacionActual.Data.Tipo =
-                    datos.Tipo;
-
                 // Actualiza la fecha.
-                notificacionActual.Data.FechaCreacion =
-                    datos.FechaCreacion;
-
-                // Actualiza si fue leída.
-                notificacionActual.Data.Leida =
-                    datos.Leida;
+                pedidoActual.Data.FechaPedido =
+                    datos.FechaPedido;
 
                 // Actualiza el estado.
-                notificacionActual.Data.Estado =
+                pedidoActual.Data.Estado =
                     datos.Estado;
+
+                // Actualiza el subtotal.
+                pedidoActual.Data.Subtotal =
+                    datos.Subtotal;
+
+                // Actualiza el impuesto.
+                pedidoActual.Data.Impuesto =
+                    datos.Impuesto;
+
+                // Actualiza el descuento.
+                pedidoActual.Data.Descuento =
+                    datos.Descuento;
+
+                // Actualiza el total.
+                pedidoActual.Data.Total =
+                    datos.Total;
+
+                // Actualiza la dirección de entrega.
+                pedidoActual.Data.DireccionEntrega =
+                    datos.DireccionEntrega;
+
+                // Actualiza el estado relacionado.
+                pedidoActual.Data.IdEstadoPedido =
+                    datos.IdEstadoPedido;
+
 
                 // Guarda los cambios.
                 var respuestaRepositorio =
-                    await _unidadDeTrabajo.TNotificacion.ModificarAsync(
-                        notificacionActual.Data);
+                    await _unidadDeTrabajo.TPedido.ModificarAsync(
+                        pedidoActual.Data);
+
 
                 // Comprueba si ocurrió un error.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
                     resultado.Error =
                         respuestaRepositorio.Error;
@@ -229,97 +291,119 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                     return resultado;
                 }
 
-                resultado.Data = respuestaRepositorio.Data;
+
+                // Guarda el pedido modificado.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al modificar la notificación {IdNotificacion}",
-                    datos.IdNotificacion);
+                    "Error al modificar el pedido {IdPedido}",
+                    datos.IdPedido);
 
                 resultado.Error = ex.Message;
             }
 
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Elimina una notificación.
+        // Elimina un pedido.
         public async Task<Respuesta<bool>> EliminarAsync(
-            Notificacion datos)
+            Pedido datos)
         {
+            // Crea la respuesta booleana.
             var resultado = new Respuesta<bool>();
 
             try
             {
-                // Busca la notificación.
-                var notificacion =
-                    await _unidadDeTrabajo.TNotificacion.ObtenerEntidadAsync(
-                        x => x.IdNotificacion == datos.IdNotificacion);
+                // Busca el pedido.
+                var pedido =
+                    await _unidadDeTrabajo.TPedido.ObtenerEntidadAsync(
+                        x => x.IdPedido ==
+                             datos.IdPedido);
+
 
                 // Comprueba que exista.
-                if (notificacion.Data == null)
+                if (pedido.Data == null)
                 {
                     resultado.Data = false;
 
                     resultado.Error =
-                        "No existe la notificación que desea eliminar.";
+                        "No existe el pedido que desea eliminar.";
 
                     return resultado;
                 }
 
-                // Elimina la notificación.
+
+                // Elimina el pedido.
                 var respuestaRepositorio =
-                    await _unidadDeTrabajo.TNotificacion.EliminarAsync(
-                        notificacion.Data);
+                    await _unidadDeTrabajo.TPedido.EliminarAsync(
+                        pedido.Data);
+
 
                 // Comprueba si ocurrió un error.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
                     resultado.Data = false;
+
                     resultado.Error =
                         respuestaRepositorio.Error;
 
                     return resultado;
                 }
 
-                resultado.Data = respuestaRepositorio.Data;
+
+                // Guarda el resultado.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al eliminar la notificación {IdNotificacion}",
-                    datos.IdNotificacion);
+                    "Error al eliminar el pedido {IdPedido}",
+                    datos.IdPedido);
 
                 resultado.Data = false;
                 resultado.Error = ex.Message;
             }
 
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Busca notificaciones por título.
-        public async Task<Respuesta<IEnumerable<Notificacion>>> BuscarAsync(
-            Notificacion datos)
+        // Busca pedidos por estado.
+        public async Task<Respuesta<IEnumerable<Pedido>>> BuscarAsync(
+            Pedido datos)
         {
+            // Crea la respuesta con varios pedidos.
             var resultado =
-                new Respuesta<IEnumerable<Notificacion>>();
+                new Respuesta<IEnumerable<Pedido>>();
 
             try
             {
-                // Evita errores si el título viene nulo.
-                var titulo = datos.Titulo ?? string.Empty;
+                // Evita errores si el estado viene nulo.
+                var estado =
+                    datos.Estado ?? string.Empty;
 
-                // Busca por coincidencia en el título.
+
+                // Busca pedidos por estado.
                 var respuestaRepositorio =
-                    await _unidadDeTrabajo.TNotificacion.BuscarAsync(
-                        x => x.Titulo.Contains(titulo));
+                    await _unidadDeTrabajo.TPedido.BuscarAsync(
+                        x => x.Estado.Contains(estado));
+
 
                 // Comprueba si ocurrió un error.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
                     resultado.Error =
                         respuestaRepositorio.Error;
@@ -327,55 +411,68 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                     return resultado;
                 }
 
-                resultado.Data = respuestaRepositorio.Data;
+
+                // Guarda los pedidos encontrados.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al buscar notificaciones.");
+                    "Error al buscar pedidos.");
 
                 resultado.Error = ex.Message;
             }
 
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Obtiene una notificación por su identificador.
-        public async Task<Respuesta<Notificacion>> ObtenerAsync(
-            Notificacion datos)
+        // Obtiene un pedido por su identificador.
+        public async Task<Respuesta<Pedido>> ObtenerAsync(
+            Pedido datos)
         {
-            var resultado = new Respuesta<Notificacion>();
+            // Crea la respuesta de la operación.
+            var resultado = new Respuesta<Pedido>();
 
             try
             {
-                // Busca la notificación.
+                // Busca el pedido.
                 var respuestaRepositorio =
-                    await _unidadDeTrabajo.TNotificacion.ObtenerEntidadAsync(
-                        x => x.IdNotificacion == datos.IdNotificacion);
+                    await _unidadDeTrabajo.TPedido.ObtenerEntidadAsync(
+                        x => x.IdPedido ==
+                             datos.IdPedido);
+
 
                 // Comprueba que exista.
                 if (respuestaRepositorio.Data == null)
                 {
                     resultado.Error =
-                        "Notificación no encontrada.";
+                        "Pedido no encontrado.";
 
                     return resultado;
                 }
 
-                resultado.Data = respuestaRepositorio.Data;
+
+                // Guarda el pedido encontrado.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al obtener la notificación {IdNotificacion}",
-                    datos.IdNotificacion);
+                    "Error al obtener el pedido {IdPedido}",
+                    datos.IdPedido);
 
                 resultado.Error = ex.Message;
             }
 
+            // Devuelve el resultado.
             return resultado;
         }
     }
