@@ -1,51 +1,51 @@
-﻿// Importa las herramientas necesarias para crear controladores API.
+﻿// Permite crear controladores API.
 using Microsoft.AspNetCore.Mvc;
 
-// Importa Entity Framework Core para consultar la base de datos.
+// Permite consultar la base de datos.
 using Microsoft.EntityFrameworkCore;
 
-// Importa el contexto de la base de datos.
+// Importa el contexto principal.
 using TiendaOnline.AccesoDatos.Context;
 
-// Importa autorización para proteger los endpoints.
+// Permite proteger los endpoints.
 using Microsoft.AspNetCore.Authorization;
 
-// Importa las entidades del dominio.
+// Importa las entidades.
 using TiendaOnline.Dominio.Entidades;
 
-// Permite leer el identificador del usuario desde el token JWT.
+// Permite leer datos del token.
 using System.Security.Claims;
 
 namespace TiendaOnline.API.Controllers;
 
-// Obliga a que el usuario esté autenticado.
+// Requiere usuario autenticado.
 [Authorize]
 
-// Indica que esta clase funciona como controlador API.
+// Define un controlador API.
 [ApiController]
 
-// Define la ruta principal api/Notificacions.
-[Route("api/[controller]")]
+// Define la ruta correcta.
+[Route("api/Notificaciones")]
 public class NotificacionsController : ControllerBase
 {
-    // Guarda el contexto de la base de datos.
+    // Guarda el contexto.
     private readonly TiendaOnlineContext _context;
 
-    // Recibe el contexto mediante inyección de dependencias.
+    // Recibe el contexto.
     public NotificacionsController(
         TiendaOnlineContext context)
     {
+        // Guarda el contexto recibido.
         _context = context;
     }
 
-    // GET: api/Notificacions
-    // Permite a Administrador y Empleado consultar todas las notificaciones.
+    // Obtiene todas las notificaciones.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Notificacion>>>
         GetNotificacions()
     {
-        // Consulta todas las notificaciones.
+        // Consulta las notificaciones.
         return await _context.Notificacions
             .AsNoTracking()
             .OrderByDescending(
@@ -54,20 +54,19 @@ public class NotificacionsController : ControllerBase
             .ToListAsync();
     }
 
-    // GET: api/Notificacions/mis-notificaciones
-    // Permite al Cliente consultar solamente sus propias notificaciones.
+    // Obtiene las notificaciones del cliente.
     [Authorize(Roles = "Cliente")]
     [HttpGet("mis-notificaciones")]
     public async Task<IActionResult>
         GetMisNotificaciones()
     {
-        // Obtiene el identificador del usuario desde el token.
+        // Obtiene el usuario del token.
         var idUsuarioTexto =
             User.FindFirstValue(
                 ClaimTypes.NameIdentifier
             );
 
-        // Comprueba que el token contenga un usuario válido.
+        // Valida el usuario.
         if (
             string.IsNullOrWhiteSpace(
                 idUsuarioTexto
@@ -83,7 +82,7 @@ public class NotificacionsController : ControllerBase
             );
         }
 
-        // Consulta solamente las notificaciones del usuario conectado.
+        // Consulta solo las del usuario.
         var notificaciones =
             await _context.Notificacions
                 .AsNoTracking()
@@ -98,45 +97,46 @@ public class NotificacionsController : ControllerBase
                 .Select(
                     n => new
                     {
-                        // Identificador de la notificación.
+                        // Id de la notificación.
                         idNotificacion =
                             n.IdNotificacion,
 
-                        // Título mostrado al cliente.
+                        // Título.
                         titulo =
                             n.Titulo,
 
-                        // Mensaje de la notificación.
+                        // Mensaje.
                         mensaje =
                             n.Mensaje,
 
-                        // Tipo de notificación.
+                        // Tipo.
                         tipo =
                             n.Tipo,
 
-                        // Fecha en que fue creada.
+                        // Fecha.
                         fechaCreacion =
                             n.FechaCreacion,
 
-                        // Indica si ya fue leída.
+                        // Estado de lectura.
                         leida =
                             n.Leida
                     }
                 )
                 .ToListAsync();
 
-        // Devuelve la lista del cliente.
-        return Ok(notificaciones);
+        // Devuelve la lista.
+        return Ok(
+            notificaciones
+        );
     }
 
-    // GET: api/Notificacions/5
-    // Permite consultar una notificación específica.
+    // Obtiene una notificación.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Notificacion>>
         GetNotificacion(int id)
     {
-        // Busca la notificación por identificador.
+        // Busca la notificación.
         var notificacion =
             await _context.Notificacions
                 .AsNoTracking()
@@ -145,7 +145,7 @@ public class NotificacionsController : ControllerBase
                         n.IdNotificacion == id
                 );
 
-        // Devuelve 404 si no existe.
+        // Valida que exista.
         if (notificacion == null)
         {
             return NotFound(
@@ -153,19 +153,20 @@ public class NotificacionsController : ControllerBase
             );
         }
 
-        // Devuelve la notificación encontrada.
-        return Ok(notificacion);
+        // Devuelve el registro.
+        return Ok(
+            notificacion
+        );
     }
 
-    // POST: api/Notificacions
-    // Permite crear notificaciones desde Administración o Empleado.
+    // Crea una notificación.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpPost]
     public async Task<ActionResult<Notificacion>>
         PostNotificacion(
             Notificacion notificacion)
     {
-        // Comprueba que el usuario exista.
+        // Revisa que exista el usuario.
         var usuarioExiste =
             await _context.Usuarios
                 .AnyAsync(
@@ -174,6 +175,7 @@ public class NotificacionsController : ControllerBase
                         notificacion.IdUsuario
                 );
 
+        // Valida el usuario.
         if (!usuarioExiste)
         {
             return BadRequest(
@@ -181,19 +183,19 @@ public class NotificacionsController : ControllerBase
             );
         }
 
-        // Permite que SQL Server genere el identificador.
+        // Permite generar el id.
         notificacion.IdNotificacion =
             0;
 
-        // Guarda automáticamente la fecha actual.
+        // Guarda la fecha.
         notificacion.FechaCreacion =
             DateTime.Now;
 
-        // Una notificación nueva inicia sin leer.
+        // Inicia como no leída.
         notificacion.Leida =
             false;
 
-        // Activa la notificación si no fue marcada.
+        // Mantiene la notificación activa.
         notificacion.Estado =
             true;
 
@@ -203,7 +205,8 @@ public class NotificacionsController : ControllerBase
         );
 
         // Guarda los cambios.
-        await _context.SaveChangesAsync();
+        await _context
+            .SaveChangesAsync();
 
         // Devuelve la notificación creada.
         return CreatedAtAction(
@@ -217,8 +220,7 @@ public class NotificacionsController : ControllerBase
         );
     }
 
-    // PUT: api/Notificacions/5
-    // Permite actualizar una notificación.
+    // Actualiza una notificación.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult>
@@ -226,12 +228,12 @@ public class NotificacionsController : ControllerBase
             int id,
             Notificacion notificacion)
     {
-        // Busca la notificación existente.
+        // Busca la notificación.
         var notificacionActual =
             await _context.Notificacions
                 .FindAsync(id);
 
-        // Devuelve 404 si no existe.
+        // Valida que exista.
         if (notificacionActual == null)
         {
             return NotFound(
@@ -239,7 +241,7 @@ public class NotificacionsController : ControllerBase
             );
         }
 
-        // Comprueba que el usuario exista.
+        // Revisa el usuario.
         var usuarioExiste =
             await _context.Usuarios
                 .AnyAsync(
@@ -248,6 +250,7 @@ public class NotificacionsController : ControllerBase
                         notificacion.IdUsuario
                 );
 
+        // Valida el usuario.
         if (!usuarioExiste)
         {
             return BadRequest(
@@ -255,45 +258,51 @@ public class NotificacionsController : ControllerBase
             );
         }
 
-        // Actualiza los datos permitidos.
+        // Actualiza el usuario.
         notificacionActual.IdUsuario =
             notificacion.IdUsuario;
 
+        // Actualiza el título.
         notificacionActual.Titulo =
             notificacion.Titulo;
 
+        // Actualiza el mensaje.
         notificacionActual.Mensaje =
             notificacion.Mensaje;
 
+        // Actualiza el tipo.
         notificacionActual.Tipo =
             notificacion.Tipo;
 
+        // Actualiza el estado de lectura.
         notificacionActual.Leida =
             notificacion.Leida;
 
+        // Actualiza el estado.
         notificacionActual.Estado =
             notificacion.Estado;
 
         // Guarda los cambios.
-        await _context.SaveChangesAsync();
+        await _context
+            .SaveChangesAsync();
 
+        // Confirma la actualización.
         return NoContent();
     }
 
-    // PUT: api/Notificacions/5/marcar-leida
-    // Permite al Cliente marcar una notificación propia como leída.
+    // Marca una notificación como leída.
     [Authorize(Roles = "Cliente")]
     [HttpPut("{id:int}/marcar-leida")]
     public async Task<IActionResult>
         MarcarComoLeida(int id)
     {
-        // Obtiene el usuario desde el token JWT.
+        // Obtiene el usuario del token.
         var idUsuarioTexto =
             User.FindFirstValue(
                 ClaimTypes.NameIdentifier
             );
 
-        // Comprueba que el usuario sea válido.
+        // Valida el usuario.
         if (
             string.IsNullOrWhiteSpace(
                 idUsuarioTexto
@@ -309,7 +318,7 @@ public class NotificacionsController : ControllerBase
             );
         }
 
-        // Busca solamente una notificación del usuario conectado.
+        // Busca una notificación propia.
         var notificacion =
             await _context.Notificacions
                 .FirstOrDefaultAsync(
@@ -318,7 +327,7 @@ public class NotificacionsController : ControllerBase
                         n.IdUsuario == idUsuario
                 );
 
-        // Evita modificar notificaciones de otro usuario.
+        // Valida que exista.
         if (notificacion == null)
         {
             return NotFound(
@@ -326,18 +335,19 @@ public class NotificacionsController : ControllerBase
             );
         }
 
-        // Marca la notificación como leída.
+        // Marca como leída.
         notificacion.Leida =
             true;
 
         // Guarda el cambio.
-        await _context.SaveChangesAsync();
+        await _context
+            .SaveChangesAsync();
 
+        // Confirma la actualización.
         return NoContent();
     }
 
-    // DELETE: api/Notificacions/5
-    // Permite eliminar notificaciones solamente al Administrador.
+    // Elimina una notificación.
     [Authorize(Roles = "Administrador")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult>
@@ -348,7 +358,7 @@ public class NotificacionsController : ControllerBase
             await _context.Notificacions
                 .FindAsync(id);
 
-        // Devuelve 404 si no existe.
+        // Valida que exista.
         if (notificacion == null)
         {
             return NotFound(
@@ -356,14 +366,16 @@ public class NotificacionsController : ControllerBase
             );
         }
 
-        // Elimina la notificación.
+        // Elimina el registro.
         _context.Notificacions.Remove(
             notificacion
         );
 
-        // Guarda los cambios.
-        await _context.SaveChangesAsync();
+        // Guarda el cambio.
+        await _context
+            .SaveChangesAsync();
 
+        // Confirma la eliminación.
         return NoContent();
     }
 }

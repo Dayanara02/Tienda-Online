@@ -1,45 +1,26 @@
-﻿
-namespace TiendaOnline.Dominio.Configuracion;
+﻿namespace TiendaOnline.Dominio.Configuracion;
 
+// Guarda la configuración del correo.
 public class CorreoConfiguracion
 {
-    // Dirección del servidor SMTP.
-    //
-    // Por ejemplo, para Gmail se utiliza:
-    // smtp.gmail.com
+    // Servidor SMTP.
     public string ServidorSmtp { get; set; } = string.Empty;
 
-
-    // Puerto utilizado por el servidor SMTP.
-    //
-    // Normalmente se utiliza 587 con TLS.
+    // Puerto del servidor.
     public int Puerto { get; set; }
 
-
-    // Correo desde el cual Esencia
-    // enviará los mensajes.
+    // Correo que envía los mensajes.
     public string CorreoRemitente { get; set; } = string.Empty;
 
-
-    // Nombre que verá el Cliente
-    // como remitente del correo.
+    // Nombre visible del remitente.
     public string NombreRemitente { get; set; } = "Esencia";
 
-
-    // Usuario utilizado para iniciar sesión
-    // en el servidor de correo.
-    //
-    // Generalmente será el mismo correo remitente.
+    // Usuario del correo.
     public string Usuario { get; set; } = string.Empty;
 
-
-    // Contraseña utilizada para autenticarse.
-    //
-    // En Gmail debe utilizarse una contraseña
-    // de aplicación y no la contraseña normal.
+    // Contraseña de aplicación.
     public string Contrasena { get; set; } = string.Empty;
 
-
-    // Indica si la conexión utilizará TLS.
+    // Indica si usa TLS.
     public bool UsarTls { get; set; } = true;
 }

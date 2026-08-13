@@ -1,0 +1,374 @@
+<!-- Crea la estructura de la página. -->
+<div class="notificaciones-layout">
+
+  <!-- Crea el menú lateral. -->
+  <aside class="sidebar">
+
+    <!-- Muestra la marca del sistema. -->
+    <div class="sidebar-marca">
+      <h2>ESENCIA</h2>
+      <span>Tienda Online</span>
+    </div>
+
+    <!-- Muestra los datos del cliente. -->
+    <div class="usuario-sidebar">
+
+      <!-- Muestra el icono del usuario. -->
+      <div class="avatar-sidebar">
+        <mat-icon>person</mat-icon>
+      </div>
+
+      <!-- Muestra nombre y rol. -->
+      <div>
+        <strong>{{ nombreUsuario }}</strong>
+        <span>Cliente</span>
+      </div>
+
+    </div>
+
+    <!-- Crea las opciones del menú. -->
+    <nav class="menu-sidebar">
+
+      <!-- Abre el Dashboard. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAlInicio()">
+
+        <mat-icon>dashboard</mat-icon>
+        <span>Inicio</span>
+
+      </button>
+
+      <!-- Abre Productos. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAProductos()">
+
+        <mat-icon>inventory_2</mat-icon>
+        <span>Productos</span>
+
+      </button>
+
+      <!-- Abre el Carrito. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAlCarrito()">
+
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Carrito</span>
+
+      </button>
+
+      <!-- Abre Favoritos. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAFavoritos()">
+
+        <mat-icon>favorite</mat-icon>
+        <span>Favoritos</span>
+
+      </button>
+
+      <!-- Abre Mis pedidos. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAMisPedidos()">
+
+        <mat-icon>receipt_long</mat-icon>
+        <span>Mis pedidos</span>
+
+      </button>
+
+      <!-- Muestra Notificaciones activa. -->
+      <button type="button"
+              class="menu-item activo">
+
+        <mat-icon>notifications_none</mat-icon>
+        <span>Notificaciones</span>
+
+        <!-- Muestra las no leídas. -->
+        <span class="contador-menu"
+              *ngIf="cantidadNoLeidas > 0">
+
+          {{ cantidadNoLeidas }}
+
+        </span>
+
+      </button>
+
+      <!-- Abre Descuentos. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irADescuentos()">
+
+        <mat-icon>sell</mat-icon>
+        <span>Descuentos</span>
+
+      </button>
+
+      <!-- Abre Mi perfil. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAPerfil()">
+
+        <mat-icon>account_circle</mat-icon>
+        <span>Mi perfil</span>
+
+      </button>
+
+    </nav>
+
+    <!-- Cierra la sesión. -->
+    <button type="button"
+            class="cerrar-sesion"
+            (click)="cerrarSesion()">
+
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar sesión</span>
+
+    </button>
+
+  </aside>
+
+  <!-- Crea el contenido principal. -->
+  <main class="contenido-notificaciones">
+
+    <!-- Crea el encabezado. -->
+    <header class="topbar">
+
+      <!-- Muestra título y descripción. -->
+      <div>
+
+        <p class="topbar-etiqueta">
+          Panel del cliente
+        </p>
+
+        <h1>
+          Notificaciones
+        </h1>
+
+        <p class="topbar-descripcion">
+          Consulta las novedades relacionadas con tus compras.
+        </p>
+
+      </div>
+
+      <!-- Utiliza PrimeNG para actualizar. -->
+      <p-button label="Actualizar"
+                icon="pi pi-refresh"
+                severity="secondary"
+                (onClick)="cargarNotificaciones()">
+      </p-button>
+
+    </header>
+
+    <!-- Crea las tarjetas de resumen. -->
+    <section class="resumen-notificaciones">
+
+      <!-- Muestra el total. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>notifications</mat-icon>
+        </div>
+
+        <div>
+          <span>Total</span>
+          <strong>
+            {{ notificaciones.length }}
+          </strong>
+        </div>
+
+      </article>
+
+      <!-- Muestra las pendientes. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>mark_email_unread</mat-icon>
+        </div>
+
+        <div>
+          <span>Sin leer</span>
+          <strong>
+            {{ cantidadNoLeidas }}
+          </strong>
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- Crea el bloque principal. -->
+    <section class="bloque-notificaciones">
+
+      <!-- Crea el encabezado del bloque. -->
+      <div class="encabezado-bloque">
+
+        <div>
+          <h2>
+            Mis notificaciones
+          </h2>
+
+          <p>
+            Selecciona una notificación para marcarla como leída.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Muestra el estado de carga. -->
+      <div class="estado-vacio"
+           *ngIf="cargando">
+
+        <mat-icon>sync</mat-icon>
+
+        <h3>
+          Cargando notificaciones
+        </h3>
+
+        <p>
+          Estamos consultando tus novedades.
+        </p>
+
+      </div>
+
+      <!-- Muestra un error. -->
+      <div class="mensaje-error"
+           *ngIf="!cargando && mensajeError">
+
+        <mat-icon>error_outline</mat-icon>
+
+        <span>
+          {{ mensajeError }}
+        </span>
+
+      </div>
+
+      <!-- Muestra cuando no existen datos. -->
+      <div class="estado-vacio"
+           *ngIf="
+             !cargando &&
+             !mensajeError &&
+             notificaciones.length === 0
+           ">
+
+        <mat-icon>notifications_off</mat-icon>
+
+        <h3>
+          No tienes notificaciones
+        </h3>
+
+        <p>
+          Cuando exista una novedad de tus pedidos aparecerá aquí.
+        </p>
+
+      </div>
+
+      <!-- Muestra la lista. -->
+      <div class="lista-notificaciones"
+           *ngIf="
+           !cargando &&
+           !mensajeError &&
+           notificaciones.length>
+        0
+        ">
+
+        <!-- Recorre las notificaciones. -->
+        <article class="notificacion"
+                 *ngFor="let notificacion of notificaciones"
+                 [class.no-leida]="!notificacion.leida"
+                 (click)="marcarComoLeida(notificacion)">
+
+          <!-- Muestra el icono según el tipo. -->
+          <div class="notificacion-icono">
+
+            <mat-icon *ngIf="notificacion.tipo === 'Pago'">
+              payments
+            </mat-icon>
+
+            <mat-icon *ngIf="notificacion.tipo === 'Pedido'">
+              receipt_long
+            </mat-icon>
+
+            <mat-icon *ngIf="notificacion.tipo === 'Envio'">
+              local_shipping
+            </mat-icon>
+
+            <mat-icon *ngIf="
+                notificacion.tipo !== 'Pago' &&
+                notificacion.tipo !== 'Pedido' &&
+                notificacion.tipo !== 'Envio'
+              ">
+              info
+            </mat-icon>
+
+          </div>
+
+          <!-- Muestra los datos. -->
+          <div class="notificacion-contenido">
+
+            <!-- Organiza título y estado. -->
+            <div class="notificacion-superior">
+
+              <h3>
+                {{ notificacion.titulo }}
+              </h3>
+
+              <!-- Indica que está pendiente. -->
+              <span class="estado-no-leida"
+                    *ngIf="!notificacion.leida">
+                Nueva
+              </span>
+
+              <!-- Indica que ya fue leída. -->
+              <span class="estado-leida"
+                    *ngIf="notificacion.leida">
+                Leída
+              </span>
+
+            </div>
+
+            <!-- Muestra el mensaje. -->
+            <p class="notificacion-mensaje">
+              {{ notificacion.mensaje }}
+            </p>
+
+            <!-- Muestra la fecha. -->
+            <div class="notificacion-fecha">
+
+              <mat-icon>schedule</mat-icon>
+
+              <span>
+                {{
+                  notificacion.fechaCreacion
+                    | date:'dd/MM/yyyy - hh:mm a'
+                }}
+              </span>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+    <!-- Crea el pie de página. -->
+    <footer class="footer-notificaciones">
+
+      <span>
+        ESENCIA · Tienda Online
+      </span>
+
+      <span>
+        Panel del cliente
+      </span>
+
+    </footer>
+
+  </main>
+
+</div>

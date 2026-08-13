@@ -1,0 +1,292 @@
+<div class="pagina-seguimiento">
+
+  <!-- Encabezado principal. -->
+  <header class="encabezado">
+
+    <div>
+      <span class="etiqueta">
+        SEGUIMIENTO
+      </span>
+
+      <h1>
+        Pedido #{{ idPedido }}
+      </h1>
+
+      <p>
+        Consulte el estado actual de su entrega.
+      </p>
+    </div>
+
+    <!-- Regresa al detalle del pedido. -->
+    <button mat-stroked-button
+            type="button"
+            class="boton-volver"
+            (click)="volverDetalle()">
+
+      <mat-icon>arrow_back</mat-icon>
+
+      Volver al detalle
+
+    </button>
+
+  </header>
+
+  <!-- Estado de carga. -->
+  <section class="mensaje mensaje-carga"
+           *ngIf="cargando">
+
+    <mat-icon>hourglass_top</mat-icon>
+
+    <div>
+      <strong>Cargando seguimiento</strong>
+      <span>
+        Estamos consultando el estado del pedido.
+      </span>
+    </div>
+
+  </section>
+
+  <!-- Mensaje cuando ocurre un error. -->
+  <section class="mensaje mensaje-error"
+           *ngIf="!cargando && mensajeError">
+
+    <mat-icon>local_shipping</mat-icon>
+
+    <div>
+      <strong>
+        Seguimiento no disponible
+      </strong>
+
+      <span>
+        {{ mensajeError }}
+      </span>
+    </div>
+
+  </section>
+
+  <!-- Información del envío. -->
+  <main class="contenido"
+        *ngIf="!cargando && envio">
+
+    <!-- Resumen principal. -->
+    <section class="tarjeta-principal">
+
+      <div class="icono-envio">
+        <mat-icon>local_shipping</mat-icon>
+      </div>
+
+      <div class="informacion-principal">
+
+        <span class="subtitulo">
+          ESTADO ACTUAL
+        </span>
+
+        <h2>
+          {{ envio.estado }}
+        </h2>
+
+        <p>
+          Su pedido se encuentra actualmente
+          en estado {{ envio.estado }}.
+        </p>
+
+      </div>
+
+      <div class="numero-seguimiento">
+
+        <span>
+          Número de seguimiento
+        </span>
+
+        <strong>
+          {{ envio.numeroSeguimiento || 'Pendiente' }}
+        </strong>
+
+      </div>
+
+    </section>
+
+    <!-- Línea visual del seguimiento. -->
+    <section class="tarjeta-seguimiento">
+
+      <div class="titulo-seccion">
+
+        <span>ESTADO DEL PEDIDO</span>
+
+        <h3>Seguimiento de la entrega</h3>
+
+      </div>
+
+      <div class="pasos">
+
+        <!-- Paso 1. -->
+        <div class="paso"
+             [class.completado]="pedidoPreparado">
+
+          <div class="circulo">
+            <mat-icon>inventory_2</mat-icon>
+          </div>
+
+          <div class="texto-paso">
+            <strong>
+              Pedido preparado
+            </strong>
+
+            <span>
+              El pedido fue preparado para su entrega.
+            </span>
+          </div>
+
+        </div>
+
+        <div class="linea"
+             [class.completada]="pedidoEnviado">
+        </div>
+
+        <!-- Paso 2. -->
+        <div class="paso"
+             [class.completado]="pedidoEnviado">
+
+          <div class="circulo">
+            <mat-icon>local_shipping</mat-icon>
+          </div>
+
+          <div class="texto-paso">
+            <strong>
+              Pedido enviado
+            </strong>
+
+            <span>
+              El pedido salió hacia la dirección indicada.
+            </span>
+          </div>
+
+        </div>
+
+        <div class="linea"
+             [class.completada]="pedidoEntregado">
+        </div>
+
+        <!-- Paso 3. -->
+        <div class="paso"
+             [class.completado]="pedidoEntregado">
+
+          <div class="circulo">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+
+          <div class="texto-paso">
+            <strong>
+              Pedido entregado
+            </strong>
+
+            <span>
+              La entrega fue completada.
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Información adicional. -->
+    <section class="informacion-grid">
+
+      <!-- Datos del envío. -->
+      <article class="tarjeta-informacion">
+
+        <div class="encabezado-tarjeta">
+          <mat-icon>local_shipping</mat-icon>
+
+          <h3>
+            Información del envío
+          </h3>
+        </div>
+
+        <div class="dato">
+          <span>Empresa</span>
+
+          <strong>
+            {{ envio.empresaEnvio || 'Sin asignar' }}
+          </strong>
+        </div>
+
+        <div class="dato">
+          <span>Fecha de envío</span>
+
+          <strong>
+            {{
+              envio.fechaEnvio
+                ? (envio.fechaEnvio | date:'dd/MM/yyyy HH:mm')
+                : 'Pendiente'
+            }}
+          </strong>
+        </div>
+
+        <div class="dato">
+          <span>Fecha de entrega</span>
+
+          <strong>
+            {{
+              envio.fechaEntrega
+                ? (envio.fechaEntrega | date:'dd/MM/yyyy HH:mm')
+                : 'Pendiente'
+            }}
+          </strong>
+        </div>
+
+      </article>
+
+      <!-- Dirección original del pedido. -->
+      <article class="tarjeta-informacion">
+
+        <div class="encabezado-tarjeta">
+          <mat-icon>location_on</mat-icon>
+
+          <h3>
+            Dirección de entrega
+          </h3>
+        </div>
+
+        <p class="direccion">
+          {{
+            direccionCompleta ||
+            'No se encontró una dirección registrada.'
+          }}
+        </p>
+
+      </article>
+
+    </section>
+
+    <!-- Botones inferiores. -->
+    <section class="acciones">
+
+      <button mat-stroked-button
+              type="button"
+              (click)="volverPedidos()">
+
+        <mat-icon>receipt_long</mat-icon>
+
+        Mis pedidos
+
+      </button>
+
+      <button mat-flat-button
+              type="button"
+              class="boton-inicio"
+              (click)="volverInicio()">
+
+        <mat-icon>home</mat-icon>
+
+        Volver al inicio
+
+      </button>
+
+    </section>
+
+  </main>
+
+</div>

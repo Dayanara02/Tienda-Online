@@ -1,51 +1,51 @@
-﻿// Importa las herramientas necesarias para crear controladores API.
+﻿// Permite crear controladores API.
 using Microsoft.AspNetCore.Mvc;
 
-// Importa Entity Framework Core para consultar la base de datos.
+// Permite consultar la base de datos.
 using Microsoft.EntityFrameworkCore;
 
-// Importa el contexto de la base de datos.
+// Importa el contexto principal.
 using TiendaOnline.AccesoDatos.Context;
 
-// Importa autorización para proteger los endpoints.
+// Permite proteger los endpoints.
 using Microsoft.AspNetCore.Authorization;
 
-// Importa las entidades del dominio.
+// Importa las entidades.
 using TiendaOnline.Dominio.Entidades;
 
-// Permite leer el identificador del usuario desde el token JWT.
+// Permite leer datos del token.
 using System.Security.Claims;
 
 namespace TiendaOnline.API.Controllers;
 
-// Obliga a que el usuario esté autenticado.
+// Requiere que el usuario esté autenticado.
 [Authorize]
 
-// Indica que esta clase funciona como controlador API.
+// Indica que esta clase es un controlador API.
 [ApiController]
 
-// Define la ruta principal api/Envios.
+// Define la ruta principal.
 [Route("api/[controller]")]
 public class EnviosController : ControllerBase
 {
     // Guarda el contexto de la base de datos.
     private readonly TiendaOnlineContext _context;
 
-    // Recibe el contexto mediante inyección de dependencias.
+    // Recibe el contexto.
     public EnviosController(
         TiendaOnlineContext context)
     {
+        // Guarda el contexto recibido.
         _context = context;
     }
 
-    // GET: api/Envios
-    // Permite a Administrador y Empleado consultar todos los envíos.
+    // Obtiene todos los envíos.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Envio>>>
         GetEnvios()
     {
-        // Consulta todos los envíos ordenados por fecha.
+        // Consulta los envíos.
         return await _context.Envios
             .AsNoTracking()
             .OrderByDescending(
@@ -54,14 +54,13 @@ public class EnviosController : ControllerBase
             .ToListAsync();
     }
 
-    // GET: api/Envios/5
-    // Permite consultar un envío específico por identificador.
+    // Obtiene un envío por id.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Envio>>
         GetEnvio(int id)
     {
-        // Busca el envío solicitado.
+        // Busca el envío.
         var envio =
             await _context.Envios
                 .AsNoTracking()
@@ -69,7 +68,7 @@ public class EnviosController : ControllerBase
                     e => e.IdEnvio == id
                 );
 
-        // Devuelve 404 si no existe.
+        // Valida que exista.
         if (envio == null)
         {
             return NotFound(
@@ -77,24 +76,23 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Devuelve el envío encontrado.
+        // Devuelve el envío.
         return Ok(envio);
     }
 
-    // GET: api/Envios/pedido/5
-    // Permite al Cliente consultar el seguimiento de su propio pedido.
+    // Obtiene el envío de un pedido.
     [Authorize(Roles = "Cliente")]
     [HttpGet("pedido/{idPedido:int}")]
     public async Task<IActionResult>
         GetEnvioPorPedido(int idPedido)
     {
-        // Obtiene el identificador del usuario desde el token JWT.
+        // Obtiene el id del usuario.
         var idUsuarioTexto =
             User.FindFirstValue(
                 ClaimTypes.NameIdentifier
             );
 
-        // Comprueba que el token contenga un usuario válido.
+        // Valida el usuario.
         if (
             string.IsNullOrWhiteSpace(
                 idUsuarioTexto
@@ -110,7 +108,7 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Busca el pedido y comprueba que pertenezca al cliente.
+        // Busca el pedido del cliente.
         var pedido =
             await _context.Pedidos
                 .AsNoTracking()
@@ -120,7 +118,7 @@ public class EnviosController : ControllerBase
                         p.IdUsuario == idUsuario
                 );
 
-        // Evita consultar pedidos de otro usuario.
+        // Evita consultar pedidos ajenos.
         if (pedido == null)
         {
             return NotFound(
@@ -128,7 +126,7 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Busca el envío relacionado con el pedido.
+        // Busca el envío relacionado.
         var envio =
             await _context.Envios
                 .AsNoTracking()
@@ -139,66 +137,62 @@ public class EnviosController : ControllerBase
                 .Select(
                     e => new
                     {
-                        // Identificador del envío.
+                        // Id del envío.
                         idEnvio =
                             e.IdEnvio,
 
-                        // Identificador del pedido.
+                        // Id del pedido.
                         idPedido =
                             e.IdPedido,
 
-                        // Empresa encargada del envío.
+                        // Empresa de envío.
                         empresaEnvio =
                             e.EmpresaEnvio,
 
-                        // Número utilizado para seguimiento.
+                        // Número de seguimiento.
                         numeroSeguimiento =
                             e.NumeroSeguimiento,
 
-                        // Fecha en que salió el pedido.
+                        // Fecha de envío.
                         fechaEnvio =
                             e.FechaEnvio,
 
-                        // Fecha en que fue entregado.
+                        // Fecha de entrega.
                         fechaEntrega =
                             e.FechaEntrega,
 
-                        // Estado actual del envío.
+                        // Estado actual.
                         estado =
                             e.Estado,
 
-                        // Identificador de la dirección.
+                        // Id de la dirección.
                         idDireccion =
                             e.IdDireccion,
 
-                        // Obtiene la dirección exacta relacionada.
+                        // Dirección guardada en el pedido.
                         direccion =
-                            e.IdDireccionNavigation != null
-                                ? e.IdDireccionNavigation.DireccionExacta
-                                : null,
+                            e.IdPedidoNavigation
+                                .DireccionEntrega,
 
-                        // Obtiene la provincia relacionada.
+                        // Provincia.
                         provincia =
-                            e.IdDireccionNavigation != null
-                                ? e.IdDireccionNavigation.Provincia
-                                : null,
+                            e.IdDireccionNavigation
+                                .Provincia,
 
-                        // Obtiene el cantón relacionado.
+                        // Cantón.
                         canton =
-                            e.IdDireccionNavigation != null
-                                ? e.IdDireccionNavigation.Canton
-                                : null,
+                            e.IdDireccionNavigation
+                                .Canton,
 
-                        // Obtiene el distrito relacionado.
+                        // Distrito.
                         distrito =
-                            e.IdDireccionNavigation != null
-                                ? e.IdDireccionNavigation.Distrito
-                                : null
+                            e.IdDireccionNavigation
+                                .Distrito
                     }
                 )
                 .FirstOrDefaultAsync();
 
-        // Informa si todavía no existe un envío.
+        // Valida que exista el envío.
         if (envio == null)
         {
             return NotFound(
@@ -206,35 +200,34 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Devuelve la información necesaria para seguimiento.
+        // Devuelve el seguimiento.
         return Ok(envio);
     }
 
-    // POST: api/Envios
-    // Permite crear envíos desde Administración o Empleado.
+    // Crea un envío.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpPost]
     public async Task<ActionResult<Envio>>
         PostEnvio(Envio envio)
     {
-        // Comprueba que el pedido exista.
-        var pedidoExiste =
+        // Busca el pedido.
+        var pedido =
             await _context.Pedidos
-                .AnyAsync(
+                .FirstOrDefaultAsync(
                     p =>
                         p.IdPedido ==
                         envio.IdPedido
                 );
 
-        // Informa si el pedido no existe.
-        if (!pedidoExiste)
+        // Valida el pedido.
+        if (pedido == null)
         {
             return BadRequest(
                 "El pedido no existe."
             );
         }
 
-        // Comprueba que la dirección exista.
+        // Revisa si existe la dirección.
         var direccionExiste =
             await _context.DireccionUsuarios
                 .AnyAsync(
@@ -243,7 +236,7 @@ public class EnviosController : ControllerBase
                         envio.IdDireccion
                 );
 
-        // Informa si la dirección no existe.
+        // Valida la dirección.
         if (!direccionExiste)
         {
             return BadRequest(
@@ -251,7 +244,7 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Evita registrar dos envíos para el mismo pedido.
+        // Revisa si el pedido ya tiene envío.
         var pedidoYaTieneEnvio =
             await _context.Envios
                 .AnyAsync(
@@ -260,7 +253,7 @@ public class EnviosController : ControllerBase
                         envio.IdPedido
                 );
 
-        // Informa si ya existe un envío.
+        // Evita envíos duplicados.
         if (pedidoYaTieneEnvio)
         {
             return Conflict(
@@ -268,11 +261,11 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Permite que SQL Server genere el identificador.
+        // Permite que SQL genere el id.
         envio.IdEnvio =
             0;
 
-        // Asigna Pendiente si no se envía ningún estado.
+        // Asigna estado inicial.
         if (
             string.IsNullOrWhiteSpace(
                 envio.Estado
@@ -283,13 +276,14 @@ public class EnviosController : ControllerBase
                 "Pendiente";
         }
 
-        // Agrega el nuevo envío.
+        // Agrega el envío.
         _context.Envios.Add(
             envio
         );
 
         // Guarda los cambios.
-        await _context.SaveChangesAsync();
+        await _context
+            .SaveChangesAsync();
 
         // Devuelve el envío creado.
         return CreatedAtAction(
@@ -302,8 +296,7 @@ public class EnviosController : ControllerBase
         );
     }
 
-    // PUT: api/Envios/5
-    // Permite actualizar los datos del envío.
+    // Actualiza un envío.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult>
@@ -311,12 +304,12 @@ public class EnviosController : ControllerBase
             int id,
             Envio envio)
     {
-        // Busca el envío existente.
+        // Busca el envío actual.
         var envioActual =
             await _context.Envios
                 .FindAsync(id);
 
-        // Devuelve 404 si no existe.
+        // Valida que exista.
         if (envioActual == null)
         {
             return NotFound(
@@ -324,24 +317,28 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Comprueba que el pedido exista.
-        var pedidoExiste =
+        // Guarda el estado anterior.
+        var estadoAnterior =
+            envioActual.Estado;
+
+        // Busca el pedido relacionado.
+        var pedido =
             await _context.Pedidos
-                .AnyAsync(
+                .FirstOrDefaultAsync(
                     p =>
                         p.IdPedido ==
                         envio.IdPedido
                 );
 
-        // Informa si el pedido no existe.
-        if (!pedidoExiste)
+        // Valida el pedido.
+        if (pedido == null)
         {
             return BadRequest(
                 "El pedido no existe."
             );
         }
 
-        // Comprueba que la dirección exista.
+        // Revisa la dirección.
         var direccionExiste =
             await _context.DireccionUsuarios
                 .AnyAsync(
@@ -350,7 +347,7 @@ public class EnviosController : ControllerBase
                         envio.IdDireccion
                 );
 
-        // Informa si la dirección no existe.
+        // Valida la dirección.
         if (!direccionExiste)
         {
             return BadRequest(
@@ -358,7 +355,7 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Evita relacionar el pedido con otro envío.
+        // Revisa si existe otro envío.
         var otroEnvioDelPedido =
             await _context.Envios
                 .AnyAsync(
@@ -368,7 +365,7 @@ public class EnviosController : ControllerBase
                         e.IdEnvio != id
                 );
 
-        // Informa si el pedido ya tiene otro envío.
+        // Evita duplicados.
         if (otroEnvioDelPedido)
         {
             return Conflict(
@@ -380,15 +377,15 @@ public class EnviosController : ControllerBase
         envioActual.IdPedido =
             envio.IdPedido;
 
-        // Actualiza la dirección relacionada.
+        // Actualiza la dirección.
         envioActual.IdDireccion =
             envio.IdDireccion;
 
-        // Actualiza la empresa encargada.
+        // Actualiza la empresa.
         envioActual.EmpresaEnvio =
             envio.EmpresaEnvio;
 
-        // Actualiza el número de seguimiento.
+        // Actualiza el seguimiento.
         envioActual.NumeroSeguimiento =
             envio.NumeroSeguimiento;
 
@@ -400,29 +397,156 @@ public class EnviosController : ControllerBase
         envioActual.FechaEntrega =
             envio.FechaEntrega;
 
-        // Actualiza el estado actual.
+        // Actualiza el estado.
         envioActual.Estado =
             envio.Estado;
 
-        // Guarda los cambios realizados.
-        await _context.SaveChangesAsync();
+        // Comprueba si cambió a Enviado.
+        var cambioAEnviado =
+            envio.Estado.Equals(
+                "Enviado",
+                StringComparison.OrdinalIgnoreCase
+            )
+            &&
+            !estadoAnterior.Equals(
+                "Enviado",
+                StringComparison.OrdinalIgnoreCase
+            );
 
+        // Comprueba si cambió a Entregado.
+        var cambioAEntregado =
+            envio.Estado.Equals(
+                "Entregado",
+                StringComparison.OrdinalIgnoreCase
+            )
+            &&
+            !estadoAnterior.Equals(
+                "Entregado",
+                StringComparison.OrdinalIgnoreCase
+            );
+
+        // Si cambió a Enviado.
+        if (cambioAEnviado)
+        {
+            // Actualiza el pedido.
+            pedido.Estado =
+                "Enviado";
+
+            // Muestra la prueba en consola.
+            Console.WriteLine(
+                $"Creando notificación para usuario {pedido.IdUsuario}, pedido {pedido.IdPedido}"
+            );
+
+            // Crea la notificación.
+            var notificacionEnviado =
+                new Notificacion
+                {
+                    // Usuario que recibe.
+                    IdUsuario =
+                        pedido.IdUsuario,
+
+                    // Título.
+                    Titulo =
+                        "Pedido enviado",
+
+                    // Mensaje.
+                    Mensaje =
+                        $"Tu pedido #{pedido.IdPedido} ya fue enviado.",
+
+                    // Tipo.
+                    Tipo =
+                        "Envio",
+
+                    // Fecha actual.
+                    FechaCreacion =
+                        DateTime.UtcNow,
+
+                    // Inicia como no leída.
+                    Leida =
+                        false,
+
+                    // Mantiene el registro activo.
+                    Estado =
+                        true
+                };
+
+            // Agrega la notificación.
+            _context.Notificacions.Add(
+                notificacionEnviado
+            );
+        }
+
+        // Si cambió a Entregado.
+        if (cambioAEntregado)
+        {
+            // Actualiza el pedido.
+            pedido.Estado =
+                "Entregado";
+
+            // Muestra la prueba en consola.
+            Console.WriteLine(
+                $"Creando notificación de entrega para usuario {pedido.IdUsuario}, pedido {pedido.IdPedido}"
+            );
+
+            // Crea la notificación.
+            var notificacionEntregado =
+                new Notificacion
+                {
+                    // Usuario que recibe.
+                    IdUsuario =
+                        pedido.IdUsuario,
+
+                    // Título.
+                    Titulo =
+                        "Pedido entregado",
+
+                    // Mensaje.
+                    Mensaje =
+                        $"Tu pedido #{pedido.IdPedido} fue entregado correctamente.",
+
+                    // Tipo.
+                    Tipo =
+                        "Envio",
+
+                    // Fecha actual.
+                    FechaCreacion =
+                        DateTime.UtcNow,
+
+                    // Inicia como no leída.
+                    Leida =
+                        false,
+
+                    // Mantiene el registro activo.
+                    Estado =
+                        true
+                };
+
+            // Agrega la notificación.
+            _context.Notificacions.Add(
+                notificacionEntregado
+            );
+        }
+
+        // Guarda todos los cambios.
+        await _context
+            .SaveChangesAsync();
+
+        // Confirma la actualización.
         return NoContent();
     }
 
-    // DELETE: api/Envios/5
-    // Permite eliminar un envío solamente al Administrador.
+    // Elimina un envío.
     [Authorize(Roles = "Administrador")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult>
         DeleteEnvio(int id)
     {
-        // Busca el envío solicitado.
+        // Busca el envío.
         var envio =
             await _context.Envios
                 .FindAsync(id);
 
-        // Devuelve 404 si no existe.
+        // Valida que exista.
         if (envio == null)
         {
             return NotFound(
@@ -430,14 +554,16 @@ public class EnviosController : ControllerBase
             );
         }
 
-        // Elimina el registro.
+        // Elimina el envío.
         _context.Envios.Remove(
             envio
         );
 
-        // Guarda los cambios.
-        await _context.SaveChangesAsync();
+        // Guarda el cambio.
+        await _context
+            .SaveChangesAsync();
 
+        // Confirma la eliminación.
         return NoContent();
     }
 }

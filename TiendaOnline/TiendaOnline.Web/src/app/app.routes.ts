@@ -64,6 +64,9 @@ import { GestionCategorias } from './paginas/gestion-categorias/gestion-categori
 // Importa la gestión de usuarios.
 import { GestionUsuarios } from './paginas/gestion-usuarios/gestion-usuarios';
 
+// Importa la página de notificaciones.
+import { Notificaciones } from './paginas/notificaciones/notificaciones';
+
 // Contiene todas las rutas disponibles de la aplicación.
 export const routes: Routes = [
 
@@ -193,6 +196,12 @@ export const routes: Routes = [
     component: GestionUsuarios
   },
 
+  // Pantalla de notificaciones.
+  {
+    path: 'notificaciones',
+    component: Notificaciones
+  },
+
   // Redirige al Login cuando no se indica ninguna ruta.
   {
     path: '',
@@ -205,4 +214,5 @@ export const routes: Routes = [
     path: '**',
     redirectTo: 'login'
   }
+  
 ];

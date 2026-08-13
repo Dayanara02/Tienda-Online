@@ -1,134 +1,242 @@
-<section class="pagina-registro">
-  <div class="tarjeta-registro">
+<div class="pagina-registro">
 
+  <!-- Contenedor principal del formulario. -->
+  <section class="tarjeta-registro">
+
+    <!-- Encabezado visual. -->
     <div class="encabezado-registro">
-      <p class="marca">ESENCIA</p>
 
-      <h1>Crear una cuenta</h1>
+      <div class="logo">
+        E
+      </div>
 
-      <p>
-        Regístrate para comprar productos y consultar tus pedidos.
-      </p>
+      <div>
+        <span class="etiqueta">
+          ESENCIA
+        </span>
+
+        <h1>
+          Crear cuenta
+        </h1>
+
+        <p>
+          Regístrese para realizar compras
+          en nuestra tienda.
+        </p>
+      </div>
+
     </div>
 
-    <form (ngSubmit)="registrarse()">
+    <!-- Mensaje de error. -->
+    <div class="mensaje mensaje-error"
+         *ngIf="mensajeError">
 
-      <div class="fila-campos">
-        <div class="campo">
-          <label for="nombre">Nombre</label>
+      <mat-icon>
+        error_outline
+      </mat-icon>
 
-          <input
-            id="nombre"
-            name="nombre"
-            type="text"
-            placeholder="Escribe tu nombre"
-            autocomplete="given-name"
-            [(ngModel)]="nombre"
-            required
-          />
-        </div>
+      {{ mensajeError }}
 
-        <div class="campo">
-          <label for="apellido">Apellido</label>
+    </div>
 
-          <input
-            id="apellido"
-            name="apellido"
-            type="text"
-            placeholder="Escribe tu apellido"
-            autocomplete="family-name"
-            [(ngModel)]="apellido"
-            required
-          />
-        </div>
+    <!-- Mensaje de éxito. -->
+    <div class="mensaje mensaje-exito"
+         *ngIf="mensajeExito">
+
+      <mat-icon>
+        check_circle
+      </mat-icon>
+
+      {{ mensajeExito }}
+
+    </div>
+
+    <!-- Formulario de registro. -->
+    <form class="formulario"
+          (ngSubmit)="registrar()">
+
+      <!-- Nombre y apellido. -->
+      <div class="fila-formulario">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Nombre
+          </mat-label>
+
+          <input matInput
+                 type="text"
+                 name="nombre"
+                 [(ngModel)]="nombre"
+                 autocomplete="given-name">
+
+          <mat-icon matSuffix>
+            person
+          </mat-icon>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Apellido
+          </mat-label>
+
+          <input matInput
+                 type="text"
+                 name="apellido"
+                 [(ngModel)]="apellido"
+                 autocomplete="family-name">
+
+          <mat-icon matSuffix>
+            badge
+          </mat-icon>
+
+        </mat-form-field>
+
       </div>
 
-      <div class="campo">
-        <label for="correo">Correo electrónico</label>
+      <!-- Correo electrónico. -->
+      <mat-form-field appearance="outline"
+                      class="campo-completo">
 
-        <input
-          id="correo"
-          name="correo"
-          type="email"
-          placeholder="ejemplo@correo.com"
-          autocomplete="email"
-          [(ngModel)]="correo"
-          required
-        />
-      </div>
+        <mat-label>
+          Correo electrónico
+        </mat-label>
 
-      <div class="campo">
-        <label for="telefono">Teléfono</label>
+        <input matInput
+               type="email"
+               name="correo"
+               [(ngModel)]="correo"
+               autocomplete="email">
 
-        <input
-          id="telefono"
-          name="telefono"
-          type="tel"
-          placeholder="Ejemplo: 88887777"
-          autocomplete="tel"
-          [(ngModel)]="telefono"
-          required
-        />
-      </div>
+        <mat-icon matSuffix>
+          mail
+        </mat-icon>
 
-      <div class="campo">
-        <label for="contrasena">Contraseña</label>
+      </mat-form-field>
 
-        <input
-          id="contrasena"
-          name="contrasena"
-          type="password"
-          placeholder="Escribe una contraseña"
-          autocomplete="new-password"
-          [(ngModel)]="contrasena"
-          required
-        />
-      </div>
+      <!-- Teléfono. -->
+      <mat-form-field appearance="outline"
+                      class="campo-completo">
 
-      <div class="campo">
-        <label for="confirmarContrasena">
+        <mat-label>
+          Teléfono
+        </mat-label>
+
+        <input matInput
+               type="tel"
+               name="telefono"
+               [(ngModel)]="telefono"
+               autocomplete="tel">
+
+        <mat-icon matSuffix>
+          phone
+        </mat-icon>
+
+      </mat-form-field>
+
+      <!-- Contraseña. -->
+      <mat-form-field appearance="outline"
+                      class="campo-completo">
+
+        <mat-label>
+          Contraseña
+        </mat-label>
+
+        <input matInput
+               [type]="mostrarContrasena ? 'text' : 'password'"
+               name="contrasena"
+               [(ngModel)]="contrasena"
+               autocomplete="new-password">
+
+        <button mat-icon-button
+                matSuffix
+                type="button"
+                (click)="cambiarVisibilidad()">
+
+          <mat-icon>
+            {{
+              mostrarContrasena
+                ? 'visibility_off'
+                : 'visibility'
+            }}
+          </mat-icon>
+
+        </button>
+
+      </mat-form-field>
+
+      <!-- Confirmación de contraseña. -->
+      <mat-form-field appearance="outline"
+                      class="campo-completo">
+
+        <mat-label>
           Confirmar contraseña
-        </label>
+        </mat-label>
 
-        <input
-          id="confirmarContrasena"
-          name="confirmarContrasena"
-          type="password"
-          placeholder="Repite la contraseña"
-          autocomplete="new-password"
-          [(ngModel)]="confirmarContrasena"
-          required
-        />
+        <input matInput
+               [type]="mostrarContrasena ? 'text' : 'password'"
+               name="confirmarContrasena"
+               [(ngModel)]="confirmarContrasena"
+               autocomplete="new-password">
+
+        <mat-icon matSuffix>
+          lock
+        </mat-icon>
+
+      </mat-form-field>
+
+      <!-- Información del rol creado. -->
+      <div class="informacion-cliente">
+
+        <mat-icon>
+          verified_user
+        </mat-icon>
+
+        <span>
+          La cuenta será registrada como Cliente.
+        </span>
+
       </div>
 
-      <button
-        type="submit"
-        class="boton-registro"
-        [disabled]="cargando"
-      >
-        {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
+      <!-- Botón principal. -->
+      <button mat-flat-button
+              type="submit"
+              class="boton-registrar"
+              [disabled]="registrando">
+
+        <mat-icon>
+          person_add
+        </mat-icon>
+
+        {{
+          registrando
+            ? 'Creando cuenta...'
+            : 'Crear cuenta'
+        }}
+
       </button>
-
-      <p
-        class="mensaje-error"
-        *ngIf="mensajeError"
-      >
-        {{ mensajeError }}
-      </p>
-
-      <p
-        class="mensaje-exito"
-        *ngIf="mensajeExito"
-      >
-        {{ mensajeExito }}
-      </p>
 
     </form>
 
-    <p class="volver-login">
-      ¿Ya tienes una cuenta?
-      <a routerLink="/login">Inicia sesión</a>
-    </p>
+    <!-- Regreso al login. -->
+    <div class="volver-login">
 
-  </div>
-</section>
+      <span>
+        ¿Ya tiene una cuenta?
+      </span>
+
+      <button mat-button
+              type="button"
+              (click)="volverLogin()">
+
+        Iniciar sesión
+
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
