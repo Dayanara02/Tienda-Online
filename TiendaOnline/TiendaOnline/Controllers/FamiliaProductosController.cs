@@ -6,12 +6,18 @@ using TiendaOnline.Dominio.Entidades;
 
 namespace TiendaOnline.API.Controllers;
 
+// Define la ruta principal del controlador.
+// [controller] será reemplazado por "FamiliaProductos"
 [Route("api/[controller]")]
 [ApiController]
+
+// Indica que esta clase funciona como un controlador de una API.
 public class FamiliaProductosController : ControllerBase
 {
     private readonly TiendaOnlineContext _context;
-
+    // Constructor del controlador.
+    // Recibe el contexto de la base de datos mediante
+    // inyección de dependencias.
     public FamiliaProductosController(TiendaOnlineContext context)
     {
         _context = context;
@@ -19,7 +25,9 @@ public class FamiliaProductosController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FamiliaProducto>>> GetFamilias()
-    {
+
+    {    // Consulta todos los registros de la tabla FamiliaProductos
+        // y los devuelve como una lista.
         return await _context.FamiliaProductos.ToListAsync();
     }
 
@@ -59,7 +67,8 @@ public class FamiliaProductosController : ControllerBase
     {
         if (id != familia.IdFamilia)
             return BadRequest();
-
+        // Busca en la base de datos una familia utilizando
+        // el identificador recibido+ 
         var existente = await _context.FamiliaProductos.FindAsync(id);
 
         if (existente == null)

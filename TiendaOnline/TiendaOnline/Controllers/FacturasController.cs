@@ -7,7 +7,11 @@ using TiendaOnline.Dominio.Entidades;
 namespace TiendaOnline.API.Controllers;
 
 [Authorize]
+// Indica que esta clase es un controlador de una API.
 [ApiController]
+
+// Define la ruta principal del controlador.
+// [controller] será reemplazado por "Facturas".
 [Route("api/[controller]")]
 public class FacturasController : ControllerBase
 {
@@ -21,13 +25,17 @@ public class FacturasController : ControllerBase
     // GET: api/Facturas
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Factura>>> GetFacturas()
-    {
+    {    // Consulta la tabla Facturas.
+        // AsNoTracking() indica que los registros solamente serán
+        // consultados y no serán rastreados para modificaciones.
+        // ToListAsync() obtiene todos los registros de forma asíncrona.
         return await _context.Facturas
             .AsNoTracking()
             .ToListAsync();
     }
 
     // GET: api/Facturas/5
+    // Permite obtener una factura específica utilizando su ID.
     [HttpGet("{id}")]
     public async Task<ActionResult<Factura>> GetFactura(int id)
     {
@@ -45,7 +53,9 @@ public class FacturasController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Factura>> PostFactura(
         Factura factura)
-    {
+
+    {   // Se establece el ID en 0 para que la base de datos
+        // genere automáticamente el identificador.
         factura.IdFactura = 0;
         factura.FechaEmision = DateTime.Now;
 
