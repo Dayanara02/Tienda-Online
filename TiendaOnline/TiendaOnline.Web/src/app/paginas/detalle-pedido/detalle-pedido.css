@@ -1,0 +1,513 @@
+/* Define los colores principales utilizados en la pantalla. */
+:host {
+  --azul-principal: #1f4e79;
+  --azul-oscuro: #163a5c;
+  --azul-claro: #eaf2f8;
+  --dorado: #c79b42;
+  --blanco: #ffffff;
+  --gris-fondo: #f4f6f8;
+  --gris-borde: #dfe5ea;
+  --gris-texto: #66727d;
+  --texto-principal: #24313c;
+  --verde: #2e7d32;
+  --verde-claro: #e8f5e9;
+  --rojo: #b42318;
+  --rojo-claro: #fdecec;
+}
+
+/* Aplica la estructura general de la pantalla. */
+.detalle-pedido-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: var(--gris-fondo);
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--texto-principal);
+}
+
+/* Organiza el encabezado superior. */
+.detalle-header {
+  max-width: 1400px;
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* Da formato a la etiqueta superior. */
+.header-etiqueta {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--azul-principal);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Configura el título principal. */
+.header-info h1 {
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 30px;
+  font-weight: 700;
+}
+
+/* Configura la descripción del encabezado. */
+.header-info p {
+  margin: 8px 0 0;
+  color: var(--gris-texto);
+  line-height: 1.5;
+}
+
+/* Agrupa los botones superiores. */
+.header-acciones {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Cambia el botón principal del encabezado. */
+.boton-inicio {
+  background: var(--azul-principal) !important;
+  color: var(--blanco) !important;
+}
+
+/* Define el ancho máximo del contenido. */
+.detalle-contenido {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Crea el estilo general de los paneles. */
+.panel {
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(31, 78, 121, 0.06);
+}
+
+/* Da espacio al panel general del pedido. */
+.panel-pedido {
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+/* Organiza el encabezado del pedido. */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+/* Configura la etiqueta Pedido. */
+.panel-etiqueta {
+  color: var(--gris-texto);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Configura el número del pedido. */
+.panel-header h2 {
+  margin: 4px 0;
+  color: var(--azul-oscuro);
+  font-size: 26px;
+}
+
+/* Configura la fecha del pedido. */
+.panel-header p {
+  margin: 0;
+  color: var(--gris-texto);
+  font-size: 14px;
+}
+
+/* Da formato al estado principal. */
+.estado-pedido {
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: var(--azul-claro);
+  color: var(--azul-principal);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Cambia el estado cuando está pagado. */
+.estado-pagado {
+  background: var(--verde-claro);
+  color: var(--verde);
+}
+
+/* Cambia el estado cuando está cancelado. */
+.estado-cancelado {
+  background: var(--rojo-claro);
+  color: var(--rojo);
+}
+
+/* Organiza los datos generales del pedido. */
+.datos-pedido {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+/* Crea cada tarjeta de información. */
+.dato-pedido {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 15px;
+  background: var(--gris-fondo);
+  border-radius: 9px;
+}
+
+  /* Configura los iconos de los datos. */
+  .dato-pedido mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Organiza el texto de cada dato. */
+  .dato-pedido div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* Configura el título pequeño de cada dato. */
+  .dato-pedido span {
+    color: var(--gris-texto);
+    font-size: 12px;
+  }
+
+  /* Configura el valor de cada dato. */
+  .dato-pedido strong {
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+/* Divide la pantalla entre productos y resumen. */
+.detalle-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Da espacio al panel de productos. */
+.panel-productos {
+  padding: 24px;
+}
+
+/* Organiza los títulos internos. */
+.panel-titulo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+  /* Configura el icono de los títulos. */
+  .panel-titulo > mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Configura los títulos de los paneles. */
+  .panel-titulo h2 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 20px;
+  }
+
+  /* Configura las descripciones de los paneles. */
+  .panel-titulo p {
+    margin: 4px 0 0;
+    color: var(--gris-texto);
+    font-size: 13px;
+  }
+
+/* Permite desplazar la tabla si falta espacio. */
+.tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Configura la tabla de productos. */
+.tabla-productos {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+  /* Configura los encabezados de la tabla. */
+  .tabla-productos th {
+    padding: 13px 12px;
+    background: var(--azul-claro);
+    color: var(--azul-oscuro);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  /* Configura las filas de información. */
+  .tabla-productos td {
+    padding: 15px 12px;
+    border-bottom: 1px solid var(--gris-borde);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  /* Elimina el borde de la última fila. */
+  .tabla-productos tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+/* Organiza el nombre del producto. */
+.producto-nombre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Crea el cuadro del icono del producto. */
+.producto-icono {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  border-radius: 8px;
+  background: var(--azul-claro);
+  color: var(--azul-principal);
+}
+
+/* Organiza el nombre y el identificador. */
+.producto-nombre > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Configura el nombre del producto. */
+.producto-nombre strong {
+  color: var(--texto-principal);
+}
+
+/* Configura el identificador del producto. */
+.producto-nombre span {
+  color: var(--gris-texto);
+  font-size: 11px;
+}
+
+/* Resalta algunos valores de la tabla. */
+.valor-destacado {
+  color: var(--azul-oscuro);
+  font-weight: 700;
+}
+
+/* Configura el resumen económico. */
+.resumen-compra {
+  padding: 24px;
+  position: sticky;
+  top: 20px;
+}
+
+/* Organiza cada fila del resumen. */
+.fila-resumen {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+  /* Configura el texto secundario del resumen. */
+  .fila-resumen span {
+    color: var(--gris-texto);
+  }
+
+/* Resalta el descuento. */
+.fila-descuento strong {
+  color: var(--verde);
+}
+
+/* Separa el total del resto de los montos. */
+.separador-resumen {
+  height: 1px;
+  margin: 10px 0;
+  background: var(--gris-borde);
+}
+
+/* Configura la fila del total final. */
+.fila-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+}
+
+  /* Configura el texto Total. */
+  .fila-total span {
+    color: var(--azul-oscuro);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* Configura el monto final. */
+  .fila-total strong {
+    color: var(--azul-principal);
+    font-size: 23px;
+  }
+
+/* Crea la nota informativa. */
+.nota-resumen {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0 18px;
+  padding: 11px;
+  background: var(--azul-claro);
+  border-radius: 8px;
+  color: var(--azul-oscuro);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+  /* Ajusta el icono de la nota. */
+  .nota-resumen mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+/* Hace que el botón de pago ocupe todo el ancho. */
+:host ::ng-deep .boton-pagar {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Configura los mensajes de estado. */
+.mensaje-estado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Configura el mensaje de pedido pagado. */
+.mensaje-pagado {
+  background: var(--verde-claro);
+  color: var(--verde);
+}
+
+/* Configura el mensaje de pedido cancelado. */
+.mensaje-cancelado {
+  background: var(--rojo-claro);
+  color: var(--rojo);
+}
+
+/* Configura las pantallas de carga y error. */
+.estado-pantalla {
+  max-width: 700px;
+  margin: 80px auto;
+  padding: 45px 30px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  text-align: center;
+}
+
+  /* Configura el icono grande del estado. */
+  .estado-pantalla > mat-icon {
+    width: 52px;
+    height: 52px;
+    color: var(--azul-principal);
+    font-size: 52px;
+  }
+
+  /* Configura el título del estado. */
+  .estado-pantalla h2 {
+    margin: 15px 0 8px;
+    color: var(--azul-oscuro);
+  }
+
+  /* Configura la explicación del estado. */
+  .estado-pantalla p {
+    margin: 0 0 20px;
+    color: var(--gris-texto);
+  }
+
+/* Cambia el icono cuando ocurre un error. */
+.estado-error > mat-icon {
+  color: var(--rojo);
+}
+
+/* Organiza las acciones inferiores. */
+.acciones-inferiores {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Ajusta la distribución en ventanas medianas. */
+@media (max-width: 1050px) {
+
+  /* Reduce los datos generales a dos columnas. */
+  .datos-pedido {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Coloca el resumen debajo de los productos. */
+  .detalle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Evita que el resumen quede fijo. */
+  .resumen-compra {
+    position: static;
+  }
+}
+
+/* Ajusta el contenido en ventanas más pequeñas. */
+@media (max-width: 750px) {
+
+  /* Reduce el espacio exterior. */
+  .detalle-pedido-page {
+    padding: 20px;
+  }
+
+  /* Coloca el encabezado en una sola columna. */
+  .detalle-header {
+    flex-direction: column;
+  }
+
+  /* Coloca los datos del pedido en una columna. */
+  .datos-pedido {
+    grid-template-columns: 1fr;
+  }
+
+  /* Coloca las acciones inferiores una debajo de otra. */
+  .acciones-inferiores {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  /* Configura el botón que abre el seguimiento del pedido. */
+  .boton-seguimiento {
+    width: 100%;
+    margin-bottom: 12px;
+    color: var(--azul-principal) !important;
+    border-color: var(--azul-principal) !important;
+  }
+
+}

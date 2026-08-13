@@ -1,0 +1,482 @@
+/* Define los colores utilizados en la pantalla. */
+:host {
+  display: block;
+  /* Azul principal utilizado en botones e iconos. */
+  --azul-principal: #1f4e79;
+  /* Azul oscuro utilizado en los títulos. */
+  --azul-oscuro: #163a5c;
+  /* Azul claro utilizado en fondos secundarios. */
+  --azul-claro: #eaf2f8;
+  /* Blanco utilizado en paneles y tarjetas. */
+  --blanco: #ffffff;
+  /* Gris utilizado como fondo de la página. */
+  --gris-suave: #f4f6f8;
+  /* Color principal de los textos. */
+  --texto: #24313d;
+  /* Color utilizado en textos secundarios. */
+  --texto-secundario: #6d7882;
+  /* Color utilizado para bordes y separadores. */
+  --borde: #d8e0e7;
+}
+
+/* Hace que padding y border formen parte del tamaño total. */
+* {
+  box-sizing: border-box;
+}
+
+/* Crea el fondo general de Confirmar Pedido. */
+.pagina-confirmar {
+  min-height: 100vh;
+  padding: 28px;
+  background-color: var(--gris-suave);
+  color: var(--texto);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Coloca el título a la izquierda y los botones a la derecha. */
+.encabezado-confirmar {
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Da formato a la etiqueta pequeña superior. */
+.etiqueta {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--azul-principal);
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Da formato al título Confirmar pedido. */
+.encabezado-confirmar h1 {
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 28px;
+}
+
+/* Da formato a la descripción principal. */
+.encabezado-confirmar p {
+  margin: 7px 0 0;
+  color: var(--texto-secundario);
+  font-size: 14px;
+}
+
+/* Organiza los botones superiores. */
+.acciones-superiores {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Da formato al botón Volver al carrito. */
+.boton-volver {
+  min-height: 40px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  background-color: var(--blanco);
+  color: var(--azul-principal);
+  cursor: pointer;
+}
+
+  /* Ajusta el icono del botón Volver. */
+  .boton-volver mat-icon {
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+  }
+
+/* Crea el estilo base de los mensajes. */
+.mensaje {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 7px;
+  font-size: 13px;
+}
+
+/* Da formato al mensaje de error. */
+.mensaje-error {
+  border: 1px solid #e5b9b9;
+  background-color: #fbe8e8;
+  color: #8a3030;
+}
+
+/* Da formato al mensaje de éxito. */
+.mensaje-exito {
+  border: 1px solid #b9d9c1;
+  background-color: #e7f4ea;
+  color: #2f6d3d;
+}
+
+/* Divide la pantalla entre información y resumen. */
+.contenido-confirmar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 22px;
+  align-items: start;
+}
+
+/* Organiza verticalmente los paneles de la izquierda. */
+.informacion-pedido {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Crea los paneles blancos de la pantalla. */
+.panel {
+  padding: 20px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background-color: var(--blanco);
+}
+
+/* Organiza el título y el icono de cada panel. */
+.titulo-panel {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+  /* Cambia a azul los iconos principales de los paneles. */
+  .titulo-panel > mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Da formato a los títulos internos. */
+  .titulo-panel h2 {
+    margin: 0 0 4px;
+    color: var(--azul-oscuro);
+    font-size: 17px;
+  }
+
+  /* Da formato a las explicaciones internas. */
+  .titulo-panel p {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+/* Hace que el campo de dirección ocupe todo el ancho. */
+.campo-direccion {
+  width: 100%;
+}
+
+/* Organiza cada producto en una sola fila. */
+.producto {
+  padding: 14px 0;
+  display: grid;
+  grid-template-columns: 75px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid var(--borde);
+}
+
+  /* Evita una línea innecesaria en el primer producto. */
+  .producto:first-of-type {
+    border-top: none;
+  }
+
+/* Crea el cuadro de la imagen del producto. */
+.imagen-producto {
+  width: 75px;
+  height: 75px;
+  overflow: hidden;
+  border-radius: 7px;
+  background-color: var(--gris-suave);
+}
+
+  /* Ajusta la imagen dentro del cuadro. */
+  .imagen-producto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+/* Da formato a la marca del producto. */
+.marca {
+  color: var(--azul-principal);
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Da formato al nombre del producto. */
+.datos-producto h3 {
+  margin: 4px 0;
+  color: var(--azul-oscuro);
+  font-size: 14px;
+}
+
+/* Da formato a cantidad y precio unitario. */
+.datos-producto p {
+  margin: 0;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+/* Da formato al subtotal de cada producto. */
+.subtotal-producto {
+  color: var(--azul-oscuro);
+  font-size: 14px;
+}
+
+/* Crea la tarjeta derecha con el resumen del pedido. */
+.resumen-pedido {
+  padding: 20px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background-color: var(--blanco);
+}
+
+  /* Da formato al título del resumen. */
+  .resumen-pedido > h2 {
+    margin: 0 0 18px;
+    color: var(--azul-oscuro);
+    font-size: 18px;
+  }
+
+/* Organiza cada dato económico del resumen. */
+.fila-resumen {
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  border-bottom: 1px solid var(--borde);
+}
+
+  /* Da formato al nombre de cada dato. */
+  .fila-resumen span {
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+  /* Da formato a los montos del resumen. */
+  .fila-resumen strong {
+    color: var(--texto);
+    font-size: 13px;
+  }
+
+/* Cambia el descuento a color verde. */
+.descuento strong {
+  color: #367447;
+}
+
+/* Crea el bloque de promoción activa. */
+.promocion {
+  margin: 16px 0;
+  padding: 13px;
+  border: 1px solid #c7d8e6;
+  border-radius: 8px;
+  background-color: var(--azul-claro);
+}
+
+/* Organiza el icono y el nombre de la promoción. */
+.promocion-superior {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Crea el cuadro del icono de promoción. */
+.icono-promocion {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  background-color: var(--blanco);
+  color: var(--azul-principal);
+}
+
+  /* Ajusta el icono Material de la promoción. */
+  .icono-promocion mat-icon {
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+  }
+
+/* Da formato al nombre de la promoción. */
+.promocion-superior strong {
+  color: var(--azul-oscuro);
+  font-size: 12px;
+}
+
+/* Da formato al porcentaje de promoción. */
+.promocion-superior p {
+  margin: 3px 0 0;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+/* Organiza el mensaje de promoción cumplida. */
+.promocion-cumplida {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #367447;
+  font-size: 11px;
+}
+
+/* Organiza el mensaje de promoción pendiente. */
+.promocion-pendiente {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #8a6418;
+  font-size: 11px;
+}
+
+  /* Ajusta los iconos de los mensajes de promoción. */
+  .promocion-cumplida mat-icon,
+  .promocion-pendiente mat-icon {
+    width: 17px;
+    height: 17px;
+    font-size: 17px;
+  }
+
+/* Organiza el total final del pedido. */
+.fila-total {
+  padding: 18px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+  /* Da formato al texto Total. */
+  .fila-total span {
+    color: var(--azul-oscuro);
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  /* Hace más visible el monto final. */
+  .fila-total strong {
+    color: var(--azul-oscuro);
+    font-size: 22px;
+  }
+
+/* Crea el aviso mostrado antes de confirmar. */
+.aviso-confirmacion {
+  margin-bottom: 16px;
+  padding: 11px;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  border-radius: 6px;
+  background-color: var(--gris-suave);
+}
+
+  /* Da formato al icono informativo. */
+  .aviso-confirmacion mat-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--azul-principal);
+    font-size: 18px;
+  }
+
+  /* Da formato al texto del aviso. */
+  .aviso-confirmacion p {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+/* Hace que el botón PrimeNG ocupe todo el ancho. */
+:host ::ng-deep .boton-confirmar {
+  width: 100%;
+}
+
+  /* Hace que el botón interno también ocupe todo el espacio. */
+  :host ::ng-deep .boton-confirmar .p-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+/* Da formato al botón para modificar el carrito. */
+.editar-carrito {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: var(--azul-principal);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+  /* Reduce la apariencia del botón cuando está bloqueado. */
+  .editar-carrito:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+/* Crea la pantalla mostrada cuando no existen productos. */
+.sin-productos {
+  padding: 60px 20px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background-color: var(--blanco);
+  text-align: center;
+}
+
+  /* Aumenta el icono del carrito vacío. */
+  .sin-productos > mat-icon {
+    width: 55px;
+    height: 55px;
+    color: var(--azul-principal);
+    font-size: 55px;
+  }
+
+  /* Da formato al título del carrito vacío. */
+  .sin-productos h2 {
+    margin: 12px 0 6px;
+    color: var(--azul-oscuro);
+  }
+
+  /* Da formato a la explicación del carrito vacío. */
+  .sin-productos p {
+    margin: 0 0 18px;
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+/* Ajusta la pantalla cuando la ventana es más pequeña. */
+@media (max-width: 950px) {
+
+  /* Coloca el resumen debajo de la información principal. */
+  .contenido-confirmar {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Ajusta la distribución cuando existe menos espacio horizontal. */
+@media (max-width: 800px) {
+
+  /* Coloca el encabezado de manera vertical. */
+  .encabezado-confirmar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Coloca los botones debajo del título. */
+  .acciones-superiores {
+    flex-wrap: wrap;
+  }
+}

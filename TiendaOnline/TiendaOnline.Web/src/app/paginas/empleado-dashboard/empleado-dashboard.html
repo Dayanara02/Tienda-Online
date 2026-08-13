@@ -1,0 +1,442 @@
+<div class="pagina-empleado">
+
+  <!-- Barra superior del empleado. -->
+  <header class="barra-superior">
+
+    <div class="marca">
+
+      <div class="logo">
+        E
+      </div>
+
+      <div>
+        <h1>
+          Panel de Empleado
+        </h1>
+
+        <p>
+          Esencia Tienda Online
+        </p>
+      </div>
+
+    </div>
+
+    <div class="acciones-superiores">
+
+      <!-- Actualiza la información mostrada. -->
+      <button mat-stroked-button
+              type="button"
+              class="boton-actualizar"
+              (click)="actualizar()">
+
+        <mat-icon>
+          refresh
+        </mat-icon>
+
+        Actualizar
+
+      </button>
+
+      <!-- Cierra la sesión del empleado. -->
+      <button mat-button
+              type="button"
+              class="boton-salir"
+              (click)="cerrarSesion()">
+
+        <mat-icon>
+          logout
+        </mat-icon>
+
+        Cerrar sesión
+
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="contenido-empleado">
+
+    <!-- Presentación principal. -->
+    <section class="bienvenida">
+
+      <div>
+        <span>
+          EMPLEADO
+        </span>
+
+        <h2>
+          Gestión operativa
+        </h2>
+
+        <p>
+          Controle pedidos, envíos, inventario
+          y operaciones de la tienda.
+        </p>
+      </div>
+
+      <mat-icon>
+        badge
+      </mat-icon>
+
+    </section>
+
+    <!-- Mensaje mostrado mientras cargan los datos. -->
+    <div class="mensaje-carga"
+         *ngIf="cargando">
+
+      <mat-icon>
+        hourglass_top
+      </mat-icon>
+
+      Cargando información...
+
+    </div>
+
+    <!-- Mensaje mostrado si ocurre un error. -->
+    <div class="mensaje-error"
+         *ngIf="mensajeError && !cargando">
+
+      <mat-icon>
+        error_outline
+      </mat-icon>
+
+      {{ mensajeError }}
+
+    </div>
+
+    <!-- Tarjetas principales del empleado. -->
+    <section class="resumen"
+             *ngIf="!cargando">
+
+      <!-- Total de pedidos. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            shopping_bag
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Pedidos
+          </span>
+
+          <strong>
+            {{ totalPedidos }}
+          </strong>
+
+          <small>
+            Pedidos registrados
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Total de productos. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            inventory_2
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Productos
+          </span>
+
+          <strong>
+            {{ totalProductos }}
+          </strong>
+
+          <small>
+            Productos registrados
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Total de envíos. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            local_shipping
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Envíos
+          </span>
+
+          <strong>
+            {{ totalEnvios }}
+          </strong>
+
+          <small>
+            Envíos registrados
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Cuenta los pedidos pendientes. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            schedule
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Pendientes
+          </span>
+
+          <strong>
+            {{ pedidosPendientes }}
+          </strong>
+
+          <small>
+            Pedidos pendientes
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Cuenta los pedidos enviados. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            delivery_dining
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Enviados
+          </span>
+
+          <strong>
+            {{ pedidosEnviados }}
+          </strong>
+
+          <small>
+            Pedidos enviados
+          </small>
+        </div>
+
+      </article>
+
+      <!-- Cuenta los pedidos entregados. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>
+            task_alt
+          </mat-icon>
+        </div>
+
+        <div>
+          <span>
+            Entregados
+          </span>
+
+          <strong>
+            {{ pedidosEntregados }}
+          </strong>
+
+          <small>
+            Pedidos entregados
+          </small>
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- Módulos disponibles para el empleado. -->
+    <section class="seccion">
+
+      <div class="titulo-seccion">
+
+        <span>
+          MÓDULOS
+        </span>
+
+        <h3>
+          Herramientas del empleado
+        </h3>
+
+        <p>
+          Seleccione el área que desea gestionar.
+        </p>
+
+      </div>
+
+      <div class="modulos">
+
+        <!-- Genera una tarjeta por cada módulo. -->
+        <article class="tarjeta-modulo"
+                 *ngFor="let modulo of modulos">
+
+          <div class="icono-modulo">
+
+            <mat-icon>
+              {{ modulo.icono }}
+            </mat-icon>
+
+          </div>
+
+          <div class="contenido-modulo">
+
+            <h4>
+              {{ modulo.titulo }}
+            </h4>
+
+            <p>
+              {{ modulo.descripcion }}
+            </p>
+
+          </div>
+
+          <!-- Luego se conectará con la ruta de cada módulo. -->
+          <button mat-stroked-button
+                  type="button"
+                  (click)="abrirModulo(modulo)">
+
+            Ir al módulo
+
+            <mat-icon>
+              arrow_forward
+            </mat-icon>
+
+          </button>
+
+        </article>
+
+      </div>
+
+    </section>
+
+    <!-- Tabla con todos los pedidos registrados. -->
+    <section class="seccion"
+             *ngIf="!cargando">
+
+      <div class="titulo-seccion">
+
+        <span>
+          PEDIDOS
+        </span>
+
+        <h3>
+          Pedidos registrados
+        </h3>
+
+        <p>
+          Consulte el estado actual de todos los pedidos.
+        </p>
+
+      </div>
+
+      <!-- Tabla mostrada cuando existen pedidos. -->
+      <div class="contenedor-tabla"
+           *ngIf="pedidosOrdenados.length > 0">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>
+                Pedido
+              </th>
+
+              <th>
+                Fecha
+              </th>
+
+              <th>
+                Estado
+              </th>
+
+              <th>
+                Dirección
+              </th>
+
+              <th>
+                Total
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <!-- Recorre todos los pedidos. -->
+            <tr *ngFor="let pedido of pedidosOrdenados">
+
+              <td class="numero-pedido">
+                #{{ pedido.idPedido }}
+              </td>
+
+              <td>
+                {{ formatearFecha(pedido.fechaPedido) }}
+              </td>
+
+              <td>
+
+                <span class="estado"
+                      [ngClass]="claseEstado(pedido.estado)">
+
+                  {{ pedido.estado }}
+
+                </span>
+
+              </td>
+
+              <td>
+                {{
+                  pedido.direccionEntrega ||
+                  'Sin dirección'
+                }}
+              </td>
+
+              <td class="total">
+                {{
+                  pedido.total |
+                  currency:'CRC':'₡':'1.0-0'
+                }}
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- Mensaje mostrado cuando no hay pedidos. -->
+      <div class="sin-registros"
+           *ngIf="pedidosOrdenados.length === 0">
+
+        <mat-icon>
+          receipt_long
+        </mat-icon>
+
+        <strong>
+          No hay pedidos registrados
+        </strong>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

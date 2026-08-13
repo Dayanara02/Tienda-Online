@@ -1,0 +1,184 @@
+/* Configura el estilo general de la pantalla. */
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  color: #263746;
+}
+
+/* Centra el formulario de registro. */
+.pagina-registro {
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Da estilo a la tarjeta principal. */
+.tarjeta-registro {
+  width: min(620px, 100%);
+  padding: 32px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #dfe6eb;
+  box-shadow: 0 8px 24px rgba(31, 78, 121, 0.08);
+}
+
+/* Organiza el encabezado del formulario. */
+.encabezado-registro {
+  margin-bottom: 26px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Da estilo al logo de Esencia. */
+.logo {
+  min-width: 54px;
+  width: 54px;
+  height: 54px;
+  border-radius: 11px;
+  background: #1f4e79;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Da estilo a la etiqueta superior. */
+.etiqueta {
+  color: #1f4e79;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+/* Da estilo al título principal. */
+.encabezado-registro h1 {
+  margin: 4px 0;
+  color: #163a5c;
+  font-size: 26px;
+}
+
+/* Da estilo a la descripción. */
+.encabezado-registro p {
+  margin: 0;
+  color: #73818b;
+  font-size: 13px;
+}
+
+/* Define el estilo general de mensajes. */
+.mensaje {
+  padding: 13px 15px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+}
+
+/* Da estilo al mensaje de error. */
+.mensaje-error {
+  background: #fff0f0;
+  color: #a23b3b;
+  border: 1px solid #efcccc;
+}
+
+/* Da estilo al mensaje de éxito. */
+.mensaje-exito {
+  background: #e8f5ec;
+  color: #287444;
+  border: 1px solid #c8e4d1;
+}
+
+/* Organiza los campos del formulario. */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Coloca nombre y apellido en dos columnas. */
+.fila-formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Hace que el campo use todo el ancho. */
+.campo-completo {
+  width: 100%;
+}
+
+/* Ajusta los campos de Material. */
+mat-form-field {
+  width: 100%;
+}
+
+/* Da estilo al mensaje informativo del rol. */
+.informacion-cliente {
+  padding: 12px 14px;
+  margin: 2px 0 12px;
+  border-radius: 8px;
+  background: #eaf2f8;
+  color: #1f4e79;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+}
+
+/* Da estilo al botón principal. */
+.boton-registrar {
+  width: 100%;
+  min-height: 46px;
+  background: #1f4e79 !important;
+  color: #ffffff !important;
+}
+
+/* Organiza el acceso al login. */
+.volver-login {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e5eaee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+  /* Da estilo al texto inferior. */
+  .volver-login span {
+    color: #77858f;
+    font-size: 12px;
+  }
+
+  /* Da estilo al botón de inicio de sesión. */
+  .volver-login button {
+    color: #1f4e79 !important;
+  }
+
+/* Ajusta el formulario en pantallas pequeñas. */
+@media (max-width: 600px) {
+
+  /* Reduce el espacio interno. */
+  .tarjeta-registro {
+    padding: 24px 20px;
+  }
+
+  /* Coloca nombre y apellido en una sola columna. */
+  .fila-formulario {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  /* Ajusta el encabezado. */
+  .encabezado-registro {
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,201 @@
+<!-- Crea la página completa del inicio de sesión. -->
+<section class="pagina-login">
+
+  <!-- Crea la tarjeta principal donde estará el formulario. -->
+  <div class="tarjeta-login">
+
+
+    <!-- Muestra el nombre de la marca. -->
+    <div class="marca-login">
+
+      <!-- Muestra el nombre ESENCIA. -->
+      <h2>
+        ESENCIA
+      </h2>
+
+      <!-- Muestra un pequeño detalle decorativo. -->
+      <span>
+        Tienda Online
+      </span>
+
+    </div>
+
+
+    <!-- Agrupa el contenido principal del formulario. -->
+    <div class="contenido-login">
+
+
+      <!-- Muestra el título del formulario. -->
+      <h1>
+        Iniciar sesión
+      </h1>
+
+
+      <!-- Muestra una pequeña descripción. -->
+      <p class="descripcion-login">
+        Ingresa tus datos para acceder a tu cuenta.
+      </p>
+
+
+      <!-- Crea el formulario y ejecuta iniciarSesion al enviarse. -->
+      <form (ngSubmit)="iniciarSesion()">
+
+
+        <!-- Crea el campo de correo utilizando Angular Material. -->
+        <mat-form-field appearance="outline"
+                        class="campo-completo">
+
+
+          <!-- Muestra el nombre del campo. -->
+          <mat-label>
+            Correo electrónico
+          </mat-label>
+
+
+          <!-- Muestra un icono de correo al inicio del campo. -->
+          <mat-icon matPrefix>
+            mail
+          </mat-icon>
+
+
+          <!-- Crea el input donde el usuario escribe su correo. -->
+          <input matInput
+                 id="correo"
+                 name="correo"
+                 type="email"
+                 placeholder="correo@ejemplo.com"
+                 autocomplete="email"
+                 [(ngModel)]="correo"
+                 required>
+
+
+        </mat-form-field>
+
+
+        <!-- Crea el campo de contraseña utilizando Angular Material. -->
+        <mat-form-field appearance="outline"
+                        class="campo-completo">
+
+
+          <!-- Muestra el nombre del campo. -->
+          <mat-label>
+            Contraseña
+          </mat-label>
+
+
+          <!-- Muestra un icono de candado al inicio. -->
+          <mat-icon matPrefix>
+            lock
+          </mat-icon>
+
+
+          <!-- Crea el input de contraseña. -->
+          <input matInput
+                 id="contrasena"
+                 name="contrasena"
+                 [type]="mostrarContrasena ? 'text' : 'password'"
+                 placeholder="Escribe tu contraseña"
+                 autocomplete="current-password"
+                 [(ngModel)]="contrasena"
+                 required>
+
+
+          <!-- Crea el botón para mostrar u ocultar la contraseña. -->
+          <button mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="cambiarVisibilidadContrasena()"
+                  [attr.aria-label]="
+              mostrarContrasena
+                ? 'Ocultar contraseña'
+                : 'Mostrar contraseña'
+            ">
+
+
+            <!-- Cambia el icono según el estado de la contraseña. -->
+            <mat-icon>
+              {{
+                mostrarContrasena
+                  ? 'visibility_off'
+                  : 'visibility'
+              }}
+            </mat-icon>
+
+
+          </button>
+
+
+        </mat-form-field>
+
+
+        <!-- Muestra el mensaje de error solamente si existe. -->
+        <div class="mensaje-error"
+             *ngIf="mensajeError">
+
+
+          <!-- Muestra un icono de advertencia. -->
+          <mat-icon>
+            error_outline
+          </mat-icon>
+
+
+          <!-- Muestra el texto del error. -->
+          <span>
+            {{ mensajeError }}
+          </span>
+
+
+        </div>
+
+
+        <!-- Crea el botón principal utilizando Angular Material. -->
+        <button mat-flat-button
+                type="submit"
+                class="boton-login"
+                [disabled]="cargando">
+
+
+          <!-- Muestra un spinner mientras el login está procesando. -->
+          <mat-spinner *ngIf="cargando"
+                       diameter="20">
+          </mat-spinner>
+
+
+          <!-- Muestra el texto normal cuando no está cargando. -->
+          <span *ngIf="!cargando">
+            Iniciar sesión
+          </span>
+
+
+          <!-- Muestra un texto diferente mientras se procesa. -->
+          <span *ngIf="cargando">
+            Ingresando...
+          </span>
+
+
+        </button>
+
+
+      </form>
+
+
+      <!-- Muestra la opción para crear una cuenta. -->
+      <p class="registro">
+
+        <!-- Muestra la pregunta. -->
+        ¿No tienes una cuenta?
+
+
+        <!-- Navega hacia la pantalla de registro. -->
+        <a routerLink="/registro">
+          Regístrate
+        </a>
+
+      </p>
+
+
+    </div>
+
+  </div>
+
+</section>

@@ -1,0 +1,658 @@
+<!-- Crea la estructura general del Dashboard. -->
+<div class="dashboard-layout">
+
+  <!-- Crea la barra lateral de navegación. -->
+  <aside class="sidebar">
+
+    <!-- Muestra la marca principal del sistema. -->
+    <div class="sidebar-marca">
+      <h2>ESENCIA</h2>
+      <span>Tienda Online</span>
+    </div>
+
+    <!-- Muestra la información básica del cliente. -->
+    <div class="usuario-sidebar">
+
+      <!-- Crea el círculo con el icono de usuario. -->
+      <div class="avatar-sidebar">
+        <mat-icon>person</mat-icon>
+      </div>
+
+      <!-- Muestra el nombre y el rol. -->
+      <div>
+        <strong>{{ nombreUsuario }}</strong>
+        <span>Cliente</span>
+      </div>
+
+    </div>
+
+    <!-- Crea el menú principal del cliente. -->
+    <nav class="menu-sidebar">
+
+      <!-- Opción activa del Dashboard. -->
+      <button type="button"
+              class="menu-item activo">
+
+        <mat-icon>dashboard</mat-icon>
+        <span>Inicio</span>
+
+      </button>
+
+      <!-- Abre el catálogo completo. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAProductos()">
+
+        <mat-icon>inventory_2</mat-icon>
+        <span>Productos</span>
+
+      </button>
+
+      <!-- Abre el carrito. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAlCarrito()">
+
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Carrito</span>
+
+        <!-- Muestra la cantidad del carrito. -->
+        <span class="contador-menu"
+              *ngIf="cantidadCarrito > 0">
+          {{ cantidadCarrito }}
+        </span>
+
+      </button>
+
+      <!-- Abre la lista de favoritos. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAFavoritos()">
+
+        <mat-icon>favorite</mat-icon>
+        <span>Favoritos</span>
+
+        <!-- Muestra la cantidad de favoritos. -->
+        <span class="contador-menu"
+              *ngIf="cantidadDeseos > 0">
+          {{ cantidadDeseos }}
+        </span>
+
+      </button>
+
+      <!-- Abre Mis pedidos. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAMisPedidos()">
+
+        <mat-icon>receipt_long</mat-icon>
+        <span>Mis pedidos</span>
+
+      </button>
+
+      <!-- Abre Notificaciones. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irANotificaciones()">
+
+        <mat-icon>notifications_none</mat-icon>
+        <span>Notificaciones</span>
+
+      </button>
+
+      <!-- Abre Descuentos. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irADescuentos()">
+
+        <mat-icon>sell</mat-icon>
+        <span>Descuentos</span>
+
+      </button>
+
+      <!-- Abre el perfil del cliente. -->
+      <button type="button"
+              class="menu-item"
+              (click)="irAPerfil()">
+
+        <mat-icon>account_circle</mat-icon>
+        <span>Mi perfil</span>
+
+      </button>
+
+    </nav>
+
+    <!-- Cierra la sesión actual. -->
+    <button type="button"
+            class="cerrar-sesion"
+            (click)="cerrarSesion()">
+
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar sesión</span>
+
+    </button>
+
+  </aside>
+
+  <!-- Crea la zona principal del Dashboard. -->
+  <main class="contenido-dashboard">
+
+    <!-- Crea el encabezado superior. -->
+    <header class="topbar">
+
+      <!-- Muestra el saludo principal. -->
+      <div>
+        <p class="topbar-etiqueta">
+          Panel del cliente
+        </p>
+
+        <h1>
+          Hola, {{ nombreUsuario }}
+        </h1>
+
+        <p class="topbar-descripcion">
+          Encuentra tus productos, revisa tus pedidos y administra tu cuenta.
+        </p>
+      </div>
+
+      <!-- Agrupa los accesos rápidos superiores. -->
+      <div class="topbar-acciones">
+
+        <!-- Abre Mis pedidos. -->
+        <p-button label="Mis pedidos"
+                  icon="pi pi-receipt"
+                  severity="secondary"
+                  (onClick)="irAMisPedidos()">
+        </p-button>
+
+        <!-- Abre el carrito. -->
+        <p-button label="Ver carrito"
+                  icon="pi pi-shopping-cart"
+                  (onClick)="irAlCarrito()">
+        </p-button>
+
+      </div>
+
+    </header>
+
+    <!-- Muestra mensajes temporales. -->
+    <div class="mensaje-dashboard"
+         [class.mensaje-exito]="tipoMensaje === 'exito'"
+         [class.mensaje-info]="tipoMensaje === 'info'"
+         [class.mensaje-error]="tipoMensaje === 'error'"
+         *ngIf="mensaje">
+
+      <mat-icon>info</mat-icon>
+      <span>{{ mensaje }}</span>
+
+    </div>
+
+    <!-- Crea las tarjetas de resumen. -->
+    <section class="resumen-dashboard">
+
+      <!-- Muestra la cantidad de productos reales. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+
+        <div>
+          <span>Productos</span>
+          <strong>{{ totalProductos }}</strong>
+        </div>
+
+      </article>
+
+      <!-- Muestra la cantidad de artículos en el carrito. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+
+        <div>
+          <span>En carrito</span>
+          <strong>{{ cantidadCarrito }}</strong>
+        </div>
+
+      </article>
+
+      <!-- Muestra la cantidad de favoritos. -->
+      <article class="tarjeta-resumen">
+
+        <div class="icono-resumen">
+          <mat-icon>favorite</mat-icon>
+        </div>
+
+        <div>
+          <span>Favoritos</span>
+          <strong>{{ cantidadDeseos }}</strong>
+        </div>
+
+      </article>
+
+      <!-- Muestra la cantidad de pedidos. -->
+      <article class="tarjeta-resumen tarjeta-clickeable"
+               (click)="irAMisPedidos()">
+
+        <div class="icono-resumen">
+          <mat-icon>local_shipping</mat-icon>
+        </div>
+
+        <div>
+          <span>Mis pedidos</span>
+
+          <!-- Muestra puntos durante la carga. -->
+          <strong *ngIf="cargandoPedidos">
+            ...
+          </strong>
+
+          <!-- Muestra la cantidad recibida. -->
+          <strong *ngIf="!cargandoPedidos">
+            {{ cantidadPedidos }}
+          </strong>
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- Crea el banner principal. -->
+    <section class="banner-principal">
+
+      <!-- Muestra el contenido del banner. -->
+      <div class="banner-contenido">
+
+        <span class="banner-etiqueta">
+          ESENCIA
+        </span>
+
+        <h2>
+          Tu cuidado personal en un solo lugar
+        </h2>
+
+        <p>
+          Explora productos disponibles para tu cuidado y bienestar.
+        </p>
+
+        <!-- Agrupa los botones del banner. -->
+        <div class="banner-botones">
+
+          <!-- Abre Productos. -->
+          <button mat-flat-button
+                  type="button"
+                  class="boton-banner-principal"
+                  (click)="irAProductos()">
+
+            <mat-icon>shopping_bag</mat-icon>
+            Ver productos
+
+          </button>
+
+          <!-- Abre Descuentos. -->
+          <button mat-stroked-button
+                  type="button"
+                  class="boton-banner-secundario"
+                  (click)="irADescuentos()">
+
+            <mat-icon>local_offer</mat-icon>
+            Ver descuentos
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Muestra un icono decorativo. -->
+      <div class="banner-icono">
+        <mat-icon>spa</mat-icon>
+      </div>
+
+    </section>
+
+    <!-- Crea los accesos rápidos. -->
+    <section class="bloque-dashboard">
+
+      <!-- Crea el encabezado del bloque. -->
+      <div class="encabezado-bloque">
+
+        <div>
+          <h2>Accesos rápidos</h2>
+
+          <p>
+            Ingresa rápidamente a las funciones principales de tu cuenta.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Crea la cuadrícula de accesos rápidos. -->
+      <div class="accesos-rapidos">
+
+        <!-- Acceso al carrito. -->
+        <button type="button"
+                class="acceso-rapido"
+                (click)="irAlCarrito()">
+
+          <mat-icon>shopping_cart</mat-icon>
+          <strong>Carrito</strong>
+
+          <span>
+            {{ cantidadCarrito }} productos agregados
+          </span>
+
+        </button>
+
+        <!-- Acceso a favoritos. -->
+        <button type="button"
+                class="acceso-rapido"
+                (click)="irAFavoritos()">
+
+          <mat-icon>favorite_border</mat-icon>
+          <strong>Favoritos</strong>
+
+          <span>
+            {{ cantidadDeseos }} productos guardados
+          </span>
+
+        </button>
+
+        <!-- Acceso a pedidos. -->
+        <button type="button"
+                class="acceso-rapido"
+                (click)="irAMisPedidos()">
+
+          <mat-icon>receipt_long</mat-icon>
+          <strong>Mis pedidos</strong>
+
+          <span>
+            Consulta el estado de tus compras
+          </span>
+
+        </button>
+
+        <!-- Acceso al perfil. -->
+        <button type="button"
+                class="acceso-rapido"
+                (click)="irAPerfil()">
+
+          <mat-icon>manage_accounts</mat-icon>
+          <strong>Mi perfil</strong>
+
+          <span>
+            Revisa los datos de tu cuenta
+          </span>
+
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- Crea el bloque de búsqueda y categorías. -->
+    <section class="bloque-dashboard">
+
+      <!-- Crea el encabezado del catálogo. -->
+      <div class="encabezado-bloque encabezado-productos">
+
+        <div>
+          <h2>Explorar productos</h2>
+
+          <p>
+            Busca por nombre o selecciona una categoría.
+          </p>
+        </div>
+
+        <!-- Crea el buscador. -->
+        <div class="buscador-productos">
+
+          <mat-icon>search</mat-icon>
+
+          <input type="text"
+                 placeholder="Buscar producto..."
+                 [(ngModel)]="textoBusqueda">
+
+        </div>
+
+      </div>
+
+      <!-- Muestra las categorías reales. -->
+      <div class="categorias-dashboard">
+
+        <!-- Recorre cada nombre de categoría. -->
+        <button type="button"
+                class="categoria-dashboard"
+                *ngFor="let categoria of categorias"
+                [class.categoria-activa]="categoriaSeleccionada === categoria"
+                (click)="seleccionarCategoria(categoria)">
+
+          <mat-icon>category</mat-icon>
+          <span>{{ categoria }}</span>
+
+        </button>
+
+      </div>
+
+      <!-- Muestra el filtro seleccionado. -->
+      <div class="estado-filtro">
+
+        <span>
+          Mostrando:
+          <strong>{{ categoriaSeleccionada }}</strong>
+        </span>
+
+        <!-- Permite limpiar los filtros. -->
+        <button type="button"
+                *ngIf="categoriaSeleccionada !== 'Todos' || textoBusqueda"
+                (click)="limpiarFiltros()">
+
+          <mat-icon>close</mat-icon>
+          Limpiar filtros
+
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- Crea la sección de productos. -->
+    <section class="bloque-dashboard">
+
+      <!-- Crea el encabezado de productos. -->
+      <div class="encabezado-bloque">
+
+        <div>
+          <h2>Productos</h2>
+
+          <!-- Muestra el estado de carga. -->
+          <p *ngIf="cargandoProductos">
+            Cargando productos...
+          </p>
+
+          <!-- Muestra la cantidad encontrada. -->
+          <p *ngIf="!cargandoProductos">
+            {{ productosFiltrados.length }} productos encontrados
+          </p>
+        </div>
+
+        <!-- Abre el catálogo completo. -->
+        <p-button label="Ver catálogo"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  severity="secondary"
+                  (onClick)="irAProductos()">
+        </p-button>
+
+      </div>
+
+      <!-- Muestra el estado mientras carga la API. -->
+      <div class="sin-resultados"
+           *ngIf="cargandoProductos">
+
+        <mat-icon>sync</mat-icon>
+
+        <h3>
+          Cargando productos
+        </h3>
+
+        <p>
+          Estamos consultando el catálogo disponible.
+        </p>
+
+      </div>
+
+      <!-- Crea la cuadrícula de productos reales. -->
+      <div class="productos-grid"
+           *ngIf="!cargandoProductos && productosFiltrados.length > 0">
+
+        <!-- Recorre cada producto filtrado. -->
+        <article class="producto-card"
+                 *ngFor="let producto of productosFiltrados">
+
+          <!-- Muestra la imagen y favoritos. -->
+          <div class="producto-imagen">
+
+            <!-- Utiliza la imagen de public/productos. -->
+            <img [src]="producto.imagen"
+                 [alt]="producto.nombre">
+
+            <!-- Permite agregar o quitar de favoritos. -->
+            <button mat-icon-button
+                    type="button"
+                    class="boton-favorito"
+                    [class.es-favorito]="esFavorito(producto)"
+                    matTooltip="Agregar o quitar de favoritos"
+                    (click)="cambiarFavorito(producto)">
+
+              <mat-icon>
+                {{
+                  esFavorito(producto)
+                    ? 'favorite'
+                    : 'favorite_border'
+                }}
+              </mat-icon>
+
+            </button>
+
+          </div>
+
+          <!-- Muestra la información del producto. -->
+          <div class="producto-contenido">
+
+            <span class="producto-categoria">
+              {{ producto.categoria }}
+            </span>
+
+            <h3>
+              {{ producto.nombre }}
+            </h3>
+
+            <p class="producto-descripcion">
+              {{ producto.descripcion }}
+            </p>
+
+            <!-- Muestra el stock real. -->
+            <div class="producto-stock">
+
+              <mat-icon>inventory</mat-icon>
+
+              <span>
+                {{ producto.stock }} disponibles
+              </span>
+
+            </div>
+
+            <!-- Muestra el precio real. -->
+            <div class="producto-precio">
+
+              <strong>
+                ₡{{ producto.precio | number:'1.0-0' }}
+              </strong>
+
+            </div>
+
+            <!-- Permite seleccionar la cantidad. -->
+            <div class="cantidad-producto">
+
+              <!-- Disminuye la cantidad. -->
+              <button type="button"
+                      (click)="disminuirCantidad(producto)"
+                      [disabled]="producto.cantidad <= 1">
+
+                <mat-icon>remove</mat-icon>
+
+              </button>
+
+              <!-- Muestra la cantidad seleccionada. -->
+              <span>
+                {{ producto.cantidad }}
+              </span>
+
+              <!-- Aumenta la cantidad. -->
+              <button type="button"
+                      (click)="aumentarCantidad(producto)"
+                      [disabled]="producto.stock <= 0 || producto.cantidad >= producto.stock">
+
+                <mat-icon>add</mat-icon>
+
+              </button>
+
+            </div>
+
+            <!-- Agrega el producto al carrito. -->
+            <p-button label="Agregar al carrito"
+                      icon="pi pi-shopping-cart"
+                      styleClass="boton-carrito-producto"
+                      [disabled]="producto.stock <= 0"
+                      (onClick)="agregarAlCarrito(producto)">
+            </p-button>
+
+          </div>
+
+        </article>
+
+      </div>
+
+      <!-- Muestra un mensaje si el filtro no encuentra productos. -->
+      <div class="sin-resultados"
+           *ngIf="!cargandoProductos && productosFiltrados.length === 0">
+
+        <mat-icon>search_off</mat-icon>
+
+        <h3>
+          No encontramos productos
+        </h3>
+
+        <p>
+          Prueba con otra búsqueda o selecciona otra categoría.
+        </p>
+
+        <!-- Restablece los filtros. -->
+        <button mat-flat-button
+                type="button"
+                (click)="limpiarFiltros()">
+          Mostrar todos
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- Crea el pie de página. -->
+    <footer class="footer-dashboard">
+
+      <span>
+        ESENCIA · Tienda Online
+      </span>
+
+      <span>
+        Cuidado personal y bienestar
+      </span>
+
+    </footer>
+
+  </main>
+
+</div>

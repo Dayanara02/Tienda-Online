@@ -1,0 +1,491 @@
+/* Importa una fuente sencilla para los textos del sistema. */
+@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' );
+
+
+/* Aplica estilos al componente completo del Login. */
+:host {
+  /* Hace que el componente se comporte como un bloque. */
+  display: block;
+  /* Define el azul principal de Esencia. */
+  --azul-principal: #1f4e79;
+  /* Define el azul oscuro utilizado en títulos y botones. */
+  --azul-oscuro: #163a5c;
+  /* Define el azul claro utilizado en fondos. */
+  --azul-claro: #eaf2f8;
+  /* Define el dorado utilizado como detalle visual. */
+  --dorado: #c79b42;
+  /* Define el blanco principal. */
+  --blanco: #ffffff;
+  /* Define un gris muy claro para fondos secundarios. */
+  --gris-suave: #f4f6f8;
+  /* Define el color principal del texto. */
+  --texto: #263746;
+  /* Define el color de textos secundarios. */
+  --texto-secundario: #6c7a86;
+  /* Define el color de los bordes. */
+  --borde: #d7e0e7;
+}
+
+
+/* Hace que padding y border se incluyan en el tamaño del elemento. */
+* {
+  box-sizing: border-box;
+}
+
+
+/* Crea el fondo general de toda la pantalla de Login. */
+.pagina-login {
+  /* Hace que ocupe todo el ancho disponible. */
+  width: 100%;
+  /* Hace que ocupe como mínimo toda la altura de la pantalla. */
+  min-height: 100vh;
+  /* Centra la tarjeta horizontalmente. */
+  display: flex;
+  /* Centra la tarjeta verticalmente. */
+  align-items: center;
+  /* Centra horizontalmente el contenido. */
+  justify-content: center;
+  /* Agrega espacio alrededor de la tarjeta. */
+  padding: 32px;
+  /* Utiliza un fondo azul muy claro. */
+  background: linear-gradient( 135deg, #eaf2f8, #f4f6f8 );
+  /* Utiliza la fuente principal del Login. */
+  font-family: 'Inter', Arial, sans-serif;
+  /* Define el color general del texto. */
+  color: var(--texto);
+}
+
+
+/* Crea la tarjeta blanca central del Login. */
+.tarjeta-login {
+  /* Hace que la tarjeta utilice todo el ancho disponible hasta su límite. */
+  width: 100%;
+  /* Limita el ancho para evitar que sea demasiado grande. */
+  max-width: 470px;
+  /* Agrega espacio interno. */
+  padding: 40px 42px;
+  /* Utiliza fondo blanco. */
+  background: var(--blanco);
+  /* Agrega un borde suave. */
+  border: 1px solid var(--borde);
+  /* Redondea ligeramente las esquinas. */
+  border-radius: 12px;
+  /* Agrega una sombra discreta. */
+  box-shadow: 0 18px 45px rgba(22, 58, 92, 0.10);
+}
+
+
+/* ========================================================= */
+/* MARCA ESENCIA                                             */
+/* ========================================================= */
+
+
+/* Contiene el nombre ESENCIA y Tienda Online. */
+.marca-login {
+  /* Centra los textos. */
+  text-align: center;
+  /* Agrega espacio debajo de la marca. */
+  margin-bottom: 34px;
+}
+
+
+  /* Estiliza el nombre ESENCIA. */
+  .marca-login h2 {
+    /* Elimina el margen predeterminado. */
+    margin: 0;
+    /* Utiliza el azul oscuro. */
+    color: var(--azul-oscuro);
+    /* Define un tamaño destacado. */
+    font-size: 1.55rem;
+    /* Hace el texto más grueso. */
+    font-weight: 700;
+    /* Agrega espacio entre las letras. */
+    letter-spacing: 0.18em;
+  }
+
+
+  /* Estiliza el texto Tienda Online. */
+  .marca-login span {
+    /* Hace que aparezca debajo del nombre. */
+    display: block;
+    /* Agrega separación superior. */
+    margin-top: 6px;
+    /* Utiliza el dorado como detalle visual. */
+    color: var(--dorado);
+    /* Reduce el tamaño del texto. */
+    font-size: 0.72rem;
+    /* Hace el texto un poco más grueso. */
+    font-weight: 600;
+    /* Agrega separación entre letras. */
+    letter-spacing: 0.12em;
+    /* Convierte el texto a mayúsculas. */
+    text-transform: uppercase;
+  }
+
+
+/* ========================================================= */
+/* CONTENIDO DEL FORMULARIO                                  */
+/* ========================================================= */
+
+
+/* Contiene el formulario completo. */
+.contenido-login {
+  /* Utiliza todo el ancho disponible. */
+  width: 100%;
+}
+
+
+  /* Estiliza el título Iniciar sesión. */
+  .contenido-login h1 {
+    /* Elimina margen superior. */
+    margin: 0 0 8px;
+    /* Utiliza azul oscuro. */
+    color: var(--azul-oscuro);
+    /* Define el tamaño del título. */
+    font-size: 1.75rem;
+    /* Define un peso medio. */
+    font-weight: 600;
+    /* Centra el título. */
+    text-align: center;
+  }
+
+
+/* Estiliza la descripción debajo del título. */
+.descripcion-login {
+  /* Define el margen inferior. */
+  margin: 0 0 30px;
+  /* Utiliza un color secundario. */
+  color: var(--texto-secundario);
+  /* Define un tamaño ligeramente menor. */
+  font-size: 0.88rem;
+  /* Mejora el espacio entre líneas. */
+  line-height: 1.5;
+  /* Centra el texto. */
+  text-align: center;
+}
+
+
+/* Organiza los elementos dentro del formulario. */
+form {
+  /* Utiliza Flexbox. */
+  display: flex;
+  /* Coloca los elementos verticalmente. */
+  flex-direction: column;
+  /* Define separación entre elementos. */
+  gap: 6px;
+}
+
+
+/* ========================================================= */
+/* CAMPOS ANGULAR MATERIAL                                   */
+/* ========================================================= */
+
+
+/* Hace que cada campo Angular Material ocupe todo el ancho. */
+.campo-completo {
+  /* Define ancho completo. */
+  width: 100%;
+  /* Agrega una pequeña separación inferior. */
+  margin-bottom: 4px;
+}
+
+
+/* Personaliza el contenedor interno de los campos Material. */
+:host ::ng-deep
+.campo-completo
+.mat-mdc-text-field-wrapper {
+  /* Utiliza un fondo muy claro. */
+  background: #fbfcfd;
+  /* Redondea las esquinas. */
+  border-radius: 7px;
+}
+
+
+/* Personaliza el texto escrito dentro de los inputs. */
+:host ::ng-deep
+.campo-completo
+input.mat-mdc-input-element {
+  /* Define el color del texto. */
+  color: var(--texto);
+  /* Define el tamaño del texto. */
+  font-size: 0.9rem;
+}
+
+
+/* Personaliza los textos placeholder. */
+:host ::ng-deep
+.campo-completo
+input::placeholder {
+  /* Utiliza un gris suave. */
+  color: #9aa6af;
+}
+
+
+/* Personaliza los iconos dentro de los campos. */
+:host ::ng-deep
+.campo-completo
+mat-icon {
+  /* Utiliza el azul principal. */
+  color: var(--azul-principal);
+}
+
+
+/* Personaliza el texto de las etiquetas Material. */
+:host ::ng-deep
+.campo-completo
+.mat-mdc-floating-label {
+  /* Utiliza un color gris azulado. */
+  color: #607587;
+}
+
+
+/* Cambia la etiqueta cuando el campo está enfocado. */
+:host ::ng-deep
+.campo-completo.mat-focused
+.mat-mdc-floating-label {
+  /* Utiliza el azul principal. */
+  color: var(--azul-principal);
+}
+
+
+/* ========================================================= */
+/* MENSAJE DE ERROR                                          */
+/* ========================================================= */
+
+
+/* Estiliza el mensaje cuando el Login falla. */
+.mensaje-error {
+  /* Coloca icono y texto horizontalmente. */
+  display: flex;
+  /* Centra verticalmente los elementos. */
+  align-items: center;
+  /* Agrega separación entre icono y texto. */
+  gap: 8px;
+  /* Agrega espacio interno. */
+  padding: 11px 12px;
+  /* Agrega espacio inferior. */
+  margin: 2px 0 12px;
+  /* Utiliza un fondo rojo muy claro. */
+  background: #fcebec;
+  /* Agrega un borde rojo suave. */
+  border: 1px solid #e8b7bb;
+  /* Redondea ligeramente las esquinas. */
+  border-radius: 6px;
+  /* Define el color del mensaje. */
+  color: #8b343c;
+  /* Define el tamaño del texto. */
+  font-size: 0.8rem;
+}
+
+
+  /* Estiliza el icono del mensaje de error. */
+  .mensaje-error mat-icon {
+    /* Define un tamaño más pequeño. */
+    font-size: 19px;
+    /* Ajusta el ancho del icono. */
+    width: 19px;
+    /* Ajusta la altura del icono. */
+    height: 19px;
+    /* Evita que el icono se reduzca. */
+    flex-shrink: 0;
+  }
+
+
+/* ========================================================= */
+/* BOTÓN PRINCIPAL                                           */
+/* ========================================================= */
+
+
+/* Estiliza el botón Angular Material para iniciar sesión. */
+.boton-login {
+  /* Hace que el botón ocupe todo el ancho. */
+  width: 100%;
+  /* Define una altura cómoda. */
+  min-height: 48px;
+  /* Agrega margen superior. */
+  margin-top: 5px;
+  /* Utiliza el azul principal. */
+  background-color: var(--azul-principal) !important;
+  /* Cambia el texto a blanco. */
+  color: var(--blanco) !important;
+  /* Redondea ligeramente las esquinas. */
+  border-radius: 7px !important;
+  /* Define el tamaño del texto. */
+  font-size: 0.9rem;
+  /* Hace el texto más grueso. */
+  font-weight: 600;
+  /* Agrega una transición suave. */
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+  /* Cambia el botón al pasar el mouse. */
+  .boton-login:hover:not(:disabled) {
+    /* Utiliza el azul oscuro. */
+    background-color: var(--azul-oscuro) !important;
+    /* Mueve ligeramente el botón hacia arriba. */
+    transform: translateY(-1px);
+    /* Agrega una pequeña sombra. */
+    box-shadow: 0 7px 15px rgba(22, 58, 92, 0.18);
+  }
+
+
+  /* Cambia el botón cuando está deshabilitado. */
+  .boton-login:disabled {
+    /* Reduce ligeramente su opacidad. */
+    opacity: 0.65;
+    /* Evita mostrar cursor de botón. */
+    cursor: not-allowed;
+  }
+
+
+/* ========================================================= */
+/* SPINNER DE CARGA                                          */
+/* ========================================================= */
+
+
+/* Personaliza el spinner utilizado durante el Login. */
+:host ::ng-deep
+.boton-login
+mat-spinner {
+  /* Agrega espacio derecho cuando aparece. */
+  margin-right: 8px;
+}
+
+
+/* Cambia el color del círculo de carga. */
+:host ::ng-deep
+.boton-login
+.mat-mdc-progress-spinner
+circle {
+  /* Utiliza color blanco. */
+  stroke: #ffffff;
+}
+
+
+/* ========================================================= */
+/* REGISTRO                                                  */
+/* ========================================================= */
+
+
+/* Estiliza el texto que invita a registrarse. */
+.registro {
+  /* Agrega espacio superior. */
+  margin: 24px 0 0;
+  /* Centra el texto. */
+  text-align: center;
+  /* Utiliza color secundario. */
+  color: var(--texto-secundario);
+  /* Define un tamaño pequeño. */
+  font-size: 0.82rem;
+}
+
+
+  /* Estiliza el enlace Regístrate. */
+  .registro a {
+    /* Utiliza el azul principal. */
+    color: var(--azul-principal);
+    /* Hace el texto más grueso. */
+    font-weight: 600;
+    /* Elimina el subrayado. */
+    text-decoration: none;
+    /* Agrega una pequeña separación a la izquierda. */
+    margin-left: 4px;
+  }
+
+
+    /* Cambia el enlace al pasar el mouse. */
+    .registro a:hover {
+      /* Utiliza el azul oscuro. */
+      color: var(--azul-oscuro);
+      /* Agrega subrayado. */
+      text-decoration: underline;
+    }
+
+
+/* ========================================================= */
+/* DETALLE DORADO                                            */
+/* ========================================================= */
+
+
+/* Crea una pequeña línea dorada decorativa sobre la marca. */
+.tarjeta-login::before {
+  /* Crea un elemento decorativo sin contenido. */
+  content: "";
+  /* Hace que se comporte como bloque. */
+  display: block;
+  /* Define el ancho de la línea. */
+  width: 55px;
+  /* Define la altura de la línea. */
+  height: 4px;
+  /* Centra la línea horizontalmente. */
+  margin: -40px auto 30px;
+  /* Utiliza el color dorado. */
+  background: var(--dorado);
+  /* Redondea completamente la línea. */
+  border-radius: 999px;
+}
+
+
+/* ========================================================= */
+/* RESPONSIVE                                                */
+/* ========================================================= */
+
+
+/* Aplica cambios en pantallas pequeñas. */
+@media (max-width: 600px) {
+
+
+  /* Reduce el espacio exterior de la página. */
+  .pagina-login {
+    /* Define menos padding. */
+    padding: 18px;
+  }
+
+
+  /* Reduce el espacio interno de la tarjeta. */
+  .tarjeta-login {
+    /* Define padding más pequeño. */
+    padding: 32px 24px;
+  }
+
+
+    /* Ajusta la línea dorada en móvil. */
+    .tarjeta-login::before {
+      /* Ajusta el margen superior porque cambia el padding. */
+      margin: -32px auto 25px;
+    }
+
+
+  /* Reduce ligeramente el título. */
+  .contenido-login h1 {
+    /* Define un tamaño menor. */
+    font-size: 1.55rem;
+  }
+}
+
+
+/* Aplica cambios en pantallas muy pequeñas. */
+@media (max-width: 380px) {
+
+
+  /* Reduce aún más el padding general. */
+  .pagina-login {
+    /* Define menos espacio exterior. */
+    padding: 10px;
+  }
+
+
+  /* Reduce el padding de la tarjeta. */
+  .tarjeta-login {
+    /* Define menos espacio interno. */
+    padding: 28px 18px;
+  }
+
+
+    /* Ajusta la línea decorativa. */
+    .tarjeta-login::before {
+      /* Corrige la posición superior. */
+      margin: -28px auto 22px;
+    }
+}

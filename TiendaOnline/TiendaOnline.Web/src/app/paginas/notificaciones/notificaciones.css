@@ -1,0 +1,506 @@
+/* Define los colores de la página. */
+:host {
+  /* Permite que el componente ocupe su espacio. */
+  display: block;
+  /* Azul principal. */
+  --azul-principal: #1f4e79;
+  /* Azul oscuro. */
+  --azul-oscuro: #163a5c;
+  /* Azul claro. */
+  --azul-claro: #eaf2f8;
+  /* Color dorado. */
+  --dorado: #c79b42;
+  /* Color blanco. */
+  --blanco: #ffffff;
+  /* Fondo general. */
+  --gris-suave: #f4f6f8;
+  /* Texto principal. */
+  --texto: #24313d;
+  /* Texto secundario. */
+  --texto-secundario: #6d7882;
+  /* Color de bordes. */
+  --borde: #d8e0e7;
+}
+
+/* Controla mejor los tamaños. */
+* {
+  box-sizing: border-box;
+}
+
+/* Crea la estructura general. */
+.notificaciones-layout {
+  /* Ocupa toda la pantalla. */
+  min-height: 100vh;
+  /* Coloca menú y contenido en fila. */
+  display: flex;
+  /* Aplica el fondo general. */
+  background-color: var(--gris-suave);
+  /* Usa fuente sencilla. */
+  font-family: Arial, Helvetica, sans-serif;
+  /* Define el color del texto. */
+  color: var(--texto);
+}
+
+/* Crea el menú lateral. */
+.sidebar {
+  /* Define el ancho. */
+  width: 240px;
+  /* Mantiene la altura de la pantalla. */
+  height: 100vh;
+  /* Agrega espacio interno. */
+  padding: 20px 18px;
+  /* Organiza los elementos. */
+  display: flex;
+  /* Los coloca verticalmente. */
+  flex-direction: column;
+  /* Mantiene el menú fijo. */
+  position: fixed;
+  /* Lo coloca arriba. */
+  top: 0;
+  /* Lo coloca a la izquierda. */
+  left: 0;
+  /* Evita que el contenido se salga. */
+  overflow: hidden;
+  /* Aplica el azul oscuro. */
+  background-color: var(--azul-oscuro);
+  /* Coloca texto blanco. */
+  color: var(--blanco);
+}
+
+/* Crea la marca ESENCIA. */
+.sidebar-marca {
+  /* Evita que se comprima. */
+  flex-shrink: 0;
+  /* Agrega espacio inferior. */
+  padding-bottom: 18px;
+  /* Agrega línea divisoria. */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  /* Centra el texto. */
+  text-align: center;
+}
+
+  /* Estiliza ESENCIA. */
+  .sidebar-marca h2 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 4px;
+  }
+
+  /* Estiliza Tienda Online. */
+  .sidebar-marca span {
+    display: block;
+    margin-top: 5px;
+    color: #c8d7e5;
+    font-size: 12px;
+  }
+
+/* Organiza los datos del cliente. */
+.usuario-sidebar {
+  /* Evita que se reduzca. */
+  flex-shrink: 0;
+  /* Agrega espacio vertical. */
+  margin: 18px 0;
+  /* Coloca los datos en fila. */
+  display: flex;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Separa los elementos. */
+  gap: 12px;
+}
+
+/* Crea el avatar. */
+.avatar-sidebar {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--azul-principal);
+}
+
+  /* Coloca el icono blanco. */
+  .avatar-sidebar mat-icon {
+    color: var(--blanco);
+  }
+
+/* Estiliza el nombre. */
+.usuario-sidebar strong {
+  display: block;
+  font-size: 14px;
+}
+
+/* Estiliza el rol. */
+.usuario-sidebar span {
+  display: block;
+  margin-top: 3px;
+  color: #b8c9d8;
+  font-size: 12px;
+}
+
+/* Organiza el menú. */
+.menu-sidebar {
+  /* Utiliza el espacio restante. */
+  flex: 1;
+  /* Permite el scroll interno. */
+  min-height: 0;
+  /* Organiza verticalmente. */
+  display: flex;
+  /* Coloca las opciones en columna. */
+  flex-direction: column;
+  /* Separa las opciones. */
+  gap: 5px;
+  /* Permite desplazarse. */
+  overflow-y: auto;
+}
+
+/* Estiliza cada opción. */
+.menu-item {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 11px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #e9f0f6;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+  /* Cambia el fondo al pasar el mouse. */
+  .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.10);
+  }
+
+  /* Marca Notificaciones como seleccionada. */
+  .menu-item.activo {
+    background-color: var(--azul-principal);
+    color: var(--blanco);
+  }
+
+  /* Ajusta los iconos. */
+  .menu-item mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+
+/* Crea el contador. */
+.contador-menu {
+  min-width: 22px;
+  height: 22px;
+  margin-left: auto;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background-color: var(--dorado);
+  color: var(--blanco);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* Estiliza Cerrar sesión. */
+.cerrar-sesion {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 10px;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  background: transparent;
+  color: #f0f4f7;
+  cursor: pointer;
+}
+
+  /* Cambia cerrar sesión al pasar el mouse. */
+  .cerrar-sesion:hover {
+    background-color: rgba(255, 255, 255, 0.10);
+  }
+
+/* Crea el contenido principal. */
+.contenido-notificaciones {
+  /* Descuenta el espacio del menú. */
+  width: calc(100% - 240px);
+  /* Deja espacio al sidebar. */
+  margin-left: 240px;
+  /* Agrega espacio interno. */
+  padding: 28px;
+}
+
+/* Organiza el encabezado. */
+.topbar {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Estiliza la etiqueta superior. */
+.topbar-etiqueta {
+  margin: 0 0 4px;
+  color: var(--azul-principal);
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Estiliza el título. */
+.topbar h1 {
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 28px;
+}
+
+/* Estiliza la descripción. */
+.topbar-descripcion {
+  margin: 6px 0 0;
+  color: var(--texto-secundario);
+  font-size: 14px;
+}
+
+/* Organiza los resúmenes. */
+.resumen-notificaciones {
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, 220px);
+  gap: 16px;
+}
+
+/* Crea las tarjetas superiores. */
+.tarjeta-resumen {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+/* Crea el cuadro del icono. */
+.icono-resumen {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: var(--azul-claro);
+}
+
+  /* Estiliza el icono. */
+  .icono-resumen mat-icon {
+    color: var(--azul-principal);
+  }
+
+/* Estiliza el nombre del resumen. */
+.tarjeta-resumen span {
+  display: block;
+  color: var(--texto-secundario);
+  font-size: 12px;
+}
+
+/* Estiliza la cantidad. */
+.tarjeta-resumen strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--azul-oscuro);
+  font-size: 22px;
+}
+
+/* Crea el bloque principal. */
+.bloque-notificaciones {
+  padding: 22px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+/* Separa el encabezado de la lista. */
+.encabezado-bloque {
+  margin-bottom: 18px;
+}
+
+  /* Estiliza el título del bloque. */
+  .encabezado-bloque h2 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 20px;
+  }
+
+  /* Estiliza la descripción. */
+  .encabezado-bloque p {
+    margin: 5px 0 0;
+    color: var(--texto-secundario);
+    font-size: 13px;
+  }
+
+/* Organiza las notificaciones. */
+.lista-notificaciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Crea cada notificación. */
+.notificacion {
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background-color: var(--blanco);
+  cursor: pointer;
+}
+
+  /* Cambia el borde al pasar el mouse. */
+  .notificacion:hover {
+    border-color: var(--azul-principal);
+  }
+
+  /* Destaca las no leídas. */
+  .notificacion.no-leida {
+    border-left: 4px solid var(--azul-principal);
+    background-color: #f8fbfd;
+  }
+
+/* Crea el cuadro del icono. */
+.notificacion-icono {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background-color: var(--azul-claro);
+}
+
+  /* Estiliza el icono. */
+  .notificacion-icono mat-icon {
+    color: var(--azul-principal);
+  }
+
+/* Ocupa el espacio disponible. */
+.notificacion-contenido {
+  flex: 1;
+}
+
+/* Organiza título y estado. */
+.notificacion-superior {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+  /* Estiliza el título. */
+  .notificacion-superior h3 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 15px;
+  }
+
+/* Estiliza el estado Nueva. */
+.estado-no-leida {
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: var(--azul-principal);
+  color: var(--blanco);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Estiliza el estado Leída. */
+.estado-leida {
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: #e8ebed;
+  color: var(--texto-secundario);
+  font-size: 10px;
+}
+
+/* Estiliza el mensaje. */
+.notificacion-mensaje {
+  margin: 7px 0;
+  color: var(--texto);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Organiza la fecha. */
+.notificacion-fecha {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+  /* Ajusta el icono de fecha. */
+  .notificacion-fecha mat-icon {
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
+  }
+
+/* Crea mensajes de error. */
+.mensaje-error {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 7px;
+  background-color: #fbe8e8;
+  color: #8a3030;
+}
+
+/* Crea los estados vacíos. */
+.estado-vacio {
+  padding: 50px 20px;
+  text-align: center;
+  color: var(--texto-secundario);
+}
+
+  /* Aumenta el icono del estado vacío. */
+  .estado-vacio > mat-icon {
+    width: 50px;
+    height: 50px;
+    color: #9eaab4;
+    font-size: 50px;
+  }
+
+  /* Estiliza el título vacío. */
+  .estado-vacio h3 {
+    margin: 10px 0 5px;
+    color: var(--azul-oscuro);
+  }
+
+  /* Estiliza el texto vacío. */
+  .estado-vacio p {
+    margin: 0;
+    font-size: 13px;
+  }
+
+/* Crea el pie de página. */
+.footer-notificaciones {
+  padding: 20px 0 5px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}

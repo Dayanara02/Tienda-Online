@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TiendaOnline.Dominio.DTO;
-using TiendaOnline.LogicaNegocio.Interfaces;
+using TiendaOnline.Dominio.InterfacesLN;
 using Microsoft.AspNetCore.Authorization;
 
 namespace TiendaOnline.API.Controllers;
@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
         RegistroUsuarioDto registro)
 
     {
-
+        // Validación básica: campos obligatorios
         if (string.IsNullOrWhiteSpace(registro.Nombre) ||
 
             string.IsNullOrWhiteSpace(registro.Apellido) ||
@@ -54,7 +54,7 @@ public class AuthController : ControllerBase
         if (registro.Contrasena.Length < 6)
 
         {
-
+            // Validación básica: campos obligatorios
             return BadRequest(
 
                 "La contraseña debe tener al menos 6 caracteres."
@@ -64,13 +64,13 @@ public class AuthController : ControllerBase
         }
 
         var registrado =
-
+            // Llama al servicio de autenticación para registrar al usuario
             await _authServicio.RegistrarAsync(registro);
-
+        // Si el registro falla
         if (!registrado)
 
         {
-
+            // Muestra un mensaje que ya existe o que no es valido
             return Conflict(
 
                 "No se pudo registrar. El correo ya existe o el rol no es válido."
@@ -79,6 +79,7 @@ public class AuthController : ControllerBase
 
         }
 
+        // Si todo va bien, retorna un mensaje de éxito
         return Ok(new
 
         {
@@ -89,14 +90,14 @@ public class AuthController : ControllerBase
 
     }
 
-    [AllowAnonymous]
+    [AllowAnonymous]// Permite el acceso sin estar autenticado
 
     [HttpPost("login")]
 
     public async Task<IActionResult> Login(LoginDto login)
 
     {
-
+        // Validación básica: correo y contraseña obligatorios
         if (string.IsNullOrWhiteSpace(login.Correo) ||
 
             string.IsNullOrWhiteSpace(login.Contrasena))
@@ -112,13 +113,14 @@ public class AuthController : ControllerBase
         }
 
         var respuesta =
-
+            // Llama al servicio de autenticación para intentar iniciar sesión
             await _authServicio.LoginAsync(login);
 
+        // Si la respuesta es null, credenciales incorrectas
         if (respuesta == null)
 
         {
-
+            //Indica que hay un error en la informacion  
             return Unauthorized(new
 
             {
@@ -128,9 +130,10 @@ public class AuthController : ControllerBase
             });
 
         }
-
+        // Credenciales válidas: devolver los datos de sesión    
         return Ok(respuesta);
 
     }
 
 }
+

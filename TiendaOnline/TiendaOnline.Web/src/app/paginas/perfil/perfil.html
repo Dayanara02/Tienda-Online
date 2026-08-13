@@ -1,0 +1,216 @@
+<!-- Crea la página completa del Perfil. -->
+<section class="pagina-perfil">
+
+  <!-- Crea el encabezado superior de la página. -->
+  <header class="barra-superior">
+
+    <!-- Muestra la marca del sistema. -->
+    <div class="logo">
+
+      <!-- Muestra el nombre ESENCIA. -->
+      ESENCIA
+
+      <!-- Muestra un texto pequeño debajo del nombre. -->
+      <span>
+        Tienda Online
+      </span>
+
+    </div>
+
+    <!-- Agrupa los botones de navegación. -->
+    <div class="acciones">
+
+      <!-- Botón para regresar al Dashboard correspondiente. -->
+      <button mat-stroked-button
+              type="button"
+              (click)="volver()">
+
+        <!-- Muestra el icono de regresar. -->
+        <mat-icon>
+          arrow_back
+        </mat-icon>
+
+        <!-- Muestra el texto del botón. -->
+        Volver
+
+      </button>
+
+      <!-- Botón para cerrar la sesión. -->
+      <button mat-flat-button
+              type="button"
+              class="boton-salir"
+              (click)="cerrarSesion()">
+
+        <!-- Muestra el icono de cerrar sesión. -->
+        <mat-icon>
+          logout
+        </mat-icon>
+
+        <!-- Muestra el texto del botón. -->
+        Cerrar sesión
+
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- Crea el contenido principal del Perfil. -->
+  <main class="contenido">
+
+    <!-- Muestra un texto pequeño sobre el título. -->
+    <span class="etiqueta">
+      Mi cuenta
+    </span>
+
+    <!-- Muestra el título principal. -->
+    <h1>
+      Perfil
+    </h1>
+
+    <!-- Muestra una pequeña descripción. -->
+    <p class="descripcion">
+      Consulta la información asociada a tu cuenta.
+    </p>
+
+    <!-- Crea la tarjeta principal del Perfil. -->
+    <section class="tarjeta">
+
+      <!-- Crea la parte superior de la tarjeta. -->
+      <div class="perfil-superior">
+
+        <!-- Crea el avatar con la inicial del usuario. -->
+        <div class="avatar">
+
+          <!-- Muestra la primera letra del nombre. -->
+          {{ nombreCompleto.charAt(0).toUpperCase() }}
+
+        </div>
+
+        <!-- Agrupa el rol y el nombre del usuario. -->
+        <div>
+
+          <!-- Muestra el rol del usuario. -->
+          <span class="rol">
+            {{ rol }}
+          </span>
+
+          <!-- Muestra el nombre completo. -->
+          <h2>
+            {{ nombreCompleto }}
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- Crea la cuadrícula con los datos del usuario. -->
+      <div class="datos">
+
+        <!-- Muestra el nombre completo. -->
+        <article class="dato">
+
+          <!-- Muestra un icono de persona. -->
+          <mat-icon>
+            person
+          </mat-icon>
+
+          <!-- Agrupa el nombre del campo y su valor. -->
+          <div>
+
+            <!-- Muestra el nombre del dato. -->
+            <span>
+              Nombre completo
+            </span>
+
+            <!-- Muestra el valor guardado. -->
+            <strong>
+              {{ nombreCompleto }}
+            </strong>
+
+          </div>
+
+        </article>
+
+        <!-- Muestra el correo electrónico. -->
+        <article class="dato">
+
+          <!-- Muestra un icono de correo. -->
+          <mat-icon>
+            mail
+          </mat-icon>
+
+          <!-- Agrupa el nombre del campo y su valor. -->
+          <div>
+
+            <!-- Muestra el nombre del dato. -->
+            <span>
+              Correo electrónico
+            </span>
+
+            <!-- Muestra el correo o un texto si no existe. -->
+            <strong>
+              {{ correo || 'No disponible' }}
+            </strong>
+
+          </div>
+
+        </article>
+
+        <!-- Muestra el rol del usuario. -->
+        <article class="dato">
+
+          <!-- Muestra un icono de identificación. -->
+          <mat-icon>
+            badge
+          </mat-icon>
+
+          <!-- Agrupa el nombre del campo y su valor. -->
+          <div>
+
+            <!-- Muestra el nombre del dato. -->
+            <span>
+              Rol
+            </span>
+
+            <!-- Muestra el rol actual. -->
+            <strong>
+              {{ rol }}
+            </strong>
+
+          </div>
+
+        </article>
+
+        <!-- Muestra el identificador del usuario. -->
+        <article class="dato">
+
+          <!-- Muestra un icono numérico. -->
+          <mat-icon>
+            tag
+          </mat-icon>
+
+          <!-- Agrupa el nombre del campo y su valor. -->
+          <div>
+
+            <!-- Muestra el nombre del dato. -->
+            <span>
+              ID de usuario
+            </span>
+
+            <!-- Muestra el identificador o un texto alternativo. -->
+            <strong>
+              {{ idUsuario || 'No disponible' }}
+            </strong>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</section>

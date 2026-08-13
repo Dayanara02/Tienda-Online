@@ -1,0 +1,978 @@
+/* Define los colores principales del Dashboard. */
+:host {
+  /* Hace que el componente se comporte como un bloque. */
+  display: block;
+  /* Azul principal del sistema. */
+  --azul-principal: #1f4e79;
+  /* Azul oscuro del menú lateral. */
+  --azul-oscuro: #163a5c;
+  /* Azul claro para fondos suaves. */
+  --azul-claro: #eaf2f8;
+  /* Dorado usado en contadores. */
+  --dorado: #c79b42;
+  /* Color blanco. */
+  --blanco: #ffffff;
+  /* Fondo gris de la página. */
+  --gris-suave: #f4f6f8;
+  /* Color del texto principal. */
+  --texto: #24313d;
+  /* Color del texto secundario. */
+  --texto-secundario: #6d7882;
+  /* Color de bordes. */
+  --borde: #d8e0e7;
+}
+
+/* Incluye padding y borde dentro del tamaño final. */
+* {
+  box-sizing: border-box;
+}
+
+/* Crea la estructura general del Dashboard. */
+.dashboard-layout {
+  /* Ocupa como mínimo toda la pantalla. */
+  min-height: 100vh;
+  /* Coloca sidebar y contenido uno al lado del otro. */
+  display: flex;
+  /* Aplica el fondo general. */
+  background-color: var(--gris-suave);
+  /* Define el color principal del texto. */
+  color: var(--texto);
+  /* Usa una fuente sencilla. */
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Crea la barra lateral izquierda. */
+.sidebar {
+  /* Define el ancho del menú. */
+  width: 240px;
+  /* Mantiene la altura igual a la pantalla. */
+  height: 100vh;
+  /* Agrega espacio interno. */
+  padding: 20px 18px;
+  /* Organiza los elementos verticalmente. */
+  display: flex;
+  /* Coloca los elementos uno debajo de otro. */
+  flex-direction: column;
+  /* Mantiene el menú fijo. */
+  position: fixed;
+  /* Lo coloca arriba. */
+  top: 0;
+  /* Lo coloca a la izquierda. */
+  left: 0;
+  /* Evita que el contenido se salga. */
+  overflow: hidden;
+  /* Aplica el fondo azul oscuro. */
+  background-color: var(--azul-oscuro);
+  /* Coloca el texto en blanco. */
+  color: var(--blanco);
+}
+
+/* Crea la zona de la marca ESENCIA. */
+.sidebar-marca {
+  /* Evita que esta parte se comprima. */
+  flex-shrink: 0;
+  /* Agrega espacio inferior. */
+  padding-bottom: 18px;
+  /* Agrega una línea divisoria. */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  /* Centra el texto. */
+  text-align: center;
+}
+
+  /* Estiliza el nombre ESENCIA. */
+  .sidebar-marca h2 {
+    /* Elimina el margen por defecto. */
+    margin: 0;
+    /* Define el tamaño del título. */
+    font-size: 22px;
+    /* Separa las letras. */
+    letter-spacing: 4px;
+  }
+
+  /* Estiliza el texto Tienda Online. */
+  .sidebar-marca span {
+    /* Coloca el texto en otra línea. */
+    display: block;
+    /* Separa el texto del título. */
+    margin-top: 5px;
+    /* Usa un azul claro. */
+    color: #c8d7e5;
+    /* Reduce el tamaño del texto. */
+    font-size: 12px;
+  }
+
+/* Organiza los datos del cliente. */
+.usuario-sidebar {
+  /* Evita que esta sección se reduzca. */
+  flex-shrink: 0;
+  /* Agrega espacio arriba y abajo. */
+  margin: 18px 0;
+  /* Coloca avatar y texto en fila. */
+  display: flex;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Separa avatar y texto. */
+  gap: 12px;
+}
+
+/* Crea el círculo del usuario. */
+.avatar-sidebar {
+  /* Define el ancho. */
+  width: 42px;
+  /* Define la altura. */
+  height: 42px;
+  /* Activa flexbox. */
+  display: flex;
+  /* Centra horizontalmente. */
+  align-items: center;
+  /* Centra verticalmente. */
+  justify-content: center;
+  /* Evita que el avatar se reduzca. */
+  flex-shrink: 0;
+  /* Convierte el cuadro en círculo. */
+  border-radius: 50%;
+  /* Aplica el azul principal. */
+  background-color: var(--azul-principal);
+}
+
+  /* Estiliza el icono del avatar. */
+  .avatar-sidebar mat-icon {
+    /* Coloca el icono en blanco. */
+    color: var(--blanco);
+  }
+
+/* Estiliza el nombre del cliente. */
+.usuario-sidebar strong {
+  /* Coloca el nombre en otra línea. */
+  display: block;
+  /* Define el tamaño del nombre. */
+  font-size: 14px;
+}
+
+/* Estiliza el rol Cliente. */
+.usuario-sidebar span {
+  /* Coloca el rol debajo del nombre. */
+  display: block;
+  /* Separa el rol del nombre. */
+  margin-top: 3px;
+  /* Usa un color más suave. */
+  color: #b8c9d8;
+  /* Reduce el tamaño. */
+  font-size: 12px;
+}
+
+/* Organiza las opciones del menú. */
+.menu-sidebar {
+  /* Usa el espacio disponible. */
+  flex: 1;
+  /* Permite que el área pueda reducirse. */
+  min-height: 0;
+  /* Activa flexbox. */
+  display: flex;
+  /* Coloca las opciones verticalmente. */
+  flex-direction: column;
+  /* Separa cada opción. */
+  gap: 5px;
+  /* Permite desplazamiento vertical. */
+  overflow-y: auto;
+  /* Evita desplazamiento horizontal. */
+  overflow-x: hidden;
+  /* Da espacio a la barra de scroll. */
+  padding-right: 3px;
+}
+
+  /* Define el ancho de la barra de scroll. */
+  .menu-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Hace transparente el fondo del scroll. */
+  .menu-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Estiliza la parte móvil del scroll. */
+  .menu-sidebar::-webkit-scrollbar-thumb {
+    /* Redondea la barra. */
+    border-radius: 10px;
+    /* Aplica un blanco transparente. */
+    background-color: rgba(255, 255, 255, 0.20);
+  }
+
+/* Estiliza cada botón del menú. */
+.menu-item {
+  /* Ocupa todo el ancho. */
+  width: 100%;
+  /* Define una altura mínima. */
+  min-height: 42px;
+  /* Agrega espacio interno. */
+  padding: 0 12px;
+  /* Coloca icono y texto en fila. */
+  display: flex;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Evita que el botón se comprima. */
+  flex-shrink: 0;
+  /* Separa icono y texto. */
+  gap: 11px;
+  /* Elimina el borde. */
+  border: none;
+  /* Redondea las esquinas. */
+  border-radius: 7px;
+  /* Mantiene fondo transparente. */
+  background: transparent;
+  /* Coloca el texto claro. */
+  color: #e9f0f6;
+  /* Define el tamaño del texto. */
+  font-size: 14px;
+  /* Alinea el texto a la izquierda. */
+  text-align: left;
+  /* Muestra la mano al pasar el mouse. */
+  cursor: pointer;
+}
+
+  /* Cambia el fondo al pasar el mouse. */
+  .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.10);
+  }
+
+  /* Marca la opción seleccionada. */
+  .menu-item.activo {
+    /* Aplica el azul principal. */
+    background-color: var(--azul-principal);
+    /* Mantiene el texto blanco. */
+    color: var(--blanco);
+  }
+
+  /* Ajusta los iconos del menú. */
+  .menu-item mat-icon {
+    /* Define el ancho. */
+    width: 20px;
+    /* Define la altura. */
+    height: 20px;
+    /* Define el tamaño del icono. */
+    font-size: 20px;
+  }
+
+/* Crea los contadores del menú. */
+.contador-menu {
+  /* Define un ancho mínimo. */
+  min-width: 22px;
+  /* Define la altura. */
+  height: 22px;
+  /* Empuja el contador a la derecha. */
+  margin-left: auto;
+  /* Agrega espacio interno. */
+  padding: 0 6px;
+  /* Activa flexbox. */
+  display: flex;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Centra horizontalmente. */
+  justify-content: center;
+  /* Redondea el contador. */
+  border-radius: 20px;
+  /* Aplica el color dorado. */
+  background-color: var(--dorado);
+  /* Coloca el texto blanco. */
+  color: var(--blanco);
+  /* Reduce el tamaño del número. */
+  font-size: 11px;
+  /* Resalta el número. */
+  font-weight: bold;
+}
+
+/* Estiliza el botón Cerrar sesión. */
+.cerrar-sesion {
+  /* Ocupa todo el ancho. */
+  width: 100%;
+  /* Mantiene una altura mínima. */
+  min-height: 44px;
+  /* Separa el botón del menú. */
+  margin-top: 12px;
+  /* Agrega espacio interno. */
+  padding: 0 12px;
+  /* Coloca icono y texto en fila. */
+  display: flex;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Evita que el botón se reduzca. */
+  flex-shrink: 0;
+  /* Separa icono y texto. */
+  gap: 10px;
+  /* Elimina el borde general. */
+  border: none;
+  /* Agrega una línea superior. */
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  /* Redondea las esquinas. */
+  border-radius: 7px;
+  /* Mantiene el fondo transparente. */
+  background-color: transparent;
+  /* Coloca el texto claro. */
+  color: #f0f4f7;
+  /* Muestra la mano. */
+  cursor: pointer;
+}
+
+  /* Cambia el fondo al pasar el mouse. */
+  .cerrar-sesion:hover {
+    background-color: rgba(255, 255, 255, 0.10);
+  }
+
+/* Crea el contenido principal del Dashboard. */
+.contenido-dashboard {
+  /* Resta el espacio ocupado por el sidebar. */
+  width: calc(100% - 240px);
+  /* Deja espacio a la izquierda. */
+  margin-left: 240px;
+  /* Agrega espacio interno. */
+  padding: 28px;
+}
+
+/* Organiza el encabezado superior. */
+.topbar {
+  /* Separa el encabezado del contenido. */
+  margin-bottom: 24px;
+  /* Activa flexbox. */
+  display: flex;
+  /* Separa contenido y botones. */
+  justify-content: space-between;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Agrega espacio entre elementos. */
+  gap: 20px;
+}
+
+/* Estiliza la etiqueta del encabezado. */
+.topbar-etiqueta {
+  /* Define los márgenes. */
+  margin: 0 0 4px;
+  /* Aplica el azul principal. */
+  color: var(--azul-principal);
+  /* Reduce el tamaño. */
+  font-size: 12px;
+  /* Resalta el texto. */
+  font-weight: bold;
+  /* Convierte el texto a mayúsculas. */
+  text-transform: uppercase;
+}
+
+/* Estiliza el saludo principal. */
+.topbar h1 {
+  /* Elimina el margen. */
+  margin: 0;
+  /* Aplica azul oscuro. */
+  color: var(--azul-oscuro);
+  /* Define el tamaño. */
+  font-size: 28px;
+}
+
+/* Estiliza la descripción del encabezado. */
+.topbar-descripcion {
+  /* Separa la descripción del título. */
+  margin: 6px 0 0;
+  /* Usa texto secundario. */
+  color: var(--texto-secundario);
+  /* Define el tamaño. */
+  font-size: 14px;
+}
+
+/* Organiza los botones superiores. */
+.topbar-acciones {
+  /* Coloca los botones en fila. */
+  display: flex;
+  /* Separa los botones. */
+  gap: 10px;
+}
+
+/* Crea los mensajes temporales. */
+.mensaje-dashboard {
+  /* Separa el mensaje del contenido. */
+  margin-bottom: 20px;
+  /* Agrega espacio interno. */
+  padding: 12px 14px;
+  /* Coloca icono y texto en fila. */
+  display: flex;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Separa icono y texto. */
+  gap: 8px;
+  /* Redondea el cuadro. */
+  border-radius: 7px;
+  /* Define el tamaño del texto. */
+  font-size: 13px;
+}
+
+/* Mensaje de éxito. */
+.mensaje-exito {
+  background-color: #e7f4ea;
+  color: #2f6d3d;
+}
+
+/* Mensaje informativo. */
+.mensaje-info {
+  background-color: var(--azul-claro);
+  color: var(--azul-oscuro);
+}
+
+/* Mensaje de error. */
+.mensaje-error {
+  background-color: #fbe8e8;
+  color: #8a3030;
+}
+
+/* Organiza las tarjetas de resumen. */
+.resumen-dashboard {
+  /* Separa las tarjetas del siguiente bloque. */
+  margin-bottom: 24px;
+  /* Usa una cuadrícula. */
+  display: grid;
+  /* Crea cuatro columnas iguales. */
+  grid-template-columns: repeat(4, 1fr);
+  /* Separa las tarjetas. */
+  gap: 16px;
+}
+
+/* Estiliza cada tarjeta de resumen. */
+.tarjeta-resumen {
+  /* Agrega espacio interno. */
+  padding: 18px;
+  /* Coloca icono y contenido en fila. */
+  display: flex;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Separa icono y texto. */
+  gap: 14px;
+  /* Agrega borde. */
+  border: 1px solid var(--borde);
+  /* Redondea la tarjeta. */
+  border-radius: 9px;
+  /* Aplica fondo blanco. */
+  background-color: var(--blanco);
+}
+
+/* Indica que la tarjeta puede recibir clic. */
+.tarjeta-clickeable {
+  cursor: pointer;
+}
+
+  /* Cambia el borde al pasar el mouse. */
+  .tarjeta-clickeable:hover {
+    border-color: var(--azul-principal);
+  }
+
+/* Crea el cuadro del icono. */
+.icono-resumen {
+  /* Define el ancho. */
+  width: 45px;
+  /* Define la altura. */
+  height: 45px;
+  /* Activa flexbox. */
+  display: flex;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Centra horizontalmente. */
+  justify-content: center;
+  /* Redondea el cuadro. */
+  border-radius: 8px;
+  /* Aplica azul claro. */
+  background-color: var(--azul-claro);
+}
+
+  /* Estiliza el icono del resumen. */
+  .icono-resumen mat-icon {
+    color: var(--azul-principal);
+  }
+
+/* Estiliza el texto pequeño de la tarjeta. */
+.tarjeta-resumen span {
+  /* Coloca el texto en línea propia. */
+  display: block;
+  /* Usa color secundario. */
+  color: var(--texto-secundario);
+  /* Reduce el tamaño. */
+  font-size: 12px;
+}
+
+/* Estiliza el número principal. */
+.tarjeta-resumen strong {
+  /* Coloca el número en línea propia. */
+  display: block;
+  /* Separa el número del texto. */
+  margin-top: 3px;
+  /* Aplica azul oscuro. */
+  color: var(--azul-oscuro);
+  /* Aumenta el tamaño. */
+  font-size: 22px;
+}
+
+/* Crea el banner principal. */
+.banner-principal {
+  /* Separa el banner del siguiente bloque. */
+  margin-bottom: 24px;
+  /* Agrega espacio interno. */
+  padding: 28px;
+  /* Coloca contenido e icono en fila. */
+  display: flex;
+  /* Separa ambos lados. */
+  justify-content: space-between;
+  /* Centra verticalmente. */
+  align-items: center;
+  /* Redondea el banner. */
+  border-radius: 10px;
+  /* Aplica el azul principal. */
+  background-color: var(--azul-principal);
+  /* Coloca texto blanco. */
+  color: var(--blanco);
+}
+
+/* Limita el ancho del contenido del banner. */
+.banner-contenido {
+  max-width: 650px;
+}
+
+/* Estiliza la etiqueta ESENCIA. */
+.banner-etiqueta {
+  color: #d9e6f1;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Estiliza el título del banner. */
+.banner-principal h2 {
+  margin: 8px 0;
+  font-size: 26px;
+}
+
+/* Estiliza la descripción del banner. */
+.banner-principal p {
+  margin: 0;
+  color: #e5edf4;
+  font-size: 14px;
+}
+
+/* Organiza los botones del banner. */
+.banner-botones {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Estiliza el botón principal. */
+.boton-banner-principal {
+  background-color: var(--blanco) !important;
+  color: var(--azul-principal) !important;
+}
+
+/* Estiliza el botón secundario. */
+.boton-banner-secundario {
+  border-color: var(--blanco) !important;
+  color: var(--blanco) !important;
+}
+
+/* Crea la zona decorativa del banner. */
+.banner-icono {
+  padding-right: 25px;
+}
+
+  /* Aumenta el icono decorativo. */
+  .banner-icono mat-icon {
+    width: 90px;
+    height: 90px;
+    color: rgba(255, 255, 255, 0.20);
+    font-size: 90px;
+  }
+
+/* Crea los bloques blancos principales. */
+.bloque-dashboard {
+  margin-bottom: 24px;
+  padding: 22px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+/* Organiza el encabezado de los bloques. */
+.encabezado-bloque {
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+  /* Estiliza los títulos de los bloques. */
+  .encabezado-bloque h2 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 20px;
+  }
+
+  /* Estiliza la descripción de los bloques. */
+  .encabezado-bloque p {
+    margin: 5px 0 0;
+    color: var(--texto-secundario);
+    font-size: 13px;
+  }
+
+/* Organiza los accesos rápidos. */
+.accesos-rapidos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* Estiliza cada acceso rápido. */
+.acceso-rapido {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background-color: var(--gris-suave);
+  color: var(--texto);
+  text-align: left;
+  cursor: pointer;
+}
+
+  /* Cambia el acceso al pasar el mouse. */
+  .acceso-rapido:hover {
+    border-color: var(--azul-principal);
+    background-color: var(--azul-claro);
+  }
+
+  /* Estiliza el icono del acceso. */
+  .acceso-rapido mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Estiliza el título del acceso. */
+  .acceso-rapido strong {
+    color: var(--azul-oscuro);
+    font-size: 14px;
+  }
+
+  /* Estiliza la descripción del acceso. */
+  .acceso-rapido span {
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+/* Alinea el buscador con el encabezado. */
+.encabezado-productos {
+  align-items: flex-end;
+}
+
+/* Crea el buscador de productos. */
+.buscador-productos {
+  width: 280px;
+  height: 42px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  background-color: var(--blanco);
+}
+
+  /* Estiliza el icono del buscador. */
+  .buscador-productos mat-icon {
+    color: var(--texto-secundario);
+  }
+
+  /* Estiliza el campo de búsqueda. */
+  .buscador-productos input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--texto);
+    font-size: 13px;
+  }
+
+/* Organiza las categorías. */
+.categorias-dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Estiliza los botones de categoría. */
+.categoria-dashboard {
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  background-color: var(--blanco);
+  color: var(--texto);
+  cursor: pointer;
+}
+
+  /* Cambia el borde al pasar el mouse. */
+  .categoria-dashboard:hover {
+    border-color: var(--azul-principal);
+  }
+
+/* Marca la categoría seleccionada. */
+.categoria-activa {
+  border-color: var(--azul-principal);
+  background-color: var(--azul-principal);
+  color: var(--blanco);
+}
+
+/* Ajusta los iconos de categorías. */
+.categoria-dashboard mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+/* Organiza el estado del filtro. */
+.estado-filtro {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--texto-secundario);
+  font-size: 12px;
+}
+
+  /* Estiliza el botón limpiar. */
+  .estado-filtro button {
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: transparent;
+    color: var(--azul-principal);
+    cursor: pointer;
+  }
+
+  /* Ajusta el icono limpiar. */
+  .estado-filtro mat-icon {
+    width: 17px;
+    height: 17px;
+    font-size: 17px;
+  }
+
+/* Crea la cuadrícula de productos. */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+/* Estiliza la tarjeta del producto. */
+.producto-card {
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+  /* Cambia el borde al pasar el mouse. */
+  .producto-card:hover {
+    border-color: var(--azul-principal);
+  }
+
+/* Crea el área de la imagen. */
+.producto-imagen {
+  height: 190px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--gris-suave);
+}
+
+  /* Ajusta la imagen del producto. */
+  .producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+/* Estiliza el botón favorito. */
+.boton-favorito {
+  position: absolute !important;
+  top: 10px;
+  right: 10px;
+  background-color: var(--blanco) !important;
+  color: var(--azul-principal) !important;
+}
+
+/* Cambia el color cuando es favorito. */
+.es-favorito {
+  color: #c94a58 !important;
+}
+
+/* Crea la etiqueta destacado. */
+.etiqueta-destacado {
+  padding: 5px 9px;
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  border-radius: 5px;
+  background-color: var(--dorado);
+  color: var(--blanco);
+  font-size: 11px;
+}
+
+/* Crea el contenido del producto. */
+.producto-contenido {
+  padding: 15px;
+}
+
+/* Estiliza la categoría del producto. */
+.producto-categoria {
+  color: var(--azul-principal);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* Estiliza el nombre del producto. */
+.producto-contenido h3 {
+  margin: 6px 0;
+  color: var(--azul-oscuro);
+  font-size: 16px;
+}
+
+/* Estiliza la descripción. */
+.producto-descripcion {
+  min-height: 38px;
+  margin: 0 0 10px;
+  color: var(--texto-secundario);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Organiza la información del stock. */
+.producto-stock {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+  /* Ajusta el icono del stock. */
+  .producto-stock mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+
+/* Separa el precio del resto. */
+.producto-precio {
+  margin: 12px 0;
+}
+
+  /* Hace destacar el precio. */
+  .producto-precio strong {
+    color: var(--azul-oscuro);
+    font-size: 18px;
+  }
+
+/* Organiza los controles de cantidad. */
+.cantidad-producto {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+  /* Estiliza los botones de cantidad. */
+  .cantidad-producto button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--borde);
+    border-radius: 5px;
+    background-color: var(--blanco);
+    color: var(--azul-principal);
+    cursor: pointer;
+  }
+
+  /* Ajusta los iconos de cantidad. */
+  .cantidad-producto mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  /* Estiliza el número seleccionado. */
+  .cantidad-producto span {
+    min-width: 20px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+/* Hace que el botón PrimeNG ocupe todo el ancho. */
+:host ::ng-deep .boton-carrito-producto {
+  width: 100%;
+}
+
+  /* Estiliza el botón interno de PrimeNG. */
+  :host ::ng-deep .boton-carrito-producto .p-button {
+    width: 100%;
+    justify-content: center;
+    background-color: var(--azul-principal);
+    border-color: var(--azul-principal);
+  }
+
+    /* Cambia el botón PrimeNG al pasar el mouse. */
+    :host ::ng-deep .boton-carrito-producto .p-button:hover {
+      background-color: var(--azul-oscuro);
+      border-color: var(--azul-oscuro);
+    }
+
+/* Crea el estado sin resultados. */
+.sin-resultados {
+  padding: 45px 20px;
+  text-align: center;
+  color: var(--texto-secundario);
+}
+
+  /* Aumenta el icono de sin resultados. */
+  .sin-resultados > mat-icon {
+    width: 55px;
+    height: 55px;
+    color: #9eaab4;
+    font-size: 55px;
+  }
+
+  /* Estiliza el título sin resultados. */
+  .sin-resultados h3 {
+    margin: 10px 0 5px;
+    color: var(--azul-oscuro);
+  }
+
+/* Crea el pie de página. */
+.footer-dashboard {
+  padding: 15px 0 5px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--texto-secundario);
+  font-size: 11px;
+}
+
+/* Ajusta el diseño en pantalla. */
+@media (max-width: 1150px) {
+
+  /* Muestra dos productos por fila. */
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Muestra dos accesos por fila. */
+  .accesos-rapidos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

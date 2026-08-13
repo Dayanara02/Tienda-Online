@@ -1,0 +1,242 @@
+<div class="pagina-registro">
+
+  <!-- Contenedor principal del formulario. -->
+  <section class="tarjeta-registro">
+
+    <!-- Encabezado visual. -->
+    <div class="encabezado-registro">
+
+      <div class="logo">
+        E
+      </div>
+
+      <div>
+        <span class="etiqueta">
+          ESENCIA
+        </span>
+
+        <h1>
+          Crear cuenta
+        </h1>
+
+        <p>
+          Regístrese para realizar compras
+          en nuestra tienda.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Mensaje de error. -->
+    <div class="mensaje mensaje-error"
+         *ngIf="mensajeError">
+
+      <mat-icon>
+        error_outline
+      </mat-icon>
+
+      {{ mensajeError }}
+
+    </div>
+
+    <!-- Mensaje de éxito. -->
+    <div class="mensaje mensaje-exito"
+         *ngIf="mensajeExito">
+
+      <mat-icon>
+        check_circle
+      </mat-icon>
+
+      {{ mensajeExito }}
+
+    </div>
+
+    <!-- Formulario de registro. -->
+    <form class="formulario"
+          (ngSubmit)="registrar()">
+
+      <!-- Nombre y apellido. -->
+      <div class="fila-formulario">
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Nombre
+          </mat-label>
+
+          <input matInput
+                 type="text"
+                 name="nombre"
+                 [(ngModel)]="nombre"
+                 autocomplete="given-name">
+
+          <mat-icon matSuffix>
+            person
+          </mat-icon>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Apellido
+          </mat-label>
+
+          <input matInput
+                 type="text"
+                 name="apellido"
+                 [(ngModel)]="apellido"
+                 autocomplete="family-name">
+
+          <mat-icon matSuffix>
+            badge
+          </mat-icon>
+
+        </mat-form-field>
+
+      </div>
+
+      <!-- Correo electrónico. -->
+      <mat-form-field appearance="outline"
+                      class="campo-completo">
+
+        <mat-label>
+          Correo electrónico
+        </mat-label>
+
+        <input matInput
+               type="email"
+               name="correo"
+               [(ngModel)]="correo"
+               autocomplete="email">
+
+        <mat-icon matSuffix>
+          mail
+        </mat-icon>
+
+      </mat-form-field>
+
+      <!-- Teléfono. -->
+      <mat-form-field appearance="outline"
+                      class="campo-completo">
+
+        <mat-label>
+          Teléfono
+        </mat-label>
+
+        <input matInput
+               type="tel"
+               name="telefono"
+               [(ngModel)]="telefono"
+               autocomplete="tel">
+
+        <mat-icon matSuffix>
+          phone
+        </mat-icon>
+
+      </mat-form-field>
+
+      <!-- Contraseña. -->
+      <mat-form-field appearance="outline"
+                      class="campo-completo">
+
+        <mat-label>
+          Contraseña
+        </mat-label>
+
+        <input matInput
+               [type]="mostrarContrasena ? 'text' : 'password'"
+               name="contrasena"
+               [(ngModel)]="contrasena"
+               autocomplete="new-password">
+
+        <button mat-icon-button
+                matSuffix
+                type="button"
+                (click)="cambiarVisibilidad()">
+
+          <mat-icon>
+            {{
+              mostrarContrasena
+                ? 'visibility_off'
+                : 'visibility'
+            }}
+          </mat-icon>
+
+        </button>
+
+      </mat-form-field>
+
+      <!-- Confirmación de contraseña. -->
+      <mat-form-field appearance="outline"
+                      class="campo-completo">
+
+        <mat-label>
+          Confirmar contraseña
+        </mat-label>
+
+        <input matInput
+               [type]="mostrarContrasena ? 'text' : 'password'"
+               name="confirmarContrasena"
+               [(ngModel)]="confirmarContrasena"
+               autocomplete="new-password">
+
+        <mat-icon matSuffix>
+          lock
+        </mat-icon>
+
+      </mat-form-field>
+
+      <!-- Información del rol creado. -->
+      <div class="informacion-cliente">
+
+        <mat-icon>
+          verified_user
+        </mat-icon>
+
+        <span>
+          La cuenta será registrada como Cliente.
+        </span>
+
+      </div>
+
+      <!-- Botón principal. -->
+      <button mat-flat-button
+              type="submit"
+              class="boton-registrar"
+              [disabled]="registrando">
+
+        <mat-icon>
+          person_add
+        </mat-icon>
+
+        {{
+          registrando
+            ? 'Creando cuenta...'
+            : 'Crear cuenta'
+        }}
+
+      </button>
+
+    </form>
+
+    <!-- Regreso al login. -->
+    <div class="volver-login">
+
+      <span>
+        ¿Ya tiene una cuenta?
+      </span>
+
+      <button mat-button
+              type="button"
+              (click)="volverLogin()">
+
+        Iniciar sesión
+
+      </button>
+
+    </div>
+
+  </section>
+
+</div>

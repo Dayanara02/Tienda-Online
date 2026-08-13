@@ -1,0 +1,506 @@
+/* Define los colores principales de la pantalla. */
+:host {
+  --azul-principal: #1f4e79;
+  --azul-oscuro: #163a5c;
+  --azul-claro: #eaf2f8;
+  --blanco: #ffffff;
+  --gris-fondo: #f4f6f8;
+  --gris-borde: #dfe5ea;
+  --gris-texto: #66727d;
+  --texto-principal: #24313c;
+  --verde: #2e7d32;
+  --verde-claro: #e8f5e9;
+  --rojo: #b42318;
+  --rojo-claro: #fdecec;
+  --amarillo-claro: #fff7df;
+}
+
+/* Configura la estructura general de la pantalla. */
+.pago-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: var(--gris-fondo);
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--texto-principal);
+}
+
+/* Organiza el encabezado superior. */
+.pago-header {
+  max-width: 1300px;
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* Configura la etiqueta superior. */
+.header-etiqueta {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--azul-principal);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Configura el título principal. */
+.pago-header h1 {
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 30px;
+}
+
+/* Configura la descripción del encabezado. */
+.pago-header p {
+  margin: 8px 0 0;
+  color: var(--gris-texto);
+  line-height: 1.5;
+}
+
+/* Define el ancho máximo del contenido. */
+.pago-contenido {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* Divide el formulario y el resumen. */
+.pago-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Crea el estilo general de los paneles. */
+.panel {
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(31, 78, 121, 0.06);
+}
+
+/* Da espacio al panel principal de pago. */
+.panel-pago {
+  padding: 24px;
+}
+
+/* Organiza los títulos internos. */
+.panel-titulo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+  /* Configura el icono del título. */
+  .panel-titulo > mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Configura los títulos internos. */
+  .panel-titulo h2 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 20px;
+  }
+
+  /* Configura las descripciones internas. */
+  .panel-titulo p {
+    margin: 4px 0 0;
+    color: var(--gris-texto);
+    font-size: 13px;
+  }
+
+/* Organiza los métodos de pago. */
+.metodos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+/* Crea cada opción de método de pago. */
+.metodo-pago {
+  min-height: 110px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+  /* Cambia la apariencia al pasar sobre un método. */
+  .metodo-pago:hover {
+    border-color: var(--azul-principal);
+    background: var(--azul-claro);
+  }
+
+/* Resalta el método seleccionado. */
+.metodo-seleccionado {
+  border: 2px solid var(--azul-principal);
+  background: var(--azul-claro);
+}
+
+/* Configura el icono de cada método. */
+.metodo-pago mat-icon {
+  color: var(--azul-principal);
+}
+
+/* Configura el nombre del método. */
+.metodo-pago strong {
+  color: var(--azul-oscuro);
+  font-size: 14px;
+}
+
+/* Configura la descripción del método. */
+.metodo-pago span {
+  color: var(--gris-texto);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Crea cada bloque de formulario. */
+.formulario-metodo {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--gris-borde);
+}
+
+/* Organiza el subtítulo del formulario. */
+.subtitulo-metodo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+  /* Configura el icono del subtítulo. */
+  .subtitulo-metodo > mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Configura el título pequeño. */
+  .subtitulo-metodo h3 {
+    margin: 0;
+    color: var(--azul-oscuro);
+    font-size: 17px;
+  }
+
+  /* Configura la explicación pequeña. */
+  .subtitulo-metodo p {
+    margin: 4px 0 0;
+    color: var(--gris-texto);
+    font-size: 12px;
+  }
+
+/* Hace que los campos Material ocupen todo el ancho. */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+/* Organiza dos campos en una misma fila. */
+.campos-dobles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Crea la nota informativa de tarjeta. */
+.nota-metodo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background: var(--azul-claro);
+  border-radius: 8px;
+  color: var(--azul-oscuro);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+  /* Ajusta el icono de la nota. */
+  .nota-metodo mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+/* Muestra la cuenta para transferencia. */
+.dato-transferencia {
+  margin-bottom: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--azul-claro);
+  border-radius: 9px;
+}
+
+  /* Configura el título de la cuenta. */
+  .dato-transferencia span {
+    color: var(--gris-texto);
+    font-size: 12px;
+  }
+
+  /* Configura el número de cuenta. */
+  .dato-transferencia strong {
+    color: var(--azul-oscuro);
+    font-size: 14px;
+  }
+
+/* Configura el resultado de la validación de saldo. */
+.resultado-saldo {
+  margin-top: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+}
+
+  /* Organiza el texto del resultado. */
+  .resultado-saldo div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  /* Configura el texto secundario. */
+  .resultado-saldo span {
+    font-size: 12px;
+  }
+
+  /* Configura el valor principal. */
+  .resultado-saldo strong {
+    font-size: 13px;
+  }
+
+/* Muestra saldo insuficiente en rojo. */
+.saldo-error {
+  background: var(--rojo-claro);
+  color: var(--rojo);
+}
+
+/* Muestra saldo suficiente en verde. */
+.saldo-correcto {
+  background: var(--verde-claro);
+  color: var(--verde);
+}
+
+/* Configura el panel del resumen. */
+.resumen-pago {
+  padding: 24px;
+  position: sticky;
+  top: 20px;
+}
+
+/* Organiza cada fila del resumen. */
+.fila-resumen {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+  /* Configura el texto secundario. */
+  .fila-resumen span {
+    color: var(--gris-texto);
+  }
+
+  /* Configura los valores del resumen. */
+  .fila-resumen strong {
+    color: var(--texto-principal);
+    text-align: right;
+  }
+
+/* Crea una línea divisoria. */
+.separador {
+  height: 1px;
+  margin: 10px 0;
+  background: var(--gris-borde);
+}
+
+/* Organiza el total del pedido. */
+.total-pago {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+}
+
+  /* Configura el texto del total. */
+  .total-pago span {
+    color: var(--azul-oscuro);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* Configura el monto total. */
+  .total-pago strong {
+    color: var(--azul-principal);
+    font-size: 24px;
+  }
+
+/* Muestra el método seleccionado en el resumen. */
+.metodo-resumen {
+  margin-top: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--azul-claro);
+  border-radius: 8px;
+}
+
+  /* Configura el icono del método seleccionado. */
+  .metodo-resumen mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Organiza el texto del método seleccionado. */
+  .metodo-resumen div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  /* Configura el texto secundario. */
+  .metodo-resumen span {
+    color: var(--gris-texto);
+    font-size: 11px;
+  }
+
+  /* Configura el nombre del método. */
+  .metodo-resumen strong {
+    color: var(--azul-oscuro);
+    font-size: 13px;
+  }
+
+/* Crea una nota dentro del resumen. */
+.nota-resumen {
+  margin: 14px 0;
+  padding: 11px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--amarillo-claro);
+  border-radius: 8px;
+  color: #765700;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+  /* Ajusta el icono de la nota. */
+  .nota-resumen mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+/* Hace que el botón PrimeNG ocupe todo el ancho. */
+:host ::ng-deep .boton-confirmar-pago {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Ajusta el botón de cancelar. */
+.boton-cancelar {
+  width: 100%;
+  margin-top: 8px;
+  color: var(--gris-texto) !important;
+}
+
+/* Configura los mensajes generales. */
+.mensaje {
+  max-width: 1300px;
+  margin: 0 auto 18px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Configura los mensajes de error. */
+.mensaje-error {
+  background: var(--rojo-claro);
+  color: var(--rojo);
+}
+
+/* Configura los mensajes exitosos. */
+.mensaje-exito {
+  background: var(--verde-claro);
+  color: var(--verde);
+}
+
+/* Configura la pantalla de carga. */
+.estado-pantalla {
+  max-width: 650px;
+  margin: 80px auto;
+  padding: 45px 30px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  text-align: center;
+}
+
+  /* Configura el icono de carga. */
+  .estado-pantalla > mat-icon {
+    width: 52px;
+    height: 52px;
+    color: var(--azul-principal);
+    font-size: 52px;
+  }
+
+  /* Configura el título del estado. */
+  .estado-pantalla h2 {
+    margin: 15px 0 8px;
+    color: var(--azul-oscuro);
+  }
+
+  /* Configura la descripción del estado. */
+  .estado-pantalla p {
+    margin: 0;
+    color: var(--gris-texto);
+  }
+
+/* Ajusta la pantalla en ventanas medianas. */
+@media (max-width: 1000px) {
+  .pago-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-pago {
+    position: static;
+  }
+}
+
+/* Ajusta la pantalla en ventanas más pequeñas. */
+@media (max-width: 750px) {
+  .pago-page {
+    padding: 20px;
+  }
+
+  .pago-header {
+    flex-direction: column;
+  }
+
+  .metodos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .campos-dobles {
+    grid-template-columns: 1fr;
+  }
+}

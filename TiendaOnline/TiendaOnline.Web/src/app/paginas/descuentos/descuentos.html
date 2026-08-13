@@ -1,0 +1,351 @@
+<!-- Crea la página completa de descuentos. -->
+<section class="pagina-descuentos">
+
+  <!-- Crea el encabezado principal. -->
+  <header class="encabezado-descuentos">
+
+    <!-- Agrupa el título y la descripción. -->
+    <div>
+
+      <!-- Muestra una etiqueta pequeña. -->
+      <span class="etiqueta">
+        Beneficios
+      </span>
+
+      <!-- Muestra el título principal. -->
+      <h1>
+        Descuentos
+      </h1>
+
+      <!-- Muestra una explicación corta. -->
+      <p>
+        Selecciona una promoción y úsala en tu próxima compra.
+      </p>
+
+    </div>
+
+    <!-- Agrupa las acciones superiores. -->
+    <div class="acciones-superiores">
+
+      <!-- Permite volver al Dashboard. -->
+      <button type="button"
+              class="boton-volver"
+              (click)="volverDashboard()">
+
+        <!-- Muestra el icono de regreso. -->
+        <mat-icon>
+          arrow_back
+        </mat-icon>
+
+        Volver
+      </button>
+
+      <!-- Permite ir directamente al Carrito. -->
+      <p-button label="Ir al carrito"
+                icon="pi pi-shopping-cart"
+                (onClick)="irAlCarrito()">
+      </p-button>
+
+    </div>
+
+  </header>
+
+  <!-- Muestra un mensaje temporal. -->
+  <div class="mensaje"
+       *ngIf="mensaje">
+
+    <!-- Muestra un icono de información. -->
+    <mat-icon>
+      info
+    </mat-icon>
+
+    <!-- Muestra el texto del mensaje. -->
+    <span>
+      {{ mensaje }}
+    </span>
+
+  </div>
+
+  <!-- Muestra una introducción sencilla. -->
+  <section class="introduccion">
+
+    <!-- Muestra el texto principal. -->
+    <div>
+
+      <!-- Muestra el título. -->
+      <h2>
+        Beneficios disponibles
+      </h2>
+
+      <!-- Muestra la explicación. -->
+      <p>
+        Cada promoción requiere una cantidad mínima de productos.
+        El descuento se aplicará en el carrito cuando cumplas la condición.
+      </p>
+
+    </div>
+
+    <!-- Muestra un icono decorativo del sistema. -->
+    <div class="icono-introduccion">
+
+      <!-- Usa un icono de Angular Material. -->
+      <mat-icon>
+        local_offer
+      </mat-icon>
+
+    </div>
+
+  </section>
+
+  <!-- Crea la tabla visual de promociones. -->
+  <section class="panel-promociones">
+
+    <!-- Crea el encabezado de la tabla. -->
+    <div class="fila encabezado-tabla">
+
+      <!-- Muestra el nombre de la promoción. -->
+      <span>
+        Promoción
+      </span>
+
+      <!-- Muestra la condición mínima. -->
+      <span>
+        Compra mínima
+      </span>
+
+      <!-- Muestra el porcentaje. -->
+      <span>
+        Descuento
+      </span>
+
+      <!-- Muestra la acción disponible. -->
+      <span>
+        Acción
+      </span>
+
+    </div>
+
+    <!-- Recorre todas las promociones. -->
+    <article class="fila fila-promocion"
+             *ngFor="let promocion of promociones"
+             [class.promocion-activa]="estaActiva(promocion)">
+
+      <!-- Muestra el nombre y descripción. -->
+      <div class="datos-promocion">
+
+        <!-- Muestra el icono de Angular Material. -->
+        <div class="icono-promocion">
+
+          <mat-icon>
+            {{ promocion.icono }}
+          </mat-icon>
+
+        </div>
+
+        <!-- Agrupa el texto de la promoción. -->
+        <div>
+
+          <!-- Muestra el nombre. -->
+          <strong>
+            {{ promocion.nombre }}
+          </strong>
+
+          <!-- Muestra la descripción. -->
+          <p>
+            {{ promocion.descripcion }}
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- Muestra la cantidad mínima. -->
+      <div class="dato-tabla">
+
+        <!-- Muestra el icono correspondiente. -->
+        <mat-icon>
+          shopping_basket
+        </mat-icon>
+
+        <!-- Muestra el requisito. -->
+        <span>
+          {{ promocion.cantidadMinima }} productos
+        </span>
+
+      </div>
+
+      <!-- Muestra el porcentaje de descuento. -->
+      <div class="porcentaje">
+
+        <!-- Muestra el porcentaje. -->
+        <strong>
+          {{ promocion.porcentaje }}%
+        </strong>
+
+      </div>
+
+      <!-- Muestra las acciones de la promoción. -->
+      <div class="accion-promocion">
+
+        <!-- Permite activar una promoción. -->
+        <p-button *ngIf="!estaActiva(promocion)"
+                  label="Seleccionar"
+                  icon="pi pi-check"
+                  severity="secondary"
+                  (onClick)="activarPromocion(promocion)">
+        </p-button>
+
+        <!-- Muestra que la promoción ya está activa. -->
+        <div class="estado-activo"
+             *ngIf="estaActiva(promocion)">
+
+          <!-- Muestra un icono de confirmación. -->
+          <mat-icon>
+            check_circle
+          </mat-icon>
+
+          <!-- Muestra el estado. -->
+          <span>
+            Seleccionada
+          </span>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  </section>
+
+  <!-- Muestra información de la promoción seleccionada. -->
+  <section class="promocion-seleccionada"
+           *ngIf="promocionActivaId > 0">
+
+    <!-- Agrupa la información. -->
+    <div class="seleccion-info">
+
+      <!-- Muestra un icono. -->
+      <mat-icon>
+        verified
+      </mat-icon>
+
+      <!-- Muestra el texto informativo. -->
+      <div>
+
+        <!-- Muestra el título. -->
+        <h3>
+          Tienes una promoción seleccionada
+        </h3>
+
+        <!-- Muestra la explicación. -->
+        <p>
+          El carrito comprobará automáticamente si cumples
+          con la cantidad mínima necesaria.
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- Agrupa las acciones de la promoción seleccionada. -->
+    <div class="acciones-seleccion">
+
+      <!-- Permite ir al carrito. -->
+      <p-button label="Revisar carrito"
+                icon="pi pi-shopping-cart"
+                (onClick)="irAlCarrito()">
+      </p-button>
+
+      <!-- Permite quitar la promoción. -->
+      <button type="button"
+              class="boton-quitar"
+              (click)="desactivarPromocion()">
+
+        <!-- Muestra el icono. -->
+        <mat-icon>
+          close
+        </mat-icon>
+
+        Quitar promoción
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- Explica brevemente cómo funciona el descuento. -->
+  <section class="como-funciona">
+
+    <!-- Muestra el título. -->
+    <h2>
+      ¿Cómo funciona?
+    </h2>
+
+    <!-- Agrupa los pasos. -->
+    <div class="pasos">
+
+      <!-- Explica el primer paso. -->
+      <article class="paso">
+
+        <!-- Muestra el número del paso. -->
+        <span>
+          1
+        </span>
+
+        <!-- Muestra el título. -->
+        <h3>
+          Selecciona
+        </h3>
+
+        <!-- Muestra la explicación. -->
+        <p>
+          Elige la promoción que deseas utilizar.
+        </p>
+
+      </article>
+
+      <!-- Explica el segundo paso. -->
+      <article class="paso">
+
+        <!-- Muestra el número del paso. -->
+        <span>
+          2
+        </span>
+
+        <!-- Muestra el título. -->
+        <h3>
+          Agrega productos
+        </h3>
+
+        <!-- Muestra la explicación. -->
+        <p>
+          Completa la cantidad mínima solicitada.
+        </p>
+
+      </article>
+
+      <!-- Explica el tercer paso. -->
+      <article class="paso">
+
+        <!-- Muestra el número del paso. -->
+        <span>
+          3
+        </span>
+
+        <!-- Muestra el título. -->
+        <h3>
+          Recibe el descuento
+        </h3>
+
+        <!-- Muestra la explicación. -->
+        <p>
+          El carrito calcula automáticamente el beneficio.
+        </p>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</section>

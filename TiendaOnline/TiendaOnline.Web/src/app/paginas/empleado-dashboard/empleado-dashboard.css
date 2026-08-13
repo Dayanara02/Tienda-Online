@@ -1,0 +1,432 @@
+/* Configura el estilo general del componente. */
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  color: #263746;
+}
+
+/* Mantiene la pantalla ocupando toda la página. */
+.pagina-empleado {
+  min-height: 100vh;
+}
+
+/* Organiza la barra superior. */
+.barra-superior {
+  min-height: 74px;
+  padding: 12px 5%;
+  background: #ffffff;
+  border-bottom: 1px solid #dce4ea;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Organiza el logo y nombre del sistema. */
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Da estilo al logo. */
+.logo {
+  width: 45px;
+  height: 45px;
+  border-radius: 9px;
+  background: #1f4e79;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+/* Da estilo al título superior. */
+.marca h1 {
+  margin: 0;
+  color: #163a5c;
+  font-size: 19px;
+}
+
+/* Da estilo al nombre de la tienda. */
+.marca p {
+  margin: 3px 0 0;
+  color: #77858f;
+  font-size: 12px;
+}
+
+/* Organiza los botones superiores. */
+.acciones-superiores {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Personaliza el botón de actualizar. */
+.boton-actualizar {
+  color: #1f4e79 !important;
+  border-color: #b8cbd9 !important;
+}
+
+/* Personaliza el botón de cerrar sesión. */
+.boton-salir {
+  color: #5f6d76 !important;
+}
+
+/* Define el ancho del contenido. */
+.contenido-empleado {
+  width: min(1200px, 90%);
+  margin: 0 auto;
+  padding: 30px 0 50px;
+}
+
+/* Crea la sección principal de bienvenida. */
+.bienvenida {
+  padding: 25px 28px;
+  margin-bottom: 22px;
+  border-radius: 12px;
+  background: #1f4e79;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+  /* Da estilo a la etiqueta EMPLEADO. */
+  .bienvenida span {
+    color: #d8e6f1;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+  }
+
+  /* Da estilo al título principal. */
+  .bienvenida h2 {
+    margin: 5px 0;
+    font-size: 27px;
+  }
+
+  /* Da estilo al texto descriptivo. */
+  .bienvenida p {
+    margin: 0;
+    color: #eaf2f8;
+    font-size: 13px;
+  }
+
+  /* Configura el icono decorativo. */
+  .bienvenida > mat-icon {
+    width: 55px;
+    height: 55px;
+    font-size: 55px;
+    opacity: 0.22;
+  }
+
+/* Configura los mensajes generales. */
+.mensaje-carga,
+.mensaje-error {
+  padding: 15px 17px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Da estilo al mensaje de carga. */
+.mensaje-carga {
+  background: #eaf2f8;
+  color: #1f4e79;
+}
+
+/* Da estilo al mensaje de error. */
+.mensaje-error {
+  background: #fff0f0;
+  color: #a23b3b;
+  border: 1px solid #efcccc;
+}
+
+/* Distribuye las tarjetas de resumen. */
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+/* Da estilo a cada tarjeta de resumen. */
+.tarjeta-resumen {
+  min-height: 105px;
+  padding: 18px;
+  border-radius: 11px;
+  background: #ffffff;
+  border: 1px solid #e0e6eb;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Contiene el icono de cada indicador. */
+.icono-resumen {
+  min-width: 45px;
+  width: 45px;
+  height: 45px;
+  border-radius: 9px;
+  background: #eaf2f8;
+  color: #1f4e79;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Organiza los textos de cada indicador. */
+.tarjeta-resumen > div:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Da estilo al nombre del indicador. */
+.tarjeta-resumen span {
+  color: #6c7c87;
+  font-size: 12px;
+}
+
+/* Da estilo al valor principal. */
+.tarjeta-resumen strong {
+  margin: 3px 0;
+  color: #163a5c;
+  font-size: 23px;
+}
+
+/* Da estilo al texto secundario. */
+.tarjeta-resumen small {
+  color: #8c989f;
+  font-size: 10px;
+}
+
+/* Da estilo a las secciones blancas. */
+.seccion {
+  padding: 24px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e0e6eb;
+}
+
+/* Organiza el encabezado de cada sección. */
+.titulo-seccion {
+  margin-bottom: 20px;
+}
+
+  /* Da estilo a la etiqueta pequeña de sección. */
+  .titulo-seccion span {
+    color: #1f4e79;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+  }
+
+  /* Da estilo al título de cada sección. */
+  .titulo-seccion h3 {
+    margin: 5px 0;
+    color: #163a5c;
+    font-size: 20px;
+  }
+
+  /* Da estilo a la descripción de sección. */
+  .titulo-seccion p {
+    margin: 0;
+    color: #7b8992;
+    font-size: 12px;
+  }
+
+/* Distribuye los módulos disponibles. */
+.modulos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+/* Da estilo a cada módulo. */
+.tarjeta-modulo {
+  padding: 18px;
+  border: 1px solid #e0e6eb;
+  border-radius: 10px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Contiene el icono del módulo. */
+.icono-modulo {
+  width: 43px;
+  height: 43px;
+  margin-bottom: 13px;
+  border-radius: 9px;
+  background: #eaf2f8;
+  color: #1f4e79;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mantiene el contenido utilizando el espacio disponible. */
+.contenido-modulo {
+  flex: 1;
+}
+
+  /* Da estilo al título del módulo. */
+  .contenido-modulo h4 {
+    margin: 0 0 6px;
+    color: #163a5c;
+    font-size: 15px;
+  }
+
+  /* Da estilo a la descripción del módulo. */
+  .contenido-modulo p {
+    min-height: 34px;
+    margin: 0 0 15px;
+    color: #77858f;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+/* Da estilo al botón de cada módulo. */
+.tarjeta-modulo button {
+  color: #1f4e79 !important;
+  border-color: #c2d1dc !important;
+}
+
+/* Permite desplazar la tabla horizontalmente. */
+.contenedor-tabla {
+  overflow-x: auto;
+}
+
+/* Configura la tabla. */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Da estilo al encabezado de la tabla. */
+th {
+  padding: 11px 13px;
+  background: #f5f8fa;
+  color: #5b6b75;
+  border-bottom: 1px solid #dce4ea;
+  text-align: left;
+  font-size: 11px;
+}
+
+/* Da estilo a cada celda. */
+td {
+  padding: 14px 13px;
+  border-bottom: 1px solid #edf0f2;
+  color: #475862;
+  font-size: 12px;
+}
+
+/* Resalta el número del pedido. */
+.numero-pedido {
+  color: #1f4e79;
+  font-weight: 700;
+}
+
+/* Resalta el monto total. */
+.total {
+  color: #163a5c;
+  font-weight: 700;
+}
+
+/* Define el estilo general de los estados. */
+.estado {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Da estilo al estado pendiente. */
+.estado-pendiente {
+  background: #fff4d8;
+  color: #866318;
+}
+
+/* Da estilo al estado pagado. */
+.estado-pagado {
+  background: #eaf2f8;
+  color: #1f4e79;
+}
+
+/* Da estilo al estado enviado. */
+.estado-enviado {
+  background: #e8f0ff;
+  color: #315f9a;
+}
+
+/* Da estilo al estado entregado. */
+.estado-entregado {
+  background: #e5f5ea;
+  color: #287444;
+}
+
+/* Da estilo al estado cancelado. */
+.estado-cancelado {
+  background: #fbe5e5;
+  color: #a23b3b;
+}
+
+/* Da estilo al mensaje cuando no existen registros. */
+.sin-registros {
+  padding: 35px;
+  color: #77858f;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Ajusta el Dashboard en pantallas medianas. */
+@media (max-width: 1000px) {
+
+  /* Cambia los indicadores a dos columnas. */
+  .resumen {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Cambia los módulos a dos columnas. */
+  .modulos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Ajusta el Dashboard en pantallas pequeñas. */
+@media (max-width: 650px) {
+
+  /* Coloca la barra superior en columna. */
+  .barra-superior {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Coloca los indicadores en una columna. */
+  .resumen {
+    grid-template-columns: 1fr;
+  }
+
+  /* Coloca los módulos en una columna. */
+  .modulos {
+    grid-template-columns: 1fr;
+  }
+
+  /* Oculta el icono decorativo. */
+  .bienvenida > mat-icon {
+    display: none;
+  }
+}

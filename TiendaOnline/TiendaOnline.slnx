@@ -2,5 +2,10 @@
   <Project Path="TiendaOnline.AccesoDatos/TiendaOnline.AccesoDatos.csproj" />
   <Project Path="TiendaOnline.Dominio/TiendaOnline.Dominio.csproj" />
   <Project Path="TiendaOnline.LogicaNegocio/TiendaOnline.LogicaNegocio.csproj" />
+  <Project Path="TiendaOnline.Utilidades/TiendaOnline.Utilidades.csproj" Id="38616d61-90cb-4105-80a7-f02be8f4c458" />
+  <Project Path="TiendaOnline.Web/TiendaOnline.Web.esproj">
+    <Build />
+    <Deploy />
+  </Project>
   <Project Path="TiendaOnline/TiendaOnline.API.csproj" />
 </Solution>

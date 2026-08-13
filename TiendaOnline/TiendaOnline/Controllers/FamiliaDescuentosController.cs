@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TiendaOnline.Dominio.Model;
+using TiendaOnline.Dominio.Entidades;
 using TiendaOnline.AccesoDatos.Context;
 using Microsoft.AspNetCore.Authorization;
 

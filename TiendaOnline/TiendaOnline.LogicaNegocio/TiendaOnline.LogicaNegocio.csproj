@@ -8,12 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="MailKit" Version="4.17.0" />
+    <PackageReference Include="QuestPDF" Version="2026.7.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TiendaOnline.AccesoDatos\TiendaOnline.AccesoDatos.csproj" />
     <ProjectReference Include="..\TiendaOnline.Dominio\TiendaOnline.Dominio.csproj" />
+    <ProjectReference Include="..\TiendaOnline.Utilidades\TiendaOnline.Utilidades.csproj" />
   </ItemGroup>
 
 </Project>

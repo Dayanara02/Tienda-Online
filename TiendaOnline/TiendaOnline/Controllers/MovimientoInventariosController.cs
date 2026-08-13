@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TiendaOnline.AccesoDatos.Context;
-using TiendaOnline.Dominio.Model;
 using Microsoft.AspNetCore.Authorization;
+using TiendaOnline.Dominio.Entidades;
 
 namespace TiendaOnline.API.Controllers;
 
-[Authorize(Roles = "Administrador")]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class MovimientoInventariosController : ControllerBase

@@ -1,0 +1,474 @@
+/* Define los colores principales de Mis Pedidos. */
+:host {
+  display: block;
+  --azul-principal: #1f4e79;
+  --azul-oscuro: #163a5c;
+  --azul-claro: #eaf2f8;
+  --dorado: #c79b42;
+  --blanco: #ffffff;
+  --gris-suave: #f4f6f8;
+  --texto: #24313d;
+  --texto-secundario: #6d7882;
+  --borde: #d8e0e7;
+}
+
+/* Facilita el control del tamaño de los elementos. */
+* {
+  box-sizing: border-box;
+}
+
+/* Crea la estructura general de la pantalla. */
+.pagina-pedidos {
+  min-height: 100vh;
+  padding: 28px;
+  background-color: var(--gris-suave);
+  color: var(--texto);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Organiza el encabezado principal. */
+.encabezado-pedidos {
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Estiliza la etiqueta pequeña. */
+.etiqueta {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--azul-principal);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Estiliza el título principal. */
+.encabezado-pedidos h1 {
+  margin: 0;
+  color: var(--azul-oscuro);
+  font-size: 28px;
+}
+
+/* Estiliza la descripción. */
+.encabezado-pedidos p {
+  margin: 7px 0 0;
+  color: var(--texto-secundario);
+  font-size: 14px;
+}
+
+/* Organiza los botones superiores. */
+.acciones-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Estiliza los mensajes generales. */
+.mensaje {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 7px;
+  font-size: 13px;
+}
+
+/* Estiliza los mensajes de éxito. */
+.mensaje-exito {
+  background-color: #e7f4ea;
+  color: #2f6d3d;
+}
+
+/* Estiliza los mensajes de error. */
+.mensaje-error {
+  background-color: #fbe8e8;
+  color: #8a3030;
+}
+
+/* Crea las tarjetas de resumen. */
+.resumen-pedidos {
+  margin-bottom: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* Estiliza cada tarjeta de resumen. */
+.tarjeta-resumen {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background-color: var(--blanco);
+}
+
+  /* Estiliza los iconos del resumen. */
+  .tarjeta-resumen > mat-icon {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: var(--azul-claro);
+    color: var(--azul-principal);
+    font-size: 24px;
+  }
+
+  /* Estiliza el texto pequeño del resumen. */
+  .tarjeta-resumen span {
+    display: block;
+    color: var(--texto-secundario);
+    font-size: 12px;
+  }
+
+  /* Estiliza el valor del resumen. */
+  .tarjeta-resumen strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--azul-oscuro);
+    font-size: 21px;
+  }
+
+/* Estiliza la pantalla de carga. */
+.estado-carga {
+  padding: 60px 20px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background-color: var(--blanco);
+  text-align: center;
+}
+
+  /* Estiliza el icono de carga. */
+  .estado-carga > mat-icon {
+    width: 55px;
+    height: 55px;
+    color: var(--azul-principal);
+    font-size: 55px;
+  }
+
+  /* Estiliza el título de carga. */
+  .estado-carga h2 {
+    margin: 12px 0 5px;
+    color: var(--azul-oscuro);
+  }
+
+  /* Estiliza el texto de carga. */
+  .estado-carga p {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 13px;
+  }
+
+/* Estiliza la pantalla cuando no existen pedidos. */
+.sin-pedidos {
+  padding: 60px 20px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background-color: var(--blanco);
+  text-align: center;
+}
+
+  /* Estiliza el icono del estado vacío. */
+  .sin-pedidos > mat-icon {
+    width: 60px;
+    height: 60px;
+    color: var(--azul-principal);
+    font-size: 60px;
+  }
+
+  /* Estiliza el título del estado vacío. */
+  .sin-pedidos h2 {
+    margin: 12px 0 6px;
+    color: var(--azul-oscuro);
+  }
+
+  /* Estiliza el texto del estado vacío. */
+  .sin-pedidos p {
+    margin: 0 0 18px;
+    color: var(--texto-secundario);
+    font-size: 13px;
+  }
+
+/* Estiliza el botón principal. */
+.boton-principal {
+  background-color: var(--azul-principal) !important;
+  color: var(--blanco) !important;
+}
+
+/* Organiza verticalmente los pedidos. */
+.lista-pedidos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Estiliza cada tarjeta de pedido. */
+.pedido-card {
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background-color: var(--blanco);
+}
+
+  /* Cambia el borde al pasar el mouse. */
+  .pedido-card:hover {
+    border-color: var(--azul-principal);
+  }
+
+/* Organiza la parte superior del pedido. */
+.pedido-superior {
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid var(--borde);
+}
+
+/* Estiliza el número del pedido. */
+.numero-pedido {
+  color: var(--azul-oscuro);
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Estiliza la fecha del pedido. */
+.pedido-superior p {
+  margin: 5px 0 0;
+  color: var(--texto-secundario);
+  font-size: 12px;
+}
+
+/* Estiliza la etiqueta general del estado. */
+.estado-pedido {
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+  /* Ajusta el icono del estado. */
+  .estado-pedido mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+/* Estiliza el estado Pendiente. */
+.estado-pendiente {
+  background-color: #fff3d8;
+  color: #8a6418;
+}
+
+/* Estiliza el estado Confirmado. */
+.estado-confirmado {
+  background-color: var(--azul-claro);
+  color: var(--azul-principal);
+}
+
+/* Estiliza el estado Pagado. */
+.estado-pagado {
+  background-color: #e5f4ea;
+  color: #337547;
+}
+
+/* Estiliza el estado Enviado. */
+.estado-enviado {
+  background-color: #e8f1fb;
+  color: #2d6090;
+}
+
+/* Estiliza el estado Entregado. */
+.estado-entregado {
+  background-color: #e0f4e5;
+  color: #26703b;
+}
+
+/* Estiliza el estado Cancelado. */
+.estado-cancelado {
+  background-color: #fbe5e5;
+  color: #963d3d;
+}
+
+/* Estiliza cualquier otro estado. */
+.estado-general {
+  background-color: #eceff2;
+  color: #59636c;
+}
+
+/* Crea la cuadrícula de montos. */
+.pedido-datos {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* Estiliza cada monto. */
+.dato-pedido {
+  padding: 14px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+  background-color: var(--gris-suave);
+}
+
+  /* Estiliza el nombre del dato. */
+  .dato-pedido span {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--texto-secundario);
+    font-size: 11px;
+  }
+
+  /* Estiliza el valor del dato. */
+  .dato-pedido strong {
+    color: var(--texto);
+    font-size: 14px;
+  }
+
+/* Destaca el total final. */
+.dato-total {
+  border-color: #bed0df;
+  background-color: var(--azul-claro);
+}
+
+  /* Hace más visible el total. */
+  .dato-total strong {
+    color: var(--azul-oscuro);
+    font-size: 16px;
+  }
+
+/* Organiza la información adicional. */
+.pedido-informacion {
+  padding: 0 20px 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* Estiliza cada dato adicional. */
+.informacion-item {
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--borde);
+  border-radius: 7px;
+}
+
+  /* Estiliza los iconos adicionales. */
+  .informacion-item > mat-icon {
+    color: var(--azul-principal);
+  }
+
+  /* Estiliza el nombre del dato adicional. */
+  .informacion-item span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--texto-secundario);
+    font-size: 11px;
+  }
+
+  /* Estiliza el valor del dato adicional. */
+  .informacion-item strong {
+    color: var(--texto);
+    font-size: 13px;
+  }
+
+/* Organiza los botones inferiores. */
+.pedido-acciones {
+  padding: 14px 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--borde);
+  background-color: #fbfcfd;
+}
+
+/* Estiliza el botón Cancelar pedido. */
+.boton-cancelar {
+  background-color: #b74747 !important;
+  color: var(--blanco) !important;
+}
+
+  /* Cambia el botón Cancelar al pasar el mouse. */
+  .boton-cancelar:hover:not(:disabled) {
+    background-color: #923636 !important;
+  }
+
+  /* Reduce la apariencia del botón mientras procesa. */
+  .boton-cancelar:disabled {
+    opacity: 0.6;
+  }
+
+/* Adapta la pantalla a tabletas. */
+@media (max-width: 900px) {
+
+  /* Organiza el encabezado verticalmente. */
+  .encabezado-pedidos {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Muestra dos montos por fila. */
+  .pedido-datos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Adapta la pantalla a teléfonos. */
+@media (max-width: 600px) {
+
+  /* Reduce el espacio general. */
+  .pagina-pedidos {
+    padding: 15px;
+  }
+
+  /* Muestra una tarjeta de resumen por fila. */
+  .resumen-pedidos {
+    grid-template-columns: 1fr;
+  }
+
+  /* Permite acomodar los botones superiores. */
+  .acciones-encabezado {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  /* Organiza la parte superior del pedido. */
+  .pedido-superior {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Muestra un monto por fila. */
+  .pedido-datos {
+    grid-template-columns: 1fr;
+  }
+
+  /* Muestra un dato adicional por fila. */
+  .pedido-informacion {
+    grid-template-columns: 1fr;
+  }
+
+  /* Organiza los botones inferiores verticalmente. */
+  .pedido-acciones {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  /* Hace que Cancelar ocupe todo el ancho en móvil. */
+  .boton-cancelar {
+    width: 100%;
+  }
+}
