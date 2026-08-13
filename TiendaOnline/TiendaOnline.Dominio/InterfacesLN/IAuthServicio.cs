@@ -1,10 +1,31 @@
-﻿using TiendaOnline.Dominio.DTO;
+﻿// Importa las entidades necesarias.
+using TiendaOnline.Dominio.Entidades;
 
-namespace TiendaOnline.Dominio.InterfacesLN;
+// Importa la clase Respuesta.
+using TiendaOnline.Utilidades;
 
-public interface IAuthServicio
+namespace TiendaOnline.Dominio.InterfacesLN
 {
-    Task<RespuestaLoginDto?> LoginAsync(LoginDto login);
+    // Define las operaciones principales de autenticación.
+    public interface IAuthServicio
+    {
+        // Permite iniciar sesión con correo y contraseña.
+        Task<Respuesta<Usuario>>
+            IniciarSesionAsync(
+                string correo,
+                string contrasena
+            );
 
-    Task<bool> RegistrarAsync(RegistroUsuarioDto registro);
+        // Permite registrar un nuevo usuario.
+        Task<Respuesta<Usuario>>
+            RegistrarAsync(
+                Usuario usuario
+            );
+
+        // Permite obtener un usuario por correo.
+        Task<Respuesta<Usuario>>
+            ObtenerPorCorreoAsync(
+                string correo
+            );
+    }
 }
