@@ -1,139 +1,146 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// Permite crear controladores y respuestas HTTP.
+using Microsoft.AspNetCore.Mvc;
+
+// Importa los DTO utilizados en autenticación.
 using TiendaOnline.Dominio.DTO;
+
+// Importa la interfaz del servicio de autenticación.
 using TiendaOnline.Dominio.InterfacesLN;
+
+// Permite utilizar atributos de autorización.
 using Microsoft.AspNetCore.Authorization;
 
 namespace TiendaOnline.API.Controllers;
 
+// Indica que esta clase funciona como controlador de API.
 [ApiController]
 
+// Define la ruta principal del controlador.
+// En este caso será: api/Auth
 [Route("api/[controller]")]
-
 public class AuthController : ControllerBase
-
 {
-
+    // Guarda el servicio de autenticación.
     private readonly IAuthServicio _authServicio;
 
-    public AuthController(IAuthServicio authServicio)
 
+    // Recibe el servicio por inyección de dependencias.
+    public AuthController(
+        IAuthServicio authServicio
+    )
     {
-
+        // Guarda el servicio recibido.
         _authServicio = authServicio;
-
     }
 
+
+    // REGISTRO
+    // Permite registrar sin iniciar sesión.
     [AllowAnonymous]
 
+    // Define la ruta POST api/Auth/registrar.
     [HttpPost("registrar")]
-
     public async Task<IActionResult> Registrar(
-
-        RegistroUsuarioDto registro)
-
+        RegistroUsuarioDto registro
+    )
     {
-        // Validación básica: campos obligatorios
-        if (string.IsNullOrWhiteSpace(registro.Nombre) ||
-
+        // Valida los campos obligatorios.
+        if (
+            string.IsNullOrWhiteSpace(registro.Nombre) ||
             string.IsNullOrWhiteSpace(registro.Apellido) ||
-
             string.IsNullOrWhiteSpace(registro.Correo) ||
-
-            string.IsNullOrWhiteSpace(registro.Contrasena))
-
+            string.IsNullOrWhiteSpace(registro.Contrasena)
+        )
         {
-
             return BadRequest(
-
                 "Nombre, apellido, correo y contraseña son obligatorios."
-
             );
-
         }
 
+
+        // Valida la longitud mínima de la contraseña.
         if (registro.Contrasena.Length < 6)
-
         {
-            // Validación básica: campos obligatorios
             return BadRequest(
-
                 "La contraseña debe tener al menos 6 caracteres."
-
             );
-
         }
 
+
+        // Intenta registrar el usuario.
         var registrado =
-            // Llama al servicio de autenticación para registrar al usuario
-            await _authServicio.RegistrarAsync(registro);
-        // Si el registro falla
+            await _authServicio.RegistrarAsync(
+                registro
+            );
+
+
+        // Verifica si el registro falló.
         if (!registrado)
-
         {
-            // Muestra un mensaje que ya existe o que no es valido
             return Conflict(
-
-                "No se pudo registrar. El correo ya existe o el rol no es válido."
-
+                "No se pudo registrar. " +
+                "El correo ya existe o el rol no es válido."
             );
-
         }
 
-        // Si todo va bien, retorna un mensaje de éxito
-        return Ok(new
 
-        {
-
-            mensaje = "Usuario registrado correctamente."
-
-        });
-
-    }
-
-    [AllowAnonymous]// Permite el acceso sin estar autenticado
-
-    [HttpPost("login")]
-
-    public async Task<IActionResult> Login(LoginDto login)
-
-    {
-        // Validación básica: correo y contraseña obligatorios
-        if (string.IsNullOrWhiteSpace(login.Correo) ||
-
-            string.IsNullOrWhiteSpace(login.Contrasena))
-
-        {
-
-            return BadRequest(
-
-                "El correo y la contraseña son obligatorios."
-
-            );
-
-        }
-
-        var respuesta =
-            // Llama al servicio de autenticación para intentar iniciar sesión
-            await _authServicio.LoginAsync(login);
-
-        // Si la respuesta es null, credenciales incorrectas
-        if (respuesta == null)
-
-        {
-            //Indica que hay un error en la informacion  
-            return Unauthorized(new
-
+        // Devuelve una respuesta correcta.
+        return Ok(
+            new
             {
-
-                mensaje = "Correo o contraseña incorrectos."
-
-            });
-
-        }
-        // Credenciales válidas: devolver los datos de sesión    
-        return Ok(respuesta);
-
+                mensaje =
+                    "Usuario registrado correctamente."
+            }
+        );
     }
 
-}
 
+
+    // LOGIN
+    // Permite iniciar sesión sin tener token.
+    [AllowAnonymous]
+
+    // Define la ruta POST api/Auth/login.
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(
+        LoginDto login
+    )
+    {
+        // Valida correo y contraseña.
+        if (
+            string.IsNullOrWhiteSpace(login.Correo) ||
+            string.IsNullOrWhiteSpace(login.Contrasena)
+        )
+        {
+            return BadRequest(
+                "El correo y la contraseña son obligatorios."
+            );
+        }
+
+
+        // Intenta iniciar sesión.
+        var respuesta =
+            await _authServicio.LoginAsync(
+                login
+            );
+
+
+        // Comprueba si las credenciales son incorrectas.
+        if (respuesta == null)
+        {
+            return Unauthorized(
+                new
+                {
+                    mensaje =
+                        "Correo o contraseña incorrectos."
+                }
+            );
+        }
+
+
+        // Devuelve token y datos del usuario.
+        return Ok(
+            respuesta
+        );
+    }
+}

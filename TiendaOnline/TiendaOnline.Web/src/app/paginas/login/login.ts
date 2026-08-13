@@ -1,492 +1,308 @@
-// Importa CommonModule para poder utilizar
-// directivas de Angular como *ngIf.
+// Permite usar directivas comunes de Angular.
 import { CommonModule } from '@angular/common';
 
-
-// Importa HttpClient para poder realizar
-// peticiones HTTP hacia la API.
+// Permite hacer peticiones HTTP.
 import { HttpClient } from '@angular/common/http';
 
-
-// Importa las herramientas principales
-// necesarias para crear el componente.
+// Importa herramientas del componente.
 import {
   ChangeDetectorRef,
   Component
 } from '@angular/core';
 
-
-// Importa FormsModule para poder utilizar
-// [(ngModel)] en los campos del formulario.
+// Permite usar ngModel.
 import { FormsModule } from '@angular/forms';
 
-
-// Importa Router para navegar entre páginas
-// y RouterLink para utilizar enlaces en el HTML.
+// Permite navegar y usar enlaces.
 import {
   Router,
   RouterLink
 } from '@angular/router';
 
-
-// Importa MatFormFieldModule de Angular Material.
-// Permite utilizar <mat-form-field>
-// para organizar visualmente los campos.
+// Permite usar campos de Angular Material.
 import { MatFormFieldModule } from '@angular/material/form-field';
 
-
-// Importa MatInputModule de Angular Material.
-// Permite utilizar la directiva matInput
-// dentro de los campos de correo y contraseña.
+// Permite usar inputs de Angular Material.
 import { MatInputModule } from '@angular/material/input';
 
-
-// Importa MatIconModule de Angular Material.
-// Permite utilizar iconos con <mat-icon>.
+// Permite usar iconos.
 import { MatIconModule } from '@angular/material/icon';
 
-
-// Importa MatButtonModule de Angular Material.
-// Permite utilizar botones Material.
+// Permite usar botones Material.
 import { MatButtonModule } from '@angular/material/button';
 
-
-// Importa MatProgressSpinnerModule de Angular Material.
-// Permite mostrar un spinner mientras
-// se está procesando el inicio de sesión.
+// Permite mostrar un spinner de carga.
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-
-// Define la configuración del componente Login.
+// Configura el componente Login.
 @Component({
-
-  // Define el selector utilizado por Angular
-  // para identificar este componente.
+  // Nombre del componente.
   selector: 'app-login',
 
-  // Registra todos los módulos que
-  // este componente puede utilizar.
+  // Módulos utilizados.
   imports: [
-
-    // Permite utilizar directivas comunes de Angular.
     CommonModule,
-
-    // Permite utilizar [(ngModel)].
     FormsModule,
-
-    // Permite utilizar routerLink.
     RouterLink,
-
-    // Permite utilizar campos visuales de Angular Material.
     MatFormFieldModule,
-
-    // Permite utilizar inputs de Angular Material.
     MatInputModule,
-
-    // Permite utilizar iconos de Angular Material.
     MatIconModule,
-
-    // Permite utilizar botones de Angular Material.
     MatButtonModule,
-
-    // Permite utilizar el indicador circular de carga.
     MatProgressSpinnerModule
   ],
 
-  // Define el archivo HTML correspondiente al Login.
+  // Archivo HTML.
   templateUrl: './login.html',
 
-  // Define el archivo CSS correspondiente al Login.
+  // Archivo CSS.
   styleUrl: './login.css'
 })
 export class Login {
 
-
-  // Guarda el correo escrito por el usuario.
+  // Guarda el correo.
   correo = '';
 
-
-  // Guarda la contraseña escrita por el usuario.
+  // Guarda la contraseña.
   contrasena = '';
 
-
-  // Controla si la contraseña
-  // se muestra o se mantiene oculta.
+  // Controla si se muestra la contraseña.
   mostrarContrasena = false;
 
-
-  // Indica si el sistema está
-  // procesando actualmente el inicio de sesión.
+  // Indica si está cargando.
   cargando = false;
 
-
-  // Guarda el mensaje de error
-  // que se mostrará en el HTML.
+  // Guarda el mensaje de error.
   mensajeError = '';
 
-
-  // Guarda la dirección del endpoint
-  // utilizado para iniciar sesión.
+  // Endpoint del login.
   private readonly urlLogin =
     'https://localhost:7196/api/Auth/login';
 
-
-  // Constructor del componente.
+  // Recibe los servicios necesarios.
   constructor(
-
-    // Permite realizar peticiones HTTP.
     private http: HttpClient,
-
-    // Permite navegar entre rutas.
     private router: Router,
-
-    // Permite forzar la actualización
-    // visual del componente cuando sea necesario.
     private detectorCambios: ChangeDetectorRef
   ) { }
 
-
-  // Cambia entre mostrar
-  // y ocultar la contraseña.
+  // Muestra u oculta la contraseña.
   cambiarVisibilidadContrasena(): void {
-
-    // Invierte el valor actual.
-    // Si era false pasa a true
-    // y si era true pasa a false.
+    // Cambia el valor actual.
     this.mostrarContrasena =
       !this.mostrarContrasena;
   }
 
-
-  // Ejecuta el proceso de inicio de sesión.
+  // Inicia el proceso de login.
   iniciarSesion(): void {
 
-
-    // Limpia cualquier mensaje
-    // de error mostrado anteriormente.
+    // Limpia errores anteriores.
     this.mensajeError = '';
 
-
-    // Comprueba que el usuario
-    // haya escrito correo y contraseña.
+    // Valida que los campos tengan datos.
     if (
       !this.correo.trim() ||
       !this.contrasena.trim()
     ) {
-
-
-      // Muestra un mensaje si falta algún dato.
+      // Muestra el error.
       this.mensajeError =
         'Debe escribir el correo y la contraseña.';
 
-
-      // Fuerza la actualización del HTML
-      // para mostrar inmediatamente el mensaje.
+      // Actualiza la pantalla.
       this.detectorCambios.detectChanges();
 
-
-      // Detiene el método.
+      // Detiene el proceso.
       return;
     }
 
-
-    // Indica que comenzó
-    // el proceso de inicio de sesión.
+    // Activa el estado de carga.
     this.cargando = true;
 
-
-    // Actualiza el HTML
-    // para mostrar el estado de carga.
+    // Actualiza la pantalla.
     this.detectorCambios.detectChanges();
 
-
-    // Crea el objeto que se enviará
-    // hacia la API.
+    // Prepara los datos del login.
     const datosLogin = {
-
-
-      // Envía el correo sin espacios
-      // innecesarios al inicio o al final.
+      // Envía el correo sin espacios.
       correo: this.correo.trim(),
 
-
-      // Envía la contraseña escrita.
+      // Envía la contraseña.
       contrasena: this.contrasena
     };
 
-
-    // Utiliza HttpClient para realizar
-    // la petición hacia la API.
+    // Realiza la petición al backend.
     this.http
-
-
-      // Realiza una petición POST.
       .post<any>(
-
-
-        // Envía la petición al endpoint de Login.
         this.urlLogin,
-
-
-        // Envía los datos del usuario.
         datosLogin
       )
-
-
-      // Se suscribe para recibir
-      // la respuesta de la API.
       .subscribe({
 
-
-        // Se ejecuta cuando
-        // la API responde correctamente.
+        // Se ejecuta si el login funciona.
         next: (respuesta) => {
 
-
-          // Finaliza el estado de carga.
+          // Finaliza la carga.
           this.cargando = false;
 
-
-          // Comprueba que la respuesta
-          // realmente contenga un token.
+          // Verifica que exista token.
           if (!respuesta?.token) {
-
-
-            // Muestra un error
-            // si el token no fue recibido.
+            // Muestra un error.
             this.mensajeError =
               'No se pudo iniciar sesión.';
 
-
-            // Actualiza inmediatamente el HTML.
+            // Actualiza la pantalla.
             this.detectorCambios.detectChanges();
-
 
             // Detiene el proceso.
             return;
           }
 
-
-          // Guarda el token JWT
-          // dentro del navegador.
+          // Guarda el token.
           localStorage.setItem(
             'token',
             respuesta.token
           );
 
-
-          // Guarda el rol del usuario.
+          // Guarda el rol.
           localStorage.setItem(
             'rol',
             respuesta.rol
           );
 
-
-          // Comprueba que exista
-          // un identificador de usuario.
+          // Verifica que exista IdUsuario.
           if (respuesta.idUsuario) {
-
-
-            // Guarda el identificador
-            // convertido a texto.
+            // Guarda el identificador.
             localStorage.setItem(
               'idUsuario',
               respuesta.idUsuario.toString()
             );
           }
 
-
           // Guarda el nombre del usuario.
           localStorage.setItem(
             'nombreUsuario',
-
-
-            // Utiliza nombreCompleto si existe.
             respuesta.nombreCompleto ||
-
-
-            // Si no existe, utiliza nombre.
             respuesta.nombre ||
-
-
-            // Si tampoco existe,
-            // utiliza un valor predeterminado.
             'Usuario'
           );
 
-          // Guarda el correo utilizado para iniciar sesión.
+          // Guarda el correo.
           localStorage.setItem(
             'correoUsuario',
             this.correo.trim()
           );
 
-
-          // Guarda temporalmente
-          // el rol recibido de la API.
+          // Obtiene el rol recibido.
           const rol = respuesta.rol;
 
-
-          // Comprueba si el usuario
-          // tiene rol Administrador.
+          // Verifica si es Administrador.
           if (rol === 'Administrador') {
-
-
-            // Navega al Dashboard del Administrador.
+            // Abre el dashboard administrador.
             this.router.navigate([
               '/admin-dashboard'
             ]);
 
-
             // Detiene el método.
             return;
           }
 
-
-          // Comprueba si el usuario
-          // tiene rol Empleado.
+          // Verifica si es Empleado.
           if (rol === 'Empleado') {
-
-
-            // Navega al Dashboard del Empleado.
+            // Abre el dashboard empleado.
             this.router.navigate([
               '/empleado-dashboard'
             ]);
 
-
             // Detiene el método.
             return;
           }
 
-
-          // Comprueba si el usuario
-          // tiene rol Cliente.
+          // Verifica si es Cliente.
           if (rol === 'Cliente') {
-
-
-            // Navega al Dashboard del Cliente.
+            // Abre el dashboard cliente.
             this.router.navigate([
               '/dashboard'
             ]);
 
-
             // Detiene el método.
             return;
           }
 
-
-          // Si el rol recibido no corresponde
-          // a ninguno de los permitidos,
-          // elimina los datos de la sesión.
+          // Limpia la sesión si el rol no sirve.
           this.limpiarSesion();
 
-
-          // Muestra un mensaje de error.
+          // Muestra un error de rol.
           this.mensajeError =
             'El rol de esta cuenta no es válido.';
 
-
-          // Actualiza el HTML.
+          // Actualiza la pantalla.
           this.detectorCambios.detectChanges();
         },
 
-
-        // Se ejecuta cuando
-        // ocurre un error en la petición.
+        // Se ejecuta si ocurre un error.
         error: (error) => {
 
-
-          // Muestra el error completo
-          // en la consola para facilitar pruebas.
+          // Muestra el error en consola.
           console.error(
             'Error de login:',
             error
           );
 
-
-          // Finaliza el estado de carga.
+          // Finaliza la carga.
           this.cargando = false;
 
-
-          // Comprueba si el servidor
-          // respondió con error 401.
+          // Error por credenciales incorrectas.
           if (error.status === 401) {
-
-
-            // Indica que las credenciales son incorrectas.
-            this.mensajeError =
-              'El correo o la contraseña son incorrectos.';
-
-
-            // Comprueba si el servidor
-            // respondió con error 400.
-          } else if (error.status === 400) {
-
-
-            // Utiliza el mensaje enviado por la API
-            // si está disponible.
+            // Usa el mensaje del backend si existe.
             this.mensajeError =
               error.error?.mensaje ||
+              'El correo o la contraseña son incorrectos.';
+          }
 
-
-              // Si no existe un mensaje,
-              // utiliza este texto.
+          // Error por datos inválidos.
+          else if (error.status === 400) {
+            // Usa el mensaje enviado por la API.
+            this.mensajeError =
+              error.error?.mensaje ||
               'Revise el correo y la contraseña.';
+          }
 
-
-            // El código 0 generalmente indica
-            // que no fue posible conectarse con la API.
-          } else if (error.status === 0) {
-
-
-            // Muestra un mensaje indicando
-            // que debe verificarse la API.
+          // Error de conexión con la API.
+          else if (error.status === 0) {
+            // Informa que la API no responde.
             this.mensajeError =
               'No se pudo conectar con la API. Verifique que esté ejecutándose.';
+          }
 
-
-            // Se ejecuta para cualquier
-            // otro error recibido.
-          } else {
-
-
-            // Utiliza el mensaje de la API
-            // cuando esté disponible.
+          // Cualquier otro error.
+          else {
+            // Usa el mensaje del backend o uno general.
             this.mensajeError =
               error.error?.mensaje ||
-
-
-              // Utiliza un mensaje general
-              // cuando la API no envía uno.
               'Ocurrió un error al iniciar sesión.';
           }
 
-
-          // Fuerza a Angular a actualizar
-          // inmediatamente el contenido del HTML.
+          // Actualiza la pantalla.
           this.detectorCambios.detectChanges();
         }
       });
   }
 
-
-  // Elimina los datos relacionados
-  // con la sesión actual.
+  // Limpia los datos de sesión.
   private limpiarSesion(): void {
 
-
-    // Elimina el token JWT.
+    // Elimina el token.
     localStorage.removeItem('token');
 
-
-    // Elimina el rol guardado.
+    // Elimina el rol.
     localStorage.removeItem('rol');
 
-
-    // Elimina el identificador del usuario.
+    // Elimina el IdUsuario.
     localStorage.removeItem('idUsuario');
 
-
-    // Elimina el nombre del usuario.
+    // Elimina el nombre.
     localStorage.removeItem('nombreUsuario');
+
+    // Elimina el correo.
+    localStorage.removeItem('correoUsuario');
   }
 }

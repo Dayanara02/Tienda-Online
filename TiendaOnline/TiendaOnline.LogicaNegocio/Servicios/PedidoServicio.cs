@@ -1,9 +1,6 @@
 ﻿// Permite trabajar con Entity Framework Core.
 using Microsoft.EntityFrameworkCore;
 
-// Permite utilizar el nivel de aislamiento de la transacción.
-using System.Data;
-
 // Importa el contexto de la base de datos.
 using TiendaOnline.AccesoDatos.Context;
 
@@ -13,19 +10,19 @@ using TiendaOnline.Dominio.DTO;
 // Importa las entidades del proyecto.
 using TiendaOnline.Dominio.Entidades;
 
-// Importa la interfaz que implementa este servicio.
+// Importa la interfaz del servicio.
 using TiendaOnline.Dominio.InterfacesLN;
 
-// Define el espacio de nombres del servicio.
+// Define el espacio de nombres.
 namespace TiendaOnline.LogicaNegocio.Servicios;
 
-// Implementa la lógica de negocio relacionada con pedidos.
+// Implementa la creación de pedidos.
 public class PedidoServicio : IPedidoServicio
 {
-    // Guarda el contexto utilizado para acceder a la base de datos.
+    // Guarda el contexto de la base de datos.
     private readonly TiendaOnlineContext _context;
 
-    // Recibe el contexto por inyección de dependencias.
+    // Recibe el contexto.
     public PedidoServicio(
         TiendaOnlineContext context
     )
@@ -34,13 +31,13 @@ public class PedidoServicio : IPedidoServicio
         _context = context;
     }
 
-    // Crea un pedido nuevo para el cliente autenticado.
+    // Crea un nuevo pedido.
     public async Task<PedidoCreadoDto> CrearPedidoAsync(
         int idUsuario,
         PedidoCrearDto pedidoDto
     )
     {
-        // Comprueba que el usuario recibido sea válido.
+        // Valida el usuario.
         if (idUsuario <= 0)
         {
             throw new ArgumentException(
@@ -48,7 +45,7 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
-        // Comprueba que el pedido tenga productos.
+        // Comprueba que existan productos.
         if (
             pedidoDto.Detalles == null ||
             pedidoDto.Detalles.Count == 0
@@ -59,7 +56,7 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
-        // Comprueba que exista una dirección de entrega.
+        // Comprueba la dirección.
         if (
             string.IsNullOrWhiteSpace(
                 pedidoDto.DireccionEntrega
@@ -71,7 +68,7 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
-        // Comprueba que el usuario exista y esté activo.
+        // Comprueba que el usuario exista.
         var usuarioExiste =
             await _context.Usuarios
                 .AnyAsync(
@@ -80,7 +77,7 @@ public class PedidoServicio : IPedidoServicio
                         usuario.Estado
                 );
 
-        // Detiene el proceso si el usuario no es válido.
+        // Detiene si el usuario no existe.
         if (!usuarioExiste)
         {
             throw new KeyNotFoundException(
@@ -88,7 +85,7 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
-        // Agrupa productos repetidos y suma sus cantidades.
+        // Agrupa productos repetidos.
         var detallesAgrupados =
             pedidoDto.Detalles
                 .GroupBy(
@@ -99,11 +96,11 @@ public class PedidoServicio : IPedidoServicio
                     grupo =>
                         new DetallePedidoCrearDto
                         {
-                            // Guarda el producto agrupado.
+                            // Guarda el producto.
                             IdProducto =
                                 grupo.Key,
 
-                            // Suma todas sus cantidades.
+                            // Suma las cantidades.
                             Cantidad =
                                 grupo.Sum(
                                     detalle =>
@@ -117,7 +114,7 @@ public class PedidoServicio : IPedidoServicio
                 )
                 .ToList();
 
-        // Comprueba que todas las cantidades sean mayores que cero.
+        // Valida las cantidades.
         if (
             detallesAgrupados.Any(
                 detalle =>
@@ -130,34 +127,32 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
-        // Calcula la cantidad total de artículos del pedido.
+        // Calcula la cantidad total.
         var cantidadTotal =
             detallesAgrupados.Sum(
                 detalle =>
                     detalle.Cantidad
             );
 
-        // Obtiene y valida la promoción seleccionada.
+        // Obtiene la promoción seleccionada.
         var promocion =
             ObtenerPromocionPermitida(
                 pedidoDto.IdPromocion,
                 cantidadTotal
             );
 
-        // Obtiene el porcentaje autorizado por el backend.
+        // Obtiene el descuento.
         var porcentajeDescuento =
             promocion?.Porcentaje ?? 0;
 
-        // Inicia una transacción para proteger pedido e inventario.
+        // Inicia una transacción.
         await using var transaccion =
             await _context.Database
-                .BeginTransactionAsync(
-                    IsolationLevel.Serializable
-                );
+                .BeginTransactionAsync();
 
         try
         {
-            // Busca el estado Pendiente activo.
+            // Busca el estado Pendiente.
             var estadoPendiente =
                 await _context.EstadoPedidos
                     .FirstOrDefaultAsync(
@@ -166,7 +161,7 @@ public class PedidoServicio : IPedidoServicio
                             estado.Estado
                     );
 
-            // Comprueba que exista el estado necesario.
+            // Comprueba que exista.
             if (estadoPendiente == null)
             {
                 throw new InvalidOperationException(
@@ -174,32 +169,32 @@ public class PedidoServicio : IPedidoServicio
                 );
             }
 
-            // Acumula el subtotal completo del pedido.
+            // Acumula el subtotal.
             decimal subtotalPedido = 0;
 
-            // Acumula el impuesto completo del pedido.
+            // Acumula el impuesto.
             decimal impuestoPedido = 0;
 
-            // Acumula el descuento completo del pedido.
+            // Acumula el descuento.
             decimal descuentoPedido = 0;
 
-            // Guarda temporalmente los cálculos de cada producto.
+            // Guarda los cálculos de cada producto.
             var lineasCalculadas =
                 new List<LineaPedidoCalculada>();
 
-            // Recorre cada producto solicitado.
+            // Recorre los productos.
             foreach (
                 var detalleDto in detallesAgrupados
             )
             {
-                // Busca el producto activo en la base de datos.
+                // Busca el producto.
                 var producto =
                     await _context.Productos
 
-                        // La consulta del producto es solamente de lectura.
+                        // Solo lectura.
                         .AsNoTracking()
 
-                        // Busca el producto solicitado.
+                        // Busca producto activo.
                         .FirstOrDefaultAsync(
                             producto =>
                                 producto.IdProducto ==
@@ -207,7 +202,7 @@ public class PedidoServicio : IPedidoServicio
                                 producto.Estado
                         );
 
-                // Comprueba que el producto exista.
+                // Comprueba que exista.
                 if (producto == null)
                 {
                     throw new KeyNotFoundException(
@@ -216,9 +211,14 @@ public class PedidoServicio : IPedidoServicio
                     );
                 }
 
-                // Busca el inventario correspondiente al producto.
+                // Consulta el inventario actual.
                 var inventario =
                     await _context.Inventarios
+
+                        // Solo se consulta.
+                        .AsNoTracking()
+
+                        // Busca por producto.
                         .FirstOrDefaultAsync(
                             inventario =>
                                 inventario.IdProducto ==
@@ -234,7 +234,7 @@ public class PedidoServicio : IPedidoServicio
                     );
                 }
 
-                // Comprueba que exista suficiente inventario.
+                // Comprueba el stock actual.
                 if (
                     inventario.CantidadDisponible <
                     detalleDto.Cantidad
@@ -247,14 +247,18 @@ public class PedidoServicio : IPedidoServicio
                     );
                 }
 
-                // Busca el impuesto activo del producto.
+                // IMPORTANTE:
+                // Aquí NO se descuenta inventario.
+                // Se descontará cuando el pedido sea pagado.
+
+                // Busca el impuesto.
                 var impuesto =
                     await _context.Impuestos
 
-                        // La consulta es solamente de lectura.
+                        // Solo lectura.
                         .AsNoTracking()
 
-                        // Busca el impuesto asociado.
+                        // Busca el impuesto activo.
                         .FirstOrDefaultAsync(
                             impuesto =>
                                 impuesto.IdImpuesto ==
@@ -262,7 +266,7 @@ public class PedidoServicio : IPedidoServicio
                                 impuesto.Estado
                         );
 
-                // Comprueba que exista un impuesto válido.
+                // Comprueba el impuesto.
                 if (impuesto == null)
                 {
                     throw new InvalidOperationException(
@@ -271,7 +275,7 @@ public class PedidoServicio : IPedidoServicio
                     );
                 }
 
-                // Calcula precio por cantidad antes de descuentos.
+                // Calcula el subtotal.
                 var subtotalLinea =
                     Math.Round(
                         producto.Precio *
@@ -279,7 +283,7 @@ public class PedidoServicio : IPedidoServicio
                         2
                     );
 
-                // Calcula el descuento autorizado para esta línea.
+                // Calcula el descuento.
                 var descuentoLinea =
                     Math.Round(
                         subtotalLinea *
@@ -288,12 +292,12 @@ public class PedidoServicio : IPedidoServicio
                         2
                     );
 
-                // Obtiene la base después de restar el descuento.
+                // Calcula la base imponible.
                 var baseImponible =
                     subtotalLinea -
                     descuentoLinea;
 
-                // Calcula el impuesto después del descuento.
+                // Calcula el impuesto.
                 var impuestoLinea =
                     Math.Round(
                         baseImponible *
@@ -302,73 +306,71 @@ public class PedidoServicio : IPedidoServicio
                         2
                     );
 
-                // Suma el subtotal de esta línea.
+                // Suma el subtotal.
                 subtotalPedido +=
                     subtotalLinea;
 
-                // Suma el descuento de esta línea.
+                // Suma el descuento.
                 descuentoPedido +=
                     descuentoLinea;
 
-                // Suma el impuesto de esta línea.
+                // Suma el impuesto.
                 impuestoPedido +=
                     impuestoLinea;
 
-                // Guarda los cálculos para crear el detalle después.
+                // Guarda los cálculos.
                 lineasCalculadas.Add(
                     new LineaPedidoCalculada
                     {
-                        // Guarda el producto encontrado.
-                        Producto = producto,
+                        // Guarda el producto.
+                        Producto =
+                            producto,
 
-                        // Guarda su inventario.
-                        Inventario = inventario,
-
-                        // Guarda la cantidad comprada.
+                        // Guarda la cantidad.
                         Cantidad =
                             detalleDto.Cantidad,
 
-                        // Guarda el precio real de la base de datos.
+                        // Guarda el precio.
                         PrecioUnitario =
                             producto.Precio,
 
-                        // Guarda el subtotal calculado.
+                        // Guarda el subtotal.
                         Subtotal =
                             subtotalLinea,
 
-                        // Guarda el descuento calculado.
+                        // Guarda el descuento.
                         Descuento =
                             descuentoLinea,
 
-                        // Guarda el impuesto calculado.
+                        // Guarda el impuesto.
                         Impuesto =
                             impuestoLinea
                     }
                 );
             }
 
-            // Redondea el subtotal final.
+            // Redondea el subtotal.
             subtotalPedido =
                 Math.Round(
                     subtotalPedido,
                     2
                 );
 
-            // Redondea el descuento final.
+            // Redondea el descuento.
             descuentoPedido =
                 Math.Round(
                     descuentoPedido,
                     2
                 );
 
-            // Redondea el impuesto final.
+            // Redondea el impuesto.
             impuestoPedido =
                 Math.Round(
                     impuestoPedido,
                     2
                 );
 
-            // Calcula el monto final del pedido.
+            // Calcula el total.
             var totalPedido =
                 Math.Round(
                     subtotalPedido -
@@ -377,165 +379,121 @@ public class PedidoServicio : IPedidoServicio
                     2
                 );
 
-            // Crea el encabezado principal del pedido.
+            // Crea el pedido.
             var pedido =
                 new Pedido
                 {
-                    // Guarda el cliente propietario.
+                    // Guarda el cliente.
                     IdUsuario =
                         idUsuario,
 
-                    // Guarda la fecha actual.
+                    // Guarda la fecha.
                     FechaPedido =
                         DateTime.Now,
 
-                    // El pedido comienza Pendiente.
+                    // Inicia Pendiente.
                     Estado =
                         "Pendiente",
 
-                    // Guarda el subtotal calculado.
+                    // Guarda el subtotal.
                     Subtotal =
                         subtotalPedido,
 
-                    // Guarda el impuesto calculado.
+                    // Guarda el impuesto.
                     Impuesto =
                         impuestoPedido,
 
-                    // Guarda el descuento calculado.
+                    // Guarda el descuento.
                     Descuento =
                         descuentoPedido,
 
-                    // Guarda el total final.
+                    // Guarda el total.
                     Total =
                         totalPedido,
 
-                    // Guarda la dirección sin espacios sobrantes.
+                    // Guarda la dirección.
                     DireccionEntrega =
                         pedidoDto
                             .DireccionEntrega?
                             .Trim(),
 
-                    // Guarda el identificador del estado Pendiente.
+                    // Relaciona el estado.
                     IdEstadoPedido =
                         estadoPendiente
                             .IdEstadoPedido
                 };
 
-            // Agrega el pedido al contexto.
+            // Agrega el pedido.
             _context.Pedidos.Add(
                 pedido
             );
 
-            // Guarda para obtener el IdPedido generado.
+            // Guarda para obtener el id.
             await _context
                 .SaveChangesAsync();
 
-            // Recorre las líneas calculadas.
+            // Recorre los productos.
             foreach (
                 var linea in lineasCalculadas
             )
             {
-                // Crea el detalle correspondiente al producto.
+                // Crea el detalle.
                 var detallePedido =
                     new DetallePedido
                     {
-                        // Relaciona el detalle con el pedido.
+                        // Relaciona el pedido.
                         IdPedido =
                             pedido.IdPedido,
 
-                        // Guarda el producto comprado.
+                        // Relaciona el producto.
                         IdProducto =
                             linea.Producto
                                 .IdProducto,
 
-                        // Guarda la cantidad comprada.
+                        // Guarda la cantidad.
                         Cantidad =
                             linea.Cantidad,
 
-                        // Guarda el precio unitario real.
+                        // Guarda el precio.
                         PrecioUnitario =
                             linea.PrecioUnitario,
 
-                        // Guarda el descuento de esta línea.
+                        // Guarda el descuento.
                         Descuento =
                             linea.Descuento,
 
-                        // Guarda el impuesto de esta línea.
+                        // Guarda el impuesto.
                         Impuesto =
                             linea.Impuesto,
 
-                        // Guarda el subtotal de esta línea.
+                        // Guarda el subtotal.
                         Subtotal =
                             linea.Subtotal
                     };
 
-                // Agrega el detalle a la base de datos.
+                // Agrega el detalle.
                 _context.DetallePedidos.Add(
                     detallePedido
                 );
 
-                // Descuenta las unidades compradas del inventario.
-                linea.Inventario
-                    .CantidadDisponible -=
-                    linea.Cantidad;
-
-                // Actualiza la fecha del inventario.
-                linea.Inventario
-                    .FechaActualizacion =
-                    DateTime.Now;
-
-                // Crea el movimiento de salida del inventario.
-                var movimiento =
-                    new MovimientoInventario
-                    {
-                        // Relaciona el movimiento con el inventario.
-                        IdInventario =
-                            linea.Inventario
-                                .IdInventario,
-
-                        // Guarda el usuario que realizó la compra.
-                        IdUsuario =
-                            idUsuario,
-
-                        // Indica que las unidades están saliendo.
-                        TipoMovimiento =
-                            "Salida",
-
-                        // Guarda la cantidad retirada.
-                        Cantidad =
-                            linea.Cantidad,
-
-                        // Explica por qué cambió el inventario.
-                        Motivo =
-                            $"Venta del pedido #{pedido.IdPedido}",
-
-                        // Guarda la fecha del movimiento.
-                        FechaMovimiento =
-                            DateTime.Now
-                    };
-
-                // Registra el movimiento de inventario.
-                _context.MovimientoInventarios.Add(
-                    movimiento
-                );
             }
 
-            // Guarda detalles e inventario.
+            // Guarda los detalles.
             await _context
                 .SaveChangesAsync();
 
-            // Confirma todos los cambios de la transacción.
+            // Confirma la transacción.
             await transaccion
                 .CommitAsync();
 
-            // Devuelve la información del pedido creado.
+            // Devuelve el pedido creado.
             return new PedidoCreadoDto
             {
-                // Devuelve el identificador generado.
+                // Devuelve el id.
                 IdPedido =
                     pedido.IdPedido,
 
-                // Devuelve la fecha del pedido.
+                // Devuelve la fecha.
                 FechaPedido =
                     pedido.FechaPedido,
 
@@ -555,33 +513,33 @@ public class PedidoServicio : IPedidoServicio
                 Total =
                     pedido.Total,
 
-                // Devuelve el estado inicial.
+                // Devuelve el estado.
                 Estado =
                     pedido.Estado,
 
-                // Devuelve un mensaje de confirmación.
+                // Devuelve el mensaje.
                 Mensaje =
                     "Pedido creado correctamente."
             };
         }
         catch
         {
-            // Revierte todos los cambios si ocurre un error.
+            // Revierte los cambios.
             await transaccion
                 .RollbackAsync();
 
-            // Vuelve a lanzar el error para que la API lo maneje.
+            // Lanza nuevamente el error.
             throw;
         }
     }
 
-    // Valida la promoción elegida y devuelve sus reglas reales.
+    // Valida una promoción.
     private PromocionPermitida? ObtenerPromocionPermitida(
         int? idPromocion,
         int cantidadTotal
     )
     {
-        // No aplica descuento cuando no se seleccionó promoción.
+        // No aplica promoción.
         if (
             !idPromocion.HasValue ||
             idPromocion.Value == 0
@@ -590,11 +548,11 @@ public class PedidoServicio : IPedidoServicio
             return null;
         }
 
-        // Define las promociones autorizadas por el sistema.
+        // Define las promociones.
         var promociones =
             new List<PromocionPermitida>
             {
-                // Requiere 2 productos y aplica 5%.
+                // Promoción de 5%.
                 new PromocionPermitida
                 {
                     Id = 1,
@@ -603,7 +561,7 @@ public class PedidoServicio : IPedidoServicio
                     Porcentaje = 5
                 },
 
-                // Requiere 5 productos y aplica 10%.
+                // Promoción de 10%.
                 new PromocionPermitida
                 {
                     Id = 2,
@@ -612,7 +570,7 @@ public class PedidoServicio : IPedidoServicio
                     Porcentaje = 10
                 },
 
-                // Requiere 10 productos y aplica 15%.
+                // Promoción de 15%.
                 new PromocionPermitida
                 {
                     Id = 3,
@@ -621,7 +579,7 @@ public class PedidoServicio : IPedidoServicio
                     Porcentaje = 15
                 },
 
-                // Requiere 20 productos y aplica 20%.
+                // Promoción de 20%.
                 new PromocionPermitida
                 {
                     Id = 4,
@@ -630,7 +588,7 @@ public class PedidoServicio : IPedidoServicio
                     Porcentaje = 20
                 },
 
-                // Requiere 50 productos y aplica 30%.
+                // Promoción de 30%.
                 new PromocionPermitida
                 {
                     Id = 5,
@@ -640,7 +598,7 @@ public class PedidoServicio : IPedidoServicio
                 }
             };
 
-        // Busca la promoción enviada por Angular.
+        // Busca la promoción.
         var promocion =
             promociones.FirstOrDefault(
                 promocion =>
@@ -648,7 +606,7 @@ public class PedidoServicio : IPedidoServicio
                     idPromocion.Value
             );
 
-        // Rechaza identificadores de promociones inexistentes.
+        // Comprueba que exista.
         if (promocion == null)
         {
             throw new ArgumentException(
@@ -656,7 +614,7 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
-        // Comprueba que el pedido cumpla la cantidad mínima.
+        // Comprueba la cantidad mínima.
         if (
             cantidadTotal <
             promocion.CantidadMinima
@@ -668,14 +626,14 @@ public class PedidoServicio : IPedidoServicio
             );
         }
 
-        // Devuelve la promoción validada.
+        // Devuelve la promoción.
         return promocion;
     }
 
-    // Guarda temporalmente las reglas de una promoción.
+    // Guarda las reglas de promoción.
     private class PromocionPermitida
     {
-        // Guarda el identificador.
+        // Guarda el id.
         public int Id { get; set; }
 
         // Guarda el nombre.
@@ -685,25 +643,21 @@ public class PedidoServicio : IPedidoServicio
         // Guarda la cantidad mínima.
         public int CantidadMinima { get; set; }
 
-        // Guarda el porcentaje autorizado.
+        // Guarda el porcentaje.
         public decimal Porcentaje { get; set; }
     }
 
-    // Guarda temporalmente los cálculos de cada producto.
+    // Guarda cálculos de cada línea.
     private class LineaPedidoCalculada
     {
-        // Guarda el producto comprado.
+        // Guarda el producto.
         public Producto Producto { get; set; } =
             null!;
 
-        // Guarda el inventario relacionado.
-        public Inventario Inventario { get; set; } =
-            null!;
-
-        // Guarda la cantidad comprada.
+        // Guarda la cantidad.
         public int Cantidad { get; set; }
 
-        // Guarda el precio unitario.
+        // Guarda el precio.
         public decimal PrecioUnitario { get; set; }
 
         // Guarda el subtotal.

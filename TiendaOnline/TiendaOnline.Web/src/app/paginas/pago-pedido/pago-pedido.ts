@@ -1,48 +1,48 @@
-// Importa CommonModule para usar *ngIf, *ngFor y pipes.
+// Permite usar directivas comunes de Angular.
 import { CommonModule } from '@angular/common';
 
-// Importa las herramientas principales del componente.
+// Importa herramientas principales del componente.
 import {
   ChangeDetectorRef,
   Component
 } from '@angular/core';
 
-// Importa las herramientas para leer el id de la URL y navegar.
+// Permite leer parámetros de la URL y navegar.
 import {
   ActivatedRoute,
   Router
 } from '@angular/router';
 
-// Importa las herramientas necesarias para consultar la API.
+// Permite realizar peticiones HTTP.
 import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders
 } from '@angular/common/http';
 
-// Importa iconos de Angular Material.
+// Permite usar iconos de Angular Material.
 import { MatIconModule } from '@angular/material/icon';
 
-// Importa botones de Angular Material.
+// Permite usar botones de Angular Material.
 import { MatButtonModule } from '@angular/material/button';
 
-// Importa campos de texto de Angular Material.
+// Permite usar campos de texto.
 import { MatInputModule } from '@angular/material/input';
 
-// Importa formularios de Angular para utilizar ngModel.
+// Permite utilizar ngModel.
 import { FormsModule } from '@angular/forms';
 
-// Importa botones de PrimeNG.
+// Permite usar botones de PrimeNG.
 import { ButtonModule } from 'primeng/button';
 
-// Representa cada método de pago recibido desde la API.
+// Representa un método de pago.
 interface MetodoPago {
   idMetodoPago: number;
   nombre: string;
   descripcion: string | null;
 }
 
-// Representa la información necesaria del pedido.
+// Representa los datos del pedido.
 interface PedidoPago {
   idPedido: number;
   estado: string;
@@ -51,7 +51,7 @@ interface PedidoPago {
   puedePagar: boolean;
 }
 
-// Representa la respuesta enviada por el backend después del pago.
+// Representa la respuesta del pago.
 interface RespuestaPago {
   mensaje: string;
   idPedido: number;
@@ -64,14 +64,14 @@ interface RespuestaPago {
   fechaPago: string;
 }
 
-// Configura la pantalla de Pago de Pedido.
+// Configura la pantalla de pago.
 @Component({
   selector: 'app-pago-pedido',
 
-  // Indica que funciona como componente independiente.
+  // Indica que es independiente.
   standalone: true,
 
-  // Registra los módulos utilizados por el HTML.
+  // Módulos utilizados.
   imports: [
     CommonModule,
     FormsModule,
@@ -81,117 +81,119 @@ interface RespuestaPago {
     ButtonModule
   ],
 
-  // Define los archivos visuales del componente.
+  // Archivo HTML.
   templateUrl: './pago-pedido.html',
+
+  // Archivo CSS.
   styleUrl: './pago-pedido.css'
 })
 export class PagoPedido {
 
-  // Guarda el identificador recibido desde la URL.
+  // Guarda el id del pedido.
   idPedido = 0;
 
-  // Guarda la información del pedido.
+  // Guarda el pedido actual.
   pedido: PedidoPago | null = null;
 
-  // Guarda los métodos de pago permitidos.
+  // Guarda los métodos disponibles.
   metodosPago: MetodoPago[] = [];
 
-  // Guarda el identificador del método seleccionado.
+  // Guarda el método seleccionado.
   idMetodoPagoSeleccionado = 0;
 
-  // Guarda el nombre del método seleccionado.
+  // Guarda el nombre del método.
   nombreMetodoSeleccionado = '';
 
-  // Guarda el dinero que el cliente indica tener disponible.
+  // Guarda el dinero disponible.
   montoDisponible = 0;
 
-  // Guarda cuánto dinero hace falta.
+  // Guarda cuánto dinero falta.
   montoFaltante = 0;
 
-  // Guarda cuánto dinero quedaría después del pago.
+  // Guarda cuánto dinero sobra.
   saldoRestante = 0;
 
   // Indica si el saldo no alcanza.
   saldoInsuficiente = false;
 
-  // Guarda la cuenta utilizada para transferencia.
+  // Cuenta usada para transferencia.
   readonly cuentaTransferenciaEsencia =
     'CR00 0000 0000 0000 0000 00';
 
-  // Guarda la referencia de la transferencia.
+  // Guarda la referencia bancaria.
   referenciaTransferencia = '';
 
-  // Guarda el nombre del titular de la tarjeta.
+  // Guarda el titular de la tarjeta.
   nombreTarjeta = '';
 
-  // Guarda el número de la tarjeta.
+  // Guarda el número de tarjeta.
   numeroTarjeta = '';
 
-  // Guarda la fecha de vencimiento.
+  // Guarda la fecha MM/AA.
   vencimientoTarjeta = '';
 
-  // Guarda el código de seguridad.
+  // Guarda el CVV.
   cvvTarjeta = '';
 
-  // Indica si todavía se están cargando datos.
+  // Indica si está cargando.
   cargando = true;
 
-  // Indica si el pago está siendo procesado.
+  // Indica si está pagando.
   procesandoPago = false;
 
-  // Guarda mensajes de error.
+  // Guarda errores.
   mensajeError = '';
 
   // Guarda mensajes exitosos.
   mensajeExito = '';
 
-  // Guarda la dirección del controlador de Pedidos.
+  // Endpoint de pedidos.
   private readonly apiPedidos =
     'https://localhost:7196/api/Pedidos';
 
-  // Guarda la dirección del controlador de métodos de pago.
+  // Endpoint de métodos de pago.
   private readonly apiMetodoPagos =
     'https://localhost:7196/api/MetodoPagos';
 
-  // Guarda la dirección del controlador de Pagos.
+  // Endpoint de pagos.
   private readonly apiPagos =
     'https://localhost:7196/api/Pagos';
 
-  // Inyecta los servicios utilizados en la pantalla.
+  // Recibe los servicios necesarios.
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router,
     private changeDetector: ChangeDetectorRef
   ) {
-    // Obtiene el pedido al abrir la pantalla.
+    // Obtiene el pedido al abrir.
     this.obtenerIdPedido();
   }
 
-  // Obtiene el identificador del pedido desde la URL.
+  // Obtiene el id del pedido.
   obtenerIdPedido(): void {
-    // Lee el parámetro llamado id.
+
+    // Lee el parámetro id.
     const idTexto =
       this.route.snapshot.paramMap.get(
         'id'
       );
 
-    // Convierte el valor recibido a número.
+    // Convierte el id a número.
     this.idPedido =
       Number(idTexto);
 
-    // Comprueba que el identificador sea válido.
+    // Valida el identificador.
     if (
       !this.idPedido ||
       this.idPedido <= 0
     ) {
-      // Muestra un mensaje si el id es incorrecto.
+      // Muestra el error.
       this.mensajeError =
         'El pedido seleccionado no es válido.';
 
       // Finaliza la carga.
-      this.cargando =
-        false;
+      this.cargando = false;
 
       // Actualiza la pantalla.
       this.changeDetector.detectChanges();
@@ -203,56 +205,54 @@ export class PagoPedido {
     this.cargarPedido();
   }
 
-  // Obtiene los encabezados necesarios para la API.
+  // Crea los encabezados JWT.
   private obtenerHeaders():
     HttpHeaders | null {
 
-    // Obtiene el token JWT.
+    // Obtiene el token guardado.
     const token =
       localStorage.getItem(
         'token'
       );
 
-    // Devuelve null si no existe sesión.
+    // Comprueba que exista.
     if (!token) {
       return null;
     }
 
-    // Crea el encabezado Authorization.
+    // Devuelve Authorization.
     return new HttpHeaders({
       Authorization:
         `Bearer ${token}`
     });
   }
 
-  // Consulta el pedido que se desea pagar.
+  // Consulta el pedido.
   cargarPedido(): void {
-    // Activa el estado de carga.
-    this.cargando =
-      true;
 
-    // Limpia errores anteriores.
-    this.mensajeError =
-      '';
+    // Activa la carga.
+    this.cargando = true;
 
-    // Obtiene los encabezados.
+    // Limpia errores.
+    this.mensajeError = '';
+
+    // Obtiene los headers.
     const headers =
       this.obtenerHeaders();
 
-    // Comprueba que exista sesión.
+    // Comprueba la sesión.
     if (!headers) {
       this.mensajeError =
         'No existe una sesión activa.';
 
-      this.cargando =
-        false;
+      this.cargando = false;
 
       this.changeDetector.detectChanges();
 
       return;
     }
 
-    // Consulta el pedido seleccionado.
+    // Consulta el pedido.
     this.http.get<PedidoPago>(
       `${this.apiPedidos}/${this.idPedido}`,
       {
@@ -260,15 +260,16 @@ export class PagoPedido {
       }
     ).subscribe({
 
-      // Se ejecuta si la API responde correctamente.
+      // Se ejecuta si responde bien.
       next: (
         respuesta: PedidoPago
       ) => {
-        // Guarda la información del pedido.
+
+        // Guarda el pedido.
         this.pedido =
           respuesta;
 
-        // Comprueba que todavía pueda pagarse.
+        // Comprueba que pueda pagarse.
         if (!respuesta.puedePagar) {
           this.mensajeError =
             'Este pedido ya no se encuentra disponible para pago.';
@@ -281,39 +282,40 @@ export class PagoPedido {
           return;
         }
 
-        // Carga los métodos permitidos.
+        // Carga los métodos.
         this.cargarMetodosPago();
       },
 
-      // Se ejecuta si ocurre un error.
+      // Se ejecuta si falla.
       error: (
         error: HttpErrorResponse
       ) => {
-        // Muestra el error durante las pruebas.
+
+        // Muestra el error en consola.
         console.error(
           'Error al cargar el pedido:',
           error
         );
 
-        // Comprueba si la sesión no es válida.
+        // Sesión inválida.
         if (error.status === 401) {
           this.mensajeError =
             'La sesión no es válida. Inicia sesión nuevamente.';
         }
 
-        // Comprueba si no tiene permiso.
+        // Sin permiso.
         else if (error.status === 403) {
           this.mensajeError =
             'No tienes permiso para pagar este pedido.';
         }
 
-        // Comprueba si el pedido no existe.
+        // Pedido inexistente.
         else if (error.status === 404) {
           this.mensajeError =
             'El pedido no existe.';
         }
 
-        // Maneja cualquier otro error.
+        // Cualquier otro error.
         else {
           this.mensajeError =
             'No se pudo cargar la información del pedido.';
@@ -329,26 +331,26 @@ export class PagoPedido {
     });
   }
 
-  // Consulta los métodos de pago disponibles.
+  // Consulta los métodos de pago.
   cargarMetodosPago(): void {
-    // Obtiene los encabezados.
+
+    // Obtiene los headers.
     const headers =
       this.obtenerHeaders();
 
-    // Comprueba que exista sesión.
+    // Comprueba la sesión.
     if (!headers) {
       this.mensajeError =
         'No existe una sesión activa.';
 
-      this.cargando =
-        false;
+      this.cargando = false;
 
       this.changeDetector.detectChanges();
 
       return;
     }
 
-    // Consulta los métodos disponibles.
+    // Consulta los métodos.
     this.http.get<MetodoPago[]>(
       `${this.apiMetodoPagos}/disponibles`,
       {
@@ -356,19 +358,10 @@ export class PagoPedido {
       }
     ).subscribe({
 
-      // Guarda únicamente los métodos permitidos.
+      // Guarda los métodos recibidos.
       next: (
         respuesta: MetodoPago[]
       ) => {
-        // Elimina SINPE de la lista.
-        this.metodosPago =
-          (respuesta ?? [])
-            .filter(
-              metodo =>
-                !metodo.nombre
-                  .toLowerCase()
-                  .includes('sinpe')
-            );
 
         // Finaliza la carga.
         this.cargando =
@@ -378,11 +371,12 @@ export class PagoPedido {
         this.changeDetector.detectChanges();
       },
 
-      // Maneja errores de la consulta.
+      // Maneja errores.
       error: (
         error: HttpErrorResponse
       ) => {
-        // Muestra el error durante las pruebas.
+
+        // Muestra el error en consola.
         console.error(
           'Error al cargar métodos:',
           error
@@ -406,7 +400,8 @@ export class PagoPedido {
   seleccionarMetodo(
     metodo: MetodoPago
   ): void {
-    // Guarda el identificador.
+
+    // Guarda el id.
     this.idMetodoPagoSeleccionado =
       metodo.idMetodoPago;
 
@@ -414,24 +409,27 @@ export class PagoPedido {
     this.nombreMetodoSeleccionado =
       metodo.nombre;
 
-    // Limpia mensajes anteriores.
+    // Limpia errores.
     this.mensajeError =
       '';
 
-    // Reinicia la validación del saldo.
+    // Reinicia el saldo.
     this.saldoInsuficiente =
       false;
 
+    // Reinicia el faltante.
     this.montoFaltante =
       0;
 
+    // Reinicia el sobrante.
     this.saldoRestante =
       0;
   }
 
-  // Indica si el método seleccionado es transferencia.
+  // Comprueba si es transferencia.
   esTransferencia(): boolean {
-    // Busca la palabra transferencia en el nombre.
+
+    // Busca la palabra transferencia.
     return this.nombreMetodoSeleccionado
       .toLowerCase()
       .includes(
@@ -439,9 +437,10 @@ export class PagoPedido {
       );
   }
 
-  // Indica si el método seleccionado es tarjeta.
+  // Comprueba si es tarjeta.
   esTarjeta(): boolean {
-    // Busca la palabra tarjeta en el nombre.
+
+    // Busca la palabra tarjeta.
     return this.nombreMetodoSeleccionado
       .toLowerCase()
       .includes(
@@ -449,125 +448,135 @@ export class PagoPedido {
       );
   }
 
-  // Recibe el monto disponible escrito por el cliente.
+  // Cambia el monto disponible.
   cambiarMontoDisponible(
     event: Event
   ): void {
-    // Obtiene el campo que generó el evento.
+
+    // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
-    // Convierte el texto recibido a número.
+    // Convierte el valor.
     const valor =
       Number(input.value);
 
-    // Guarda cero si el valor no es válido.
+    // Guarda cero si falla.
     this.montoDisponible =
       isNaN(valor)
         ? 0
         : valor;
 
-    // Recalcula el saldo.
+    // Valida el saldo.
     this.validarFondos(
       false
     );
   }
 
-  // Guarda la referencia de la transferencia.
+  // Guarda la referencia.
   cambiarReferenciaTransferencia(
     event: Event
   ): void {
+
     // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
-    // Guarda el valor escrito.
+    // Guarda el valor.
     this.referenciaTransferencia =
       input.value;
   }
 
-  // Guarda el nombre del titular.
+  // Guarda el titular.
   cambiarNombreTarjeta(
     event: Event
   ): void {
+
     // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
-    // Guarda el valor escrito.
+    // Guarda el valor.
     this.nombreTarjeta =
       input.value;
   }
 
-  // Guarda el número de tarjeta.
+  // Guarda el número.
   cambiarNumeroTarjeta(
     event: Event
   ): void {
+
     // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
-    // Guarda el valor escrito.
+    // Guarda el valor.
     this.numeroTarjeta =
       input.value;
   }
 
-  // Guarda la fecha de vencimiento.
+  // Guarda el vencimiento.
   cambiarVencimientoTarjeta(
     event: Event
   ): void {
+
     // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
-    // Guarda el valor escrito.
+    // Guarda el valor.
     this.vencimientoTarjeta =
       input.value;
   }
 
-  // Guarda el código CVV.
+  // Guarda el CVV.
   cambiarCvvTarjeta(
     event: Event
   ): void {
+
     // Obtiene el input.
     const input =
       event.target as HTMLInputElement;
 
-    // Guarda el valor escrito.
+    // Guarda el valor.
     this.cvvTarjeta =
       input.value;
   }
 
-  // Devuelve el total del pedido de forma segura.
+  // Obtiene el total del pedido.
   obtenerTotalPedido(): number {
-    // Devuelve cero si todavía no existe pedido.
+
+    // Devuelve cero si no existe.
     return this.pedido?.total ?? 0;
   }
 
-  // Comprueba que el cliente indique saldo suficiente.
+  // Comprueba si el saldo alcanza.
   validarFondos(
     mostrarMensaje: boolean = true
   ): boolean {
-    // Obtiene el total real del pedido.
+
+    // Obtiene el total.
     const total =
       this.obtenerTotalPedido();
 
-    // No permite continuar si no existe un total válido.
+    // Comprueba el total.
     if (total <= 0) {
       return false;
     }
 
-    // Reinicia los resultados anteriores.
+    // Reinicia cálculos.
     this.montoFaltante =
       0;
 
+    // Reinicia sobrante.
     this.saldoRestante =
       0;
 
+    // Reinicia indicador.
     this.saldoInsuficiente =
       false;
 
-    // Comprueba que haya indicado un monto.
+    // Comprueba el monto.
     if (
       this.montoDisponible <= 0
     ) {
@@ -579,21 +588,22 @@ export class PagoPedido {
       return false;
     }
 
-    // Comprueba si el dinero no alcanza.
+    // Comprueba si falta dinero.
     if (
       this.montoDisponible <
       total
     ) {
-      // Calcula cuánto dinero hace falta.
+
+      // Calcula el faltante.
       this.montoFaltante =
         total -
         this.montoDisponible;
 
-      // Activa el indicador de saldo insuficiente.
+      // Activa el indicador.
       this.saldoInsuficiente =
         true;
 
-      // Muestra el mensaje si corresponde.
+      // Muestra el mensaje.
       if (mostrarMensaje) {
         this.mensajeError =
           'Pago no completado. No tienes suficiente saldo para realizar esta compra.';
@@ -602,12 +612,12 @@ export class PagoPedido {
       return false;
     }
 
-    // Calcula cuánto dinero quedaría disponible.
+    // Calcula el sobrante.
     this.saldoRestante =
       this.montoDisponible -
       total;
 
-    // Limpia el mensaje de saldo anterior.
+    // Limpia errores anteriores.
     if (
       this.mensajeError.includes(
         'suficiente saldo'
@@ -617,27 +627,31 @@ export class PagoPedido {
         '';
     }
 
+    // Indica que alcanza.
     return true;
   }
 
-  // Indica si el saldo disponible alcanza.
+  // Comprueba si el saldo alcanza.
   tieneFondosSuficientes(): boolean {
+
     // Obtiene el total.
     const total =
       this.obtenerTotalPedido();
 
-    // Comprueba el saldo.
+    // Compara el saldo.
     return (
       total > 0 &&
       this.montoDisponible >= total
     );
   }
 
-  // Valida los datos según el método seleccionado.
+  // Valida los datos del método.
   validarDatosMetodo(): boolean {
-    // Valida la transferencia bancaria.
+
+    // Valida transferencia.
     if (this.esTransferencia()) {
-      // Comprueba que exista una referencia.
+
+      // Comprueba la referencia.
       if (
         !this.referenciaTransferencia
           .trim()
@@ -649,9 +663,10 @@ export class PagoPedido {
       }
     }
 
-    // Valida los datos de tarjeta.
+    // Valida tarjeta.
     if (this.esTarjeta()) {
-      // Comprueba el nombre del titular.
+
+      // Comprueba el titular.
       if (
         !this.nombreTarjeta
           .trim()
@@ -662,7 +677,19 @@ export class PagoPedido {
         return false;
       }
 
-      // Elimina espacios del número de tarjeta.
+      // Comprueba que el nombre tenga solo letras y espacios.
+      if (
+        !/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$/.test(
+          this.nombreTarjeta.trim()
+        )
+      ) {
+        this.mensajeError =
+          'El nombre de la tarjeta solo puede contener letras.';
+
+        return false;
+      }
+
+      // Elimina espacios del número.
       const numeroLimpio =
         this.numeroTarjeta
           .replace(
@@ -670,7 +697,7 @@ export class PagoPedido {
             ''
           );
 
-      // Comprueba que tenga 16 dígitos.
+      // Comprueba los 16 dígitos.
       if (
         !/^\d{16}$/.test(
           numeroLimpio
@@ -694,7 +721,7 @@ export class PagoPedido {
         return false;
       }
 
-      // Comprueba que el mes sea válido.
+      // Obtiene el mes.
       const mes =
         Number(
           this.vencimientoTarjeta
@@ -704,7 +731,22 @@ export class PagoPedido {
             )
         );
 
-      // Evita meses fuera del rango permitido.
+      // Obtiene el año corto.
+      const anioCorto =
+        Number(
+          this.vencimientoTarjeta
+            .substring(
+              3,
+              5
+            )
+        );
+
+      // Convierte 26 en 2026.
+      const anio =
+        2000 +
+        anioCorto;
+
+      // Comprueba el rango del mes.
       if (
         mes < 1 ||
         mes > 12
@@ -715,7 +757,41 @@ export class PagoPedido {
         return false;
       }
 
-      // Comprueba el código CVV.
+      // Obtiene la fecha actual.
+      const fechaActual =
+        new Date();
+
+      // Obtiene el mes actual.
+      const mesActual =
+        fechaActual.getMonth() + 1;
+
+      // Obtiene el año actual.
+      const anioActual =
+        fechaActual.getFullYear();
+
+      // Comprueba si el año ya pasó.
+      if (
+        anio <
+        anioActual
+      ) {
+        this.mensajeError =
+          'La tarjeta está vencida.';
+
+        return false;
+      }
+
+      // Comprueba si el mes ya pasó.
+      if (
+        anio === anioActual &&
+        mes < mesActual
+      ) {
+        this.mensajeError =
+          'La tarjeta está vencida.';
+
+        return false;
+      }
+
+      // Comprueba el CVV.
       if (
         !/^\d{3,4}$/.test(
           this.cvvTarjeta
@@ -728,17 +804,19 @@ export class PagoPedido {
       }
     }
 
+    // Indica que los datos son válidos.
     return true;
   }
 
-  // Envía el pago hacia el backend.
+  // Envía el pago al backend.
   pagar(): void {
-    // Comprueba que exista el pedido.
+
+    // Comprueba que exista pedido.
     if (!this.pedido) {
       return;
     }
 
-    // Comprueba que se haya seleccionado un método.
+    // Comprueba el método.
     if (
       this.idMetodoPagoSeleccionado <= 0
     ) {
@@ -748,19 +826,7 @@ export class PagoPedido {
       return;
     }
 
-    // Comprueba nuevamente que no se haya seleccionado SINPE.
-    if (
-      this.nombreMetodoSeleccionado
-        .toLowerCase()
-        .includes('sinpe')
-    ) {
-      this.mensajeError =
-        'SINPE no se encuentra disponible como método de pago.';
-
-      return;
-    }
-
-    // Comprueba el saldo disponible.
+    // Comprueba el saldo.
     if (
       !this.validarFondos(
         true
@@ -769,23 +835,23 @@ export class PagoPedido {
       return;
     }
 
-    // Comprueba los datos del método seleccionado.
+    // Comprueba los datos.
     if (
       !this.validarDatosMetodo()
     ) {
       return;
     }
 
-    // Evita enviar el pago dos veces.
+    // Evita pagos dobles.
     if (this.procesandoPago) {
       return;
     }
 
-    // Obtiene los encabezados de autorización.
+    // Obtiene autorización.
     const headers =
       this.obtenerHeaders();
 
-    // Comprueba que exista sesión.
+    // Comprueba la sesión.
     if (!headers) {
       this.mensajeError =
         'No existe una sesión activa.';
@@ -797,25 +863,27 @@ export class PagoPedido {
     this.procesandoPago =
       true;
 
-    // Limpia mensajes anteriores.
+    // Limpia errores.
     this.mensajeError =
       '';
 
+    // Limpia mensajes exitosos.
     this.mensajeExito =
       '';
 
-    // Crea los datos que recibe el backend.
+    // Prepara el pago.
     const datosPago = {
-      // Envía el pedido seleccionado.
+
+      // Envía el pedido.
       idPedido:
         this.pedido.idPedido,
 
-      // Envía el método seleccionado.
+      // Envía el método.
       idMetodoPago:
         this.idMetodoPagoSeleccionado
     };
 
-    // Envía el pago al backend.
+    // Envía el pago.
     this.http.post<RespuestaPago>(
       `${this.apiPagos}/pagar`,
       datosPago,
@@ -824,28 +892,29 @@ export class PagoPedido {
       }
     ).subscribe({
 
-      // Se ejecuta cuando el pago es correcto.
+      // Se ejecuta si funciona.
       next: (
         respuesta: RespuestaPago
       ) => {
-        // Muestra la respuesta durante las pruebas.
+
+        // Muestra la respuesta.
         console.log(
           'Pago realizado:',
           respuesta
         );
 
-        // Informa que el pago fue realizado.
+        // Muestra éxito.
         this.mensajeExito =
           'Pago realizado correctamente.';
 
-        // Finaliza el procesamiento.
+        // Finaliza el proceso.
         this.procesandoPago =
           false;
 
         // Actualiza la pantalla.
         this.changeDetector.detectChanges();
 
-        // Regresa al detalle después de mostrar el mensaje.
+        // Regresa al pedido.
         setTimeout(
           () => {
             this.router.navigate([
@@ -857,17 +926,18 @@ export class PagoPedido {
         );
       },
 
-      // Se ejecuta cuando ocurre un error.
+      // Se ejecuta si falla.
       error: (
         error: HttpErrorResponse
       ) => {
-        // Muestra el error durante las pruebas.
+
+        // Muestra el error.
         console.error(
           'Error al realizar el pago:',
           error
         );
 
-        // Utiliza el mensaje enviado por la API.
+        // Comprueba texto simple.
         if (
           typeof error.error ===
           'string' &&
@@ -877,7 +947,7 @@ export class PagoPedido {
             error.error;
         }
 
-        // Utiliza el campo mensaje si existe.
+        // Comprueba campo mensaje.
         else if (
           error.error?.mensaje
         ) {
@@ -885,13 +955,13 @@ export class PagoPedido {
             error.error.mensaje;
         }
 
-        // Utiliza un mensaje general.
+        // Usa un mensaje general.
         else {
           this.mensajeError =
             'No se pudo completar el pago.';
         }
 
-        // Finaliza el procesamiento.
+        // Finaliza el proceso.
         this.procesandoPago =
           false;
 
@@ -901,9 +971,10 @@ export class PagoPedido {
     });
   }
 
-  // Regresa al detalle del pedido sin realizar el pago.
+  // Cancela y vuelve al pedido.
   cancelar(): void {
-    // Navega al detalle del pedido actual.
+
+    // Regresa al detalle.
     this.router.navigate([
       '/detalle-pedido',
       this.idPedido
