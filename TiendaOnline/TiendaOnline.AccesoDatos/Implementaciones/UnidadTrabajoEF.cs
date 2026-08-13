@@ -1,160 +1,137 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore;
-using TiendaOnline.AccesoDatos.Context;
-using TiendaOnline.Dominio.Entidades;
-using TiendaOnline.Dominio.InterfacesAD;
+﻿using Microsoft.EntityFrameworkCore.Storage; // Permite trabajar con transacciones de Entity Framework.
+using Microsoft.EntityFrameworkCore; // Permite utilizar Entity Framework Core.
+using TiendaOnline.AccesoDatos.Context; // Contiene el contexto de la base de datos.
+using TiendaOnline.Dominio.Entidades; // Contiene las entidades utilizadas por el sistema.
+using TiendaOnline.Dominio.InterfacesAD; // Contiene la interfaz de la unidad de trabajo.
 
 namespace TiendaOnline.AccesoDatos.Implementaciones
 {
-    // Esta clase implementa la interfaz IUnidadTrabajoEF.
-    // Su función principal es centralizar el acceso a los diferentes repositorios
-    // y permitir que todos trabajen utilizando el mismo contexto de Entity Framework.
+    // Clase encargada de centralizar los repositorios y las operaciones de la base de datos.
     public class UnidadTrabajoEF : IUnidadTrabajoEF
     {
-        // Este region sirve solamente para ordenar visualmente el código.
-        // Dentro se colocan las variables que utiliza la clase.
+        // Sección donde se declaran los atributos de la clase.
         #region Atributos y variables
 
-        // Guarda el contexto principal de Entity Framework.
-        // Este contexto representa la conexión y las tablas de la base de datos TiendaOnline.
+        // Contiene el contexto utilizado para acceder a la base de datos.
         private TiendaOnlineContext _Contexto { get; set; }
 
-        // Guarda una transacción activa de la base de datos.
-        // Sirve para poder confirmar varios cambios juntos o devolverlos si algo falla.
+        // Guarda la transacción activa de la base de datos.
         private IDbContextTransaction? _transaction;
 
-        // Cada una de estas variables almacenará un repositorio específico.
-        // Al principio están vacías y se crean solamente cuando se necesitan.
-
-        // Repositorio utilizado para trabajar con los usuarios.
+        // Guarda el repositorio de usuarios cuando es utilizado.
         private RepositorioAD<Usuario>? _TUsuario;
 
-        // Repositorio utilizado para trabajar con los roles.
+        // Guarda el repositorio de roles cuando es utilizado.
         private RepositorioAD<Rol>? _TRol;
 
-        // Repositorio utilizado para trabajar con los productos.
+        // Guarda el repositorio de productos cuando es utilizado.
         private RepositorioAD<Producto>? _TProducto;
 
-        // Repositorio utilizado para trabajar con las categorías.
+        // Guarda el repositorio de categorías cuando es utilizado.
         private RepositorioAD<Categorium>? _TCategoria;
 
-        // Repositorio utilizado para trabajar con los pedidos.
+        // Guarda el repositorio de pedidos cuando es utilizado.
         private RepositorioAD<Pedido>? _TPedido;
 
-        // Repositorio utilizado para trabajar con los detalles de cada pedido.
+        // Guarda el repositorio de detalles de pedidos cuando es utilizado.
         private RepositorioAD<DetallePedido>? _TDetallePedido;
 
-        // Repositorio utilizado para trabajar con el inventario.
+        // Guarda el repositorio del inventario cuando es utilizado.
         private RepositorioAD<Inventario>? _TInventario;
 
-        // Repositorio utilizado para registrar entradas, salidas
-        // y demás movimientos realizados en el inventario.
+        // Guarda el repositorio de movimientos de inventario cuando es utilizado.
         private RepositorioAD<MovimientoInventario>? _TMovimientoInventario;
 
-        // Repositorio utilizado para trabajar con descuentos.
+        // Guarda el repositorio de descuentos cuando es utilizado.
         private RepositorioAD<Descuento>? _TDescuento;
 
-        // Repositorio utilizado para trabajar con proveedores.
+        // Guarda el repositorio de proveedores cuando es utilizado.
         private RepositorioAD<Proveedor>? _TProveedor;
 
-        // Repositorio utilizado para trabajar con la relación
-        // entre los productos y sus proveedores.
+        // Guarda el repositorio de productos relacionados con proveedores.
         private RepositorioAD<ProductoProveedor>? _TProductoProveedor;
 
-        // Repositorio utilizado para trabajar con los carritos de compra.
+        // Guarda el repositorio de carritos de compra.
         private RepositorioAD<Carrito>? _TCarrito;
 
-        // Repositorio utilizado para trabajar con los productos
-        // agregados dentro de cada carrito.
+        // Guarda el repositorio de detalles de los carritos.
         private RepositorioAD<DetalleCarrito>? _TDetalleCarrito;
 
-        // Repositorio utilizado para trabajar con las listas de deseos.
+        // Guarda el repositorio de listas de deseos.
         private RepositorioAD<ListaDeseo>? _TListaDeseo;
 
-        // Repositorio utilizado para trabajar con los productos
-        // guardados dentro de una lista de deseos.
+        // Guarda el repositorio de detalles de las listas de deseos.
         private RepositorioAD<DetalleListaDeseo>? _TDetalleListaDeseo;
 
-        // Repositorio utilizado para trabajar con los métodos de pago.
+        // Guarda el repositorio de métodos de pago.
         private RepositorioAD<MetodoPago>? _TMetodoPago;
 
-        // Repositorio utilizado para trabajar con los pagos realizados.
+        // Guarda el repositorio de pagos.
         private RepositorioAD<Pago>? _TPago;
 
-        // Repositorio utilizado para trabajar con los estados de los pagos.
+        // Guarda el repositorio de estados de pago.
         private RepositorioAD<EstadoPago>? _TEstadoPago;
 
-        // Repositorio utilizado para trabajar con los estados de los pedidos.
+        // Guarda el repositorio de estados de pedido.
         private RepositorioAD<EstadoPedido>? _TEstadoPedido;
 
-        // Repositorio utilizado para trabajar con los envíos.
+        // Guarda el repositorio de envíos.
         private RepositorioAD<Envio>? _TEnvio;
 
-        // Repositorio utilizado para trabajar con las direcciones de los usuarios.
+        // Guarda el repositorio de direcciones de usuarios.
         private RepositorioAD<DireccionUsuario>? _TDireccionUsuario;
 
-        // Repositorio utilizado para trabajar con las facturas.
+        // Guarda el repositorio de facturas.
         private RepositorioAD<Factura>? _TFactura;
 
-        // Repositorio utilizado para trabajar con las evaluaciones
-        // o calificaciones realizadas a los productos.
+        // Guarda el repositorio de evaluaciones de productos.
         private RepositorioAD<EvaluacionProducto>? _TEvaluacionProducto;
 
-        // Repositorio utilizado para trabajar con los impuestos.
+        // Guarda el repositorio de impuestos.
         private RepositorioAD<Impuesto>? _TImpuesto;
 
-        // Repositorio utilizado para trabajar con las familias de productos.
+        // Guarda el repositorio de familias de productos.
         private RepositorioAD<FamiliaProducto>? _TFamiliaProducto;
 
-        // Repositorio utilizado para trabajar con las compras hechas a proveedores.
+        // Guarda el repositorio de compras realizadas a proveedores.
         private RepositorioAD<CompraProveedor>? _TCompraProveedor;
 
-        // Repositorio utilizado para trabajar con los productos
-        // incluidos dentro de cada compra a proveedor.
+        // Guarda el repositorio de detalles de compras a proveedores.
         private RepositorioAD<DetalleCompraProveedor>? _TDetalleCompraProveedor;
 
-        // Repositorio utilizado para trabajar con las proformas.
+        // Guarda el repositorio de proformas.
         private RepositorioAD<Proforma>? _TProforma;
 
-        // Repositorio utilizado para trabajar con el detalle de las proformas.
+        // Guarda el repositorio de detalles de las proformas.
         private RepositorioAD<DetalleProforma>? _TDetalleProforma;
 
-        // Repositorio utilizado para trabajar con las notificaciones.
+        // Guarda el repositorio de notificaciones.
         private RepositorioAD<Notificacion>? _TNotificacion;
 
-        // Repositorio utilizado para guardar y consultar
-        // los accesos realizados por los usuarios.
+        // Guarda el repositorio del historial de accesos.
         private RepositorioAD<HistorialAcceso>? _THistorialAcceso;
 
-        // Repositorio utilizado para trabajar con la bitácora del sistema.
+        // Guarda el repositorio de la bitácora del sistema.
         private RepositorioAD<BitacoraSistema>? _TBitacoraSistema;
 
-        // Finaliza la sección visual de atributos y variables.
         #endregion
 
-
-        // Esta sección contiene el constructor de la clase.
+        // Sección donde se encuentra el constructor de la clase.
         #region Constructor
 
-        // El constructor recibe TiendaOnlineContext mediante inyección de dependencias.
-        // Esto permite que UnidadTrabajoEF utilice el contexto que ya fue configurado
-        // con la conexión hacia la base de datos.
+        // Constructor que recibe el contexto mediante inyección de dependencias.
         public UnidadTrabajoEF(TiendaOnlineContext contexto)
         {
-            // Guarda el contexto recibido dentro de la variable _Contexto.
-            // Así se puede utilizar posteriormente en todos los repositorios.
+            // Guarda el contexto recibido para utilizarlo en los repositorios.
             _Contexto = contexto;
         }
 
-        // Finaliza la sección visual del constructor.
         #endregion
 
-
-        // Esta sección contiene las propiedades que permiten obtener cada repositorio.
+        // Sección donde se encuentran las propiedades de los repositorios.
         #region Repositorios
 
-
-        // Esta propiedad permite acceder al repositorio de usuarios.
+        // Permite acceder al repositorio de usuarios.
         public IRepositorioAD<Usuario> TUsuario
         {
             get
@@ -162,25 +139,24 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
                 // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TUsuario == null)
                 {
-                    // Crea un repositorio para Usuario utilizando el mismo contexto.
+                    // Crea el repositorio de usuarios utilizando el contexto actual.
                     _TUsuario = new RepositorioAD<Usuario>(_Contexto);
                 }
 
-                // Devuelve el repositorio para poder realizar operaciones con usuarios.
+                // Devuelve el repositorio de usuarios.
                 return _TUsuario;
             }
         }
 
-
-        // Esta propiedad permite acceder al repositorio de roles.
+        // Permite acceder al repositorio de roles.
         public IRepositorioAD<Rol> TRol
         {
             get
             {
-                // Solo crea el repositorio si todavía no existe.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TRol == null)
                 {
-                    // Crea un repositorio genérico preparado para trabajar con Rol.
+                    // Crea el repositorio de roles utilizando el contexto actual.
                     _TRol = new RepositorioAD<Rol>(_Contexto);
                 }
 
@@ -189,34 +165,32 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite acceder al repositorio de productos.
+        // Permite acceder al repositorio de productos.
         public IRepositorioAD<Producto> TProducto
         {
             get
             {
-                // Revisa si todavía no existe una instancia del repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TProducto == null)
                 {
                     // Crea el repositorio de productos utilizando el contexto actual.
                     _TProducto = new RepositorioAD<Producto>(_Contexto);
                 }
 
-                // Devuelve el repositorio para trabajar con productos.
+                // Devuelve el repositorio de productos.
                 return _TProducto;
             }
         }
 
-
-        // Esta propiedad permite acceder al repositorio de categorías.
+        // Permite acceder al repositorio de categorías.
         public IRepositorioAD<Categorium> TCategoria
         {
             get
             {
-                // Verifica si el repositorio todavía no ha sido creado.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TCategoria == null)
                 {
-                    // Crea un repositorio preparado para trabajar con Categorium.
+                    // Crea el repositorio de categorías utilizando el contexto actual.
                     _TCategoria = new RepositorioAD<Categorium>(_Contexto);
                 }
 
@@ -225,16 +199,15 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite acceder al repositorio de pedidos.
+        // Permite acceder al repositorio de pedidos.
         public IRepositorioAD<Pedido> TPedido
         {
             get
             {
-                // Comprueba si el repositorio de pedidos todavía está vacío.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TPedido == null)
                 {
-                    // Crea un repositorio utilizando la entidad Pedido.
+                    // Crea el repositorio de pedidos utilizando el contexto actual.
                     _TPedido = new RepositorioAD<Pedido>(_Contexto);
                 }
 
@@ -243,18 +216,16 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite acceder a los detalles de los pedidos.
+        // Permite acceder al repositorio de detalles de pedidos.
         public IRepositorioAD<DetallePedido> TDetallePedido
         {
             get
             {
-                // Comprueba si el repositorio todavía no existe.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TDetallePedido == null)
                 {
-                    // Crea un repositorio para trabajar con DetallePedido.
-                    _TDetallePedido =
-                        new RepositorioAD<DetallePedido>(_Contexto);
+                    // Crea el repositorio de detalles de pedidos.
+                    _TDetallePedido = new RepositorioAD<DetallePedido>(_Contexto);
                 }
 
                 // Devuelve el repositorio de detalles de pedidos.
@@ -262,18 +233,16 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite acceder al repositorio del inventario.
+        // Permite acceder al repositorio del inventario.
         public IRepositorioAD<Inventario> TInventario
         {
             get
             {
-                // Verifica si todavía no se ha creado el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TInventario == null)
                 {
-                    // Crea el repositorio para trabajar con el inventario.
-                    _TInventario =
-                        new RepositorioAD<Inventario>(_Contexto);
+                    // Crea el repositorio del inventario.
+                    _TInventario = new RepositorioAD<Inventario>(_Contexto);
                 }
 
                 // Devuelve el repositorio del inventario.
@@ -281,37 +250,34 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite trabajar con los movimientos del inventario.
+        // Permite acceder al repositorio de movimientos de inventario.
         public IRepositorioAD<MovimientoInventario> TMovimientoInventario
         {
             get
             {
-                // Comprueba si todavía no existe un repositorio para los movimientos.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TMovimientoInventario == null)
                 {
-                    // Crea el repositorio utilizando la entidad MovimientoInventario.
+                    // Crea el repositorio de movimientos de inventario.
                     _TMovimientoInventario =
                         new RepositorioAD<MovimientoInventario>(_Contexto);
                 }
 
-                // Devuelve el repositorio de movimientos de inventario.
+                // Devuelve el repositorio de movimientos.
                 return _TMovimientoInventario;
             }
         }
 
-
-        // Esta propiedad permite acceder a los descuentos.
+        // Permite acceder al repositorio de descuentos.
         public IRepositorioAD<Descuento> TDescuento
         {
             get
             {
-                // Verifica si el repositorio todavía no existe.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TDescuento == null)
                 {
-                    // Crea el repositorio para trabajar con los descuentos.
-                    _TDescuento =
-                        new RepositorioAD<Descuento>(_Contexto);
+                    // Crea el repositorio de descuentos.
+                    _TDescuento = new RepositorioAD<Descuento>(_Contexto);
                 }
 
                 // Devuelve el repositorio de descuentos.
@@ -319,8 +285,7 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite acceder a los proveedores.
+        // Permite acceder al repositorio de proveedores.
         public IRepositorioAD<Proveedor> TProveedor
         {
             get
@@ -328,9 +293,8 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
                 // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TProveedor == null)
                 {
-                    // Crea un repositorio para trabajar con proveedores.
-                    _TProveedor =
-                        new RepositorioAD<Proveedor>(_Contexto);
+                    // Crea el repositorio de proveedores.
+                    _TProveedor = new RepositorioAD<Proveedor>(_Contexto);
                 }
 
                 // Devuelve el repositorio de proveedores.
@@ -338,37 +302,34 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad maneja la relación entre productos y proveedores.
+        // Permite acceder al repositorio de relación entre productos y proveedores.
         public IRepositorioAD<ProductoProveedor> TProductoProveedor
         {
             get
             {
-                // Verifica si todavía no existe un repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TProductoProveedor == null)
                 {
-                    // Crea el repositorio usando la entidad ProductoProveedor.
+                    // Crea el repositorio de productos y proveedores.
                     _TProductoProveedor =
                         new RepositorioAD<ProductoProveedor>(_Contexto);
                 }
 
-                // Devuelve el repositorio de la relación producto-proveedor.
+                // Devuelve el repositorio correspondiente.
                 return _TProductoProveedor;
             }
         }
 
-
-        // Esta propiedad permite acceder a los carritos de compra.
+        // Permite acceder al repositorio de carritos.
         public IRepositorioAD<Carrito> TCarrito
         {
             get
             {
-                // Comprueba si todavía no se ha creado el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TCarrito == null)
                 {
-                    // Crea un repositorio para trabajar con los carritos.
-                    _TCarrito =
-                        new RepositorioAD<Carrito>(_Contexto);
+                    // Crea el repositorio de carritos.
+                    _TCarrito = new RepositorioAD<Carrito>(_Contexto);
                 }
 
                 // Devuelve el repositorio de carritos.
@@ -376,51 +337,47 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite acceder a los detalles del carrito.
+        // Permite acceder al repositorio de detalles de carritos.
         public IRepositorioAD<DetalleCarrito> TDetalleCarrito
         {
             get
             {
-                // Verifica si todavía no existe un repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TDetalleCarrito == null)
                 {
-                    // Crea el repositorio para trabajar con DetalleCarrito.
+                    // Crea el repositorio de detalles de carritos.
                     _TDetalleCarrito =
                         new RepositorioAD<DetalleCarrito>(_Contexto);
                 }
 
-                // Devuelve el repositorio de detalles del carrito.
+                // Devuelve el repositorio correspondiente.
                 return _TDetalleCarrito;
             }
         }
 
-
-        // Esta propiedad permite trabajar con las listas de deseos.
+        // Permite acceder al repositorio de listas de deseos.
         public IRepositorioAD<ListaDeseo> TListaDeseo
         {
             get
             {
-                // Revisa si el repositorio todavía no ha sido creado.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TListaDeseo == null)
                 {
                     // Crea el repositorio de listas de deseos.
-                    _TListaDeseo =
-                        new RepositorioAD<ListaDeseo>(_Contexto);
+                    _TListaDeseo = new RepositorioAD<ListaDeseo>(_Contexto);
                 }
 
-                // Devuelve el repositorio de listas de deseos.
+                // Devuelve el repositorio correspondiente.
                 return _TListaDeseo;
             }
         }
 
-
-        // Esta propiedad permite acceder a los productos guardados en listas de deseos.
+        // Permite acceder al repositorio de detalles de listas de deseos.
         public IRepositorioAD<DetalleListaDeseo> TDetalleListaDeseo
         {
             get
             {
-                // Comprueba si el repositorio todavía no existe.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TDetalleListaDeseo == null)
                 {
                     // Crea el repositorio de detalles de listas de deseos.
@@ -433,84 +390,75 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite acceder a los métodos de pago.
+        // Permite acceder al repositorio de métodos de pago.
         public IRepositorioAD<MetodoPago> TMetodoPago
         {
             get
             {
-                // Comprueba si todavía no existe el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TMetodoPago == null)
                 {
-                    // Crea un repositorio para trabajar con MetodoPago.
-                    _TMetodoPago =
-                        new RepositorioAD<MetodoPago>(_Contexto);
+                    // Crea el repositorio de métodos de pago.
+                    _TMetodoPago = new RepositorioAD<MetodoPago>(_Contexto);
                 }
 
-                // Devuelve el repositorio de métodos de pago.
+                // Devuelve el repositorio correspondiente.
                 return _TMetodoPago;
             }
         }
 
-
-        // Esta propiedad permite acceder a los pagos realizados.
+        // Permite acceder al repositorio de pagos.
         public IRepositorioAD<Pago> TPago
         {
             get
             {
-                // Comprueba si todavía no se ha creado el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TPago == null)
                 {
-                    // Crea un repositorio para trabajar con Pago.
-                    _TPago =
-                        new RepositorioAD<Pago>(_Contexto);
+                    // Crea el repositorio de pagos.
+                    _TPago = new RepositorioAD<Pago>(_Contexto);
                 }
 
-                // Devuelve el repositorio de pagos.
+                // Devuelve el repositorio correspondiente.
                 return _TPago;
             }
         }
 
-
-        // Esta propiedad permite trabajar con los estados de pago.
+        // Permite acceder al repositorio de estados de pago.
         public IRepositorioAD<EstadoPago> TEstadoPago
         {
             get
             {
-                // Verifica si el repositorio todavía está vacío.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TEstadoPago == null)
                 {
-                    // Crea un repositorio para trabajar con EstadoPago.
-                    _TEstadoPago =
-                        new RepositorioAD<EstadoPago>(_Contexto);
+                    // Crea el repositorio de estados de pago.
+                    _TEstadoPago = new RepositorioAD<EstadoPago>(_Contexto);
                 }
 
-                // Devuelve el repositorio de estados de pago.
+                // Devuelve el repositorio correspondiente.
                 return _TEstadoPago;
             }
         }
 
-
-        // Esta propiedad permite trabajar con los estados de los pedidos.
+        // Permite acceder al repositorio de estados de pedido.
         public IRepositorioAD<EstadoPedido> TEstadoPedido
         {
             get
             {
-                // Comprueba si el repositorio todavía no existe.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TEstadoPedido == null)
                 {
-                    // Crea un repositorio para trabajar con EstadoPedido.
-                    _TEstadoPedido =
-                        new RepositorioAD<EstadoPedido>(_Contexto);
+                    // Crea el repositorio de estados de pedido.
+                    _TEstadoPedido = new RepositorioAD<EstadoPedido>(_Contexto);
                 }
 
-                // Devuelve el repositorio de estados de pedido.
+                // Devuelve el repositorio correspondiente.
                 return _TEstadoPedido;
             }
         }
 
-
-        // Esta propiedad permite trabajar con los envíos.
+        // Permite acceder al repositorio de envíos.
         public IRepositorioAD<Envio> TEnvio
         {
             get
@@ -518,94 +466,86 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
                 // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TEnvio == null)
                 {
-                    // Crea un repositorio para trabajar con la entidad Envio.
-                    _TEnvio =
-                        new RepositorioAD<Envio>(_Contexto);
+                    // Crea el repositorio de envíos.
+                    _TEnvio = new RepositorioAD<Envio>(_Contexto);
                 }
 
-                // Devuelve el repositorio de envíos.
+                // Devuelve el repositorio correspondiente.
                 return _TEnvio;
             }
         }
 
-
-        // Esta propiedad permite trabajar con las direcciones de los usuarios.
+        // Permite acceder al repositorio de direcciones de usuarios.
         public IRepositorioAD<DireccionUsuario> TDireccionUsuario
         {
             get
             {
-                // Verifica si el repositorio todavía no existe.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TDireccionUsuario == null)
                 {
-                    // Crea el repositorio para trabajar con DireccionUsuario.
+                    // Crea el repositorio de direcciones.
                     _TDireccionUsuario =
                         new RepositorioAD<DireccionUsuario>(_Contexto);
                 }
 
-                // Devuelve el repositorio de direcciones.
+                // Devuelve el repositorio correspondiente.
                 return _TDireccionUsuario;
             }
         }
 
-
-        // Esta propiedad permite acceder a las facturas.
+        // Permite acceder al repositorio de facturas.
         public IRepositorioAD<Factura> TFactura
         {
             get
             {
-                // Comprueba si todavía no se ha creado el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TFactura == null)
                 {
-                    // Crea un repositorio preparado para trabajar con Factura.
-                    _TFactura =
-                        new RepositorioAD<Factura>(_Contexto);
+                    // Crea el repositorio de facturas.
+                    _TFactura = new RepositorioAD<Factura>(_Contexto);
                 }
 
-                // Devuelve el repositorio de facturas.
+                // Devuelve el repositorio correspondiente.
                 return _TFactura;
             }
         }
 
-
-        // Esta propiedad permite trabajar con evaluaciones de productos.
+        // Permite acceder al repositorio de evaluaciones de productos.
         public IRepositorioAD<EvaluacionProducto> TEvaluacionProducto
         {
             get
             {
-                // Comprueba si todavía no existe el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TEvaluacionProducto == null)
                 {
-                    // Crea el repositorio para trabajar con EvaluacionProducto.
+                    // Crea el repositorio de evaluaciones.
                     _TEvaluacionProducto =
                         new RepositorioAD<EvaluacionProducto>(_Contexto);
                 }
 
-                // Devuelve el repositorio de evaluaciones.
+                // Devuelve el repositorio correspondiente.
                 return _TEvaluacionProducto;
             }
         }
 
-
-        // Esta propiedad permite trabajar con los impuestos.
+        // Permite acceder al repositorio de impuestos.
         public IRepositorioAD<Impuesto> TImpuesto
         {
             get
             {
-                // Revisa si todavía no existe un repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TImpuesto == null)
                 {
-                    // Crea el repositorio para trabajar con Impuesto.
-                    _TImpuesto =
-                        new RepositorioAD<Impuesto>(_Contexto);
+                    // Crea el repositorio de impuestos.
+                    _TImpuesto = new RepositorioAD<Impuesto>(_Contexto);
                 }
 
-                // Devuelve el repositorio de impuestos.
+                // Devuelve el repositorio correspondiente.
                 return _TImpuesto;
             }
         }
 
-
-        // Esta propiedad permite trabajar con las familias de productos.
+        // Permite acceder al repositorio de familias de productos.
         public IRepositorioAD<FamiliaProducto> TFamiliaProducto
         {
             get
@@ -613,23 +553,22 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
                 // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TFamiliaProducto == null)
                 {
-                    // Crea el repositorio para trabajar con FamiliaProducto.
+                    // Crea el repositorio de familias de productos.
                     _TFamiliaProducto =
                         new RepositorioAD<FamiliaProducto>(_Contexto);
                 }
 
-                // Devuelve el repositorio de familias de productos.
+                // Devuelve el repositorio correspondiente.
                 return _TFamiliaProducto;
             }
         }
 
-
-        // Esta propiedad permite trabajar con las compras a proveedores.
+        // Permite acceder al repositorio de compras a proveedores.
         public IRepositorioAD<CompraProveedor> TCompraProveedor
         {
             get
             {
-                // Comprueba si todavía no existe un repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TCompraProveedor == null)
                 {
                     // Crea el repositorio de compras a proveedores.
@@ -642,55 +581,50 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite trabajar con los detalles
-        // de las compras realizadas a los proveedores.
+        // Permite acceder al repositorio de detalles de compras a proveedores.
         public IRepositorioAD<DetalleCompraProveedor> TDetalleCompraProveedor
         {
             get
             {
-                // Comprueba si todavía no ha sido creado el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TDetalleCompraProveedor == null)
                 {
-                    // Crea un repositorio usando DetalleCompraProveedor.
+                    // Crea el repositorio de detalles de compras.
                     _TDetalleCompraProveedor =
                         new RepositorioAD<DetalleCompraProveedor>(_Contexto);
                 }
 
-                // Devuelve el repositorio de detalles de compras.
+                // Devuelve el repositorio correspondiente.
                 return _TDetalleCompraProveedor;
             }
         }
 
-
-        // Esta propiedad permite trabajar con las proformas.
+        // Permite acceder al repositorio de proformas.
         public IRepositorioAD<Proforma> TProforma
         {
             get
             {
-                // Verifica si todavía no existe un repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TProforma == null)
                 {
-                    // Crea un repositorio para la entidad Proforma.
-                    _TProforma =
-                        new RepositorioAD<Proforma>(_Contexto);
+                    // Crea el repositorio de proformas.
+                    _TProforma = new RepositorioAD<Proforma>(_Contexto);
                 }
 
-                // Devuelve el repositorio de proformas.
+                // Devuelve el repositorio correspondiente.
                 return _TProforma;
             }
         }
 
-
-        // Esta propiedad permite trabajar con los detalles de las proformas.
+        // Permite acceder al repositorio de detalles de proformas.
         public IRepositorioAD<DetalleProforma> TDetalleProforma
         {
             get
             {
-                // Comprueba si todavía no se ha creado el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TDetalleProforma == null)
                 {
-                    // Crea el repositorio para trabajar con DetalleProforma.
+                    // Crea el repositorio de detalles de proformas.
                     _TDetalleProforma =
                         new RepositorioAD<DetalleProforma>(_Contexto);
                 }
@@ -700,174 +634,152 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             }
         }
 
-
-        // Esta propiedad permite trabajar con las notificaciones.
+        // Permite acceder al repositorio de notificaciones.
         public IRepositorioAD<Notificacion> TNotificacion
         {
             get
             {
-                // Verifica si todavía no existe un repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TNotificacion == null)
                 {
-                    // Crea el repositorio para trabajar con Notificacion.
+                    // Crea el repositorio de notificaciones.
                     _TNotificacion =
                         new RepositorioAD<Notificacion>(_Contexto);
                 }
 
-                // Devuelve el repositorio de notificaciones.
+                // Devuelve el repositorio correspondiente.
                 return _TNotificacion;
             }
         }
 
-
-        // Esta propiedad permite trabajar con el historial de accesos.
+        // Permite acceder al repositorio del historial de accesos.
         public IRepositorioAD<HistorialAcceso> THistorialAcceso
         {
             get
             {
-                // Comprueba si todavía no se ha creado el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_THistorialAcceso == null)
                 {
-                    // Crea un repositorio para la entidad HistorialAcceso.
+                    // Crea el repositorio del historial de accesos.
                     _THistorialAcceso =
                         new RepositorioAD<HistorialAcceso>(_Contexto);
                 }
 
-                // Devuelve el repositorio del historial de accesos.
+                // Devuelve el repositorio correspondiente.
                 return _THistorialAcceso;
             }
         }
 
-
-        // Esta propiedad permite trabajar con la bitácora del sistema.
+        // Permite acceder al repositorio de la bitácora del sistema.
         public IRepositorioAD<BitacoraSistema> TBitacoraSistema
         {
             get
             {
-                // Comprueba si todavía no existe el repositorio.
+                // Comprueba si el repositorio todavía no ha sido creado.
                 if (_TBitacoraSistema == null)
                 {
-                    // Crea un repositorio para trabajar con BitacoraSistema.
+                    // Crea el repositorio de la bitácora.
                     _TBitacoraSistema =
                         new RepositorioAD<BitacoraSistema>(_Contexto);
                 }
 
-                // Devuelve el repositorio de la bitácora.
+                // Devuelve el repositorio correspondiente.
                 return _TBitacoraSistema;
             }
         }
 
-
-        // Finaliza la sección visual donde están todos los repositorios.
         #endregion
 
-
-        // Esta sección contiene los métodos utilizados para guardar cambios
-        // y controlar transacciones de la base de datos.
+        // Sección donde se manejan los cambios y las transacciones.
         #region Cambios y transacciones
 
-
-        // Este método guarda todos los cambios pendientes del contexto.
+        // Guarda todos los cambios pendientes en la base de datos.
         public int Completar()
         {
+            // Inicia el bloque para controlar posibles errores.
             try
             {
-                // SaveChanges ejecuta en la base de datos todos los cambios pendientes,
-                // como insertar, modificar o eliminar registros.
-                // Además devuelve la cantidad de registros afectados.
+                // Guarda los cambios y devuelve la cantidad de registros afectados.
                 return _Contexto.SaveChanges();
             }
+            // Captura cualquier error ocurrido durante el guardado.
             catch
             {
-                // Si ocurre algún error al guardar,
-                // se vuelve a enviar el error a la capa que llamó este método.
+                // Vuelve a lanzar el error para que pueda ser controlado externamente.
                 throw;
             }
         }
 
-
-        // Este método guarda los cambios y confirma una transacción.
-        // Se utiliza cuando varias operaciones deben completarse correctamente juntas.
+        // Guarda los cambios y confirma la transacción actual.
         public void CompletarTran()
         {
+            // Inicia el bloque para controlar posibles errores.
             try
             {
-                // Guarda primero todos los cambios pendientes en el contexto.
+                // Guarda los cambios pendientes en la base de datos.
                 _Contexto.SaveChanges();
 
-                // Comprueba que exista una transacción activa.
+                // Comprueba si existe una transacción activa.
                 if (_transaction != null)
                 {
-                    // Commit confirma de forma definitiva todos los cambios
-                    // realizados dentro de la transacción.
+                    // Confirma definitivamente los cambios realizados.
                     _transaction.Commit();
                 }
             }
+            // Captura cualquier error ocurrido durante la operación.
             catch
             {
-                // Si ocurre un error, verifica si existe una transacción.
+                // Comprueba si existe una transacción activa.
                 if (_transaction != null)
                 {
-                    // Rollback devuelve la base de datos al estado anterior
-                    // al inicio de la transacción.
+                    // Revierte los cambios realizados dentro de la transacción.
                     _transaction.Rollback();
                 }
 
-                // Vuelve a lanzar el error para que pueda ser controlado
-                // desde la lógica de negocio o la API.
+                // Vuelve a lanzar el error para que pueda ser controlado externamente.
                 throw;
             }
         }
 
-
-        // Este método inicia una nueva transacción.
+        // Inicia una nueva transacción en la base de datos.
         public void EmpezarTransaccion()
         {
-            // BeginTransaction indica a Entity Framework que las siguientes operaciones
-            // deben formar parte de una misma transacción.
+            // Crea una transacción utilizando el contexto actual.
             _transaction = _Contexto.Database.BeginTransaction();
         }
 
-
-        // Este método cancela manualmente la transacción actual.
+        // Revierte los cambios realizados dentro de la transacción.
         public void Rollback()
         {
-            // Comprueba que exista una transacción antes de intentar cancelarla.
+            // Comprueba si existe una transacción activa.
             if (_transaction != null)
             {
-                // Revierte todos los cambios realizados dentro de esa transacción.
+                // Cancela la transacción y devuelve los datos a su estado anterior.
                 _transaction.Rollback();
             }
         }
 
-
-        // Este método cierra la conexión utilizada por Entity Framework.
+        // Cierra la conexión con la base de datos.
         public void CerrarConexion()
         {
-            // CloseConnection cierra la conexión con SQL Server
-            // cuando ya no es necesario mantenerla abierta.
+            // Cierra la conexión utilizada por el contexto.
             _Contexto.Database.CloseConnection();
         }
 
-
-        // Dispose se utiliza para liberar recursos que ya no se necesitan.
-        // Existe porque IUnidadTrabajoEF hereda de IDisposable.
+        // Libera los recursos utilizados por la unidad de trabajo.
         public void Dispose()
         {
-            // Comprueba si existe una transacción.
+            // Comprueba si existe una transacción activa.
             if (_transaction != null)
             {
                 // Libera los recursos utilizados por la transacción.
                 _transaction.Dispose();
             }
 
-            // Libera los recursos utilizados por TiendaOnlineContext
-            // cuando la unidad de trabajo deja de utilizarse.
+            // Libera los recursos utilizados por el contexto de Entity Framework.
             _Contexto.Dispose();
         }
 
-
-        // Finaliza la sección visual de cambios y transacciones.
         #endregion
     }
 }

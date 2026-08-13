@@ -1,10 +1,7 @@
 ﻿// Permite utilizar funcionalidades básicas de C#.
 using System;
 
-// Permite trabajar con colecciones genéricas.
-using System.Collections.Generic;
 
-// Define el espacio de nombres donde se encuentra la entidad tipada.
 namespace TiendaOnline.Dominio.EntidadesTipadas;
 
 // Representa los productos que tienen un nivel de inventario bajo.

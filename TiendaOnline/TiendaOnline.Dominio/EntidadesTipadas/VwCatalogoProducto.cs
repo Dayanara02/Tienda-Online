@@ -1,10 +1,6 @@
 ﻿
 using System;
 
-// Permite trabajar con colecciones genéricas.
-using System.Collections.Generic;
-
-// Define el espacio de nombres donde se encuentra la entidad tipada.
 namespace TiendaOnline.Dominio.EntidadesTipadas;
 
 // Representa la información del catálogo de productos.
