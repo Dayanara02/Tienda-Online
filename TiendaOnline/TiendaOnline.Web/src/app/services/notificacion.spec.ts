@@ -1,58 +1,30 @@
-// Importa herramientas de prueba.
+// Importa las herramientas de prueba.
 import { TestBed } from '@angular/core/testing';
 
-// Permite usar HttpClient.
-import { provideHttpClient } from '@angular/common/http';
-
-// Permite simular peticiones HTTP.
-import {
-  HttpTestingController,
-  provideHttpClientTesting
-} from '@angular/common/http/testing';
-
-// Importa el servicio.
+// Importa el servicio de notificaciones.
 import { Notificacion } from './notificacion';
 
-// Agrupa las pruebas.
+// Agrupa las pruebas del servicio.
 describe('Notificacion', () => {
 
-  // Guarda el servicio.
+  // Guarda una instancia del servicio.
   let service: Notificacion;
 
-  // Controla las peticiones HTTP.
-  let httpMock: HttpTestingController;
-
-  // Configura cada prueba.
+  // Se ejecuta antes de cada prueba.
   beforeEach(() => {
 
-    // Configura Angular.
-    TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting()
-      ]
-    });
+    // Configura el entorno de pruebas.
+    TestBed.configureTestingModule({});
 
     // Obtiene el servicio.
     service =
       TestBed.inject(Notificacion);
-
-    // Obtiene el controlador HTTP.
-    httpMock =
-      TestBed.inject(HttpTestingController);
   });
 
-  // Se ejecuta después.
-  afterEach(() => {
-
-    // Verifica peticiones pendientes.
-    httpMock.verify();
-  });
-
-  // Comprueba que exista.
+  // Comprueba que el servicio se pueda crear.
   it('should be created', () => {
 
-    // Valida el servicio.
+    // Verifica que exista.
     expect(service).toBeTruthy();
   });
 });

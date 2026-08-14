@@ -1,19 +1,34 @@
-// Permite realizar peticiones HTTP.
-import { HttpClient } from '@angular/common/http';
-
 // Permite crear e inyectar servicios.
 import {
   inject,
   Injectable
 } from '@angular/core';
 
-// Permite manejar respuestas asíncronas.
-import { Observable } from 'rxjs';
+// Permite realizar peticiones HTTP.
+import {
+  HttpClient
+} from '@angular/common/http';
+
+// Permite trabajar con respuestas asíncronas.
+import {
+  Observable
+} from 'rxjs';
 
 // Importa el modelo de envío.
-import { IEnvio } from '../model/IEnvio';
+import {
+  IEnvio
+} from '../model/IEnvio';
 
-// Datos necesarios para guardar un envío.
+// Importa la configuración.
+import {
+  environment
+} from '../../environments/environment';
+
+// Guarda la dirección principal.
+const baseUrl =
+  environment.apiUrl;
+
+// Representa los datos de un envío.
 export interface EnvioGuardar {
 
   // Identificador del envío.
@@ -41,28 +56,24 @@ export interface EnvioGuardar {
   estado: string;
 }
 
-// Permite usar el servicio.
+// Permite utilizar el servicio.
 @Injectable({
   providedIn: 'root'
 })
-export class Envio {
+export class EnvioService {
 
   // Inyecta HttpClient.
   private readonly http =
     inject(HttpClient);
 
-  // Dirección del controlador.
-  private readonly apiUrl =
-    'https://localhost:7196/api/Envios';
-
-  // Obtiene el envío de un pedido.
+  // Obtiene el seguimiento de un pedido.
   obtenerPorPedido(
     idPedido: number
   ): Observable<IEnvio> {
 
-    // Consulta el seguimiento.
+    // Consulta el envío relacionado.
     return this.http.get<IEnvio>(
-      `${this.apiUrl}/pedido/${idPedido}`
+      `${baseUrl}/Envios/pedido/${idPedido}`
     );
   }
 
@@ -70,9 +81,9 @@ export class Envio {
   listar():
     Observable<IEnvio[]> {
 
-    // Consulta todos los envíos.
+    // Consulta los registros.
     return this.http.get<IEnvio[]>(
-      this.apiUrl
+      `${baseUrl}/Envios`
     );
   }
 
@@ -81,22 +92,27 @@ export class Envio {
     envio: EnvioGuardar
   ): Observable<IEnvio> {
 
-    // Envía el nuevo registro.
+    // Envía el registro a la API.
     return this.http.post<IEnvio>(
-      this.apiUrl,
+      `${baseUrl}/Envios`,
       envio
     );
   }
 
-  // Actualiza un envío.
+  // Modifica un envío.
   modificar(
     envio: EnvioGuardar
   ): Observable<void> {
 
     // Envía los cambios.
     return this.http.put<void>(
-      `${this.apiUrl}/${envio.idEnvio}`,
+      `${baseUrl}/Envios/${envio.idEnvio}`,
       envio
     );
   }
 }
+
+// Mantiene el nombre anterior.
+export {
+  EnvioService as Envio
+};

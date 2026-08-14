@@ -1,237 +1,135 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// Permite crear controladores API.
+using Microsoft.AspNetCore.Mvc;
+
+// Permite consultar la base de datos.
 using Microsoft.EntityFrameworkCore;
+
+// Importa el contexto principal.
 using TiendaOnline.AccesoDatos.Context;
-using Microsoft.AspNetCore.Authorization;
+
+// Importa la entidad Descuento.
 using TiendaOnline.Dominio.Entidades;
+
+// Define el espacio de nombres.
 namespace TiendaOnline.API.Controllers;
 
-    // Define que esta clase pertenece al controlador de descuentos de la API.
+// Define la ruta principal.
+[Route("api/[controller]")]
 
-    [Route("api/[controller]")]
-
-// Indica que esta clase es un controlador de una API.
-
+// Indica que es un controlador API.
 [ApiController]
-
-// Controlador encargado de gestionar las operaciones relacionadas con los descuentos.
-
 public class DescuentosController : ControllerBase
-
 {
-
-    // Variable privada que permite acceder a la base de datos.
-
+    // Guarda el contexto de la base de datos.
     private readonly TiendaOnlineContext _context;
 
-    // Constructor del controlador.
-
-    // Recibe el contexto de la base de datos mediante inyección de dependencias.
-
-    public DescuentosController(TiendaOnlineContext context)
-
+    // Recibe el contexto mediante inyección.
+    public DescuentosController(
+        TiendaOnlineContext context)
     {
-
-        // Guarda el contexto recibido en la variable _context.
-
+        // Guarda el contexto recibido.
         _context = context;
-
     }
 
-    // Método HTTP GET para obtener todos los descuentos.
-
+    // Obtiene todos los descuentos activos.
     [HttpGet]
-
-    public async Task<ActionResult<IEnumerable<Descuento>>> GetDescuentos()
-
+    public async Task<ActionResult<IEnumerable<Descuento>>>
+        GetDescuentos()
     {
+        // Consulta los descuentos disponibles.
+        var descuentos =
+            await _context.Descuentos
+                .AsNoTracking()
+                .Where(
+                    descuento =>
+                        descuento.Estado
+                )
+                .OrderBy(
+                    descuento =>
+                        descuento.CantidadMinima
+                )
+                .ToListAsync();
 
-        // Consulta todos los descuentos registrados en la base de datos
-
-        // y los convierte en una lista.
-
-        return await _context.Descuentos.ToListAsync();
-
-    }
-
-    // Método HTTP GET que recibe el ID de un descuento.
-
-    [HttpGet("{id}")]
-
-    public async Task<ActionResult<Descuento>> GetDescuento(int id)
-
-    {
-
-        // Busca en la base de datos el descuento que tenga el ID indicado.
-
-        var descuento = await _context.Descuentos.FindAsync(id);
-
-        // Si no se encuentra el descuento, devuelve una respuesta NotFound (404).
-
-        if (descuento == null)
-
-            return NotFound();
-
-        // Devuelve el descuento encontrado.
-
-        return descuento;
-
-    }
-
-    // Indica que solamente los usuarios que tengan el rol de Administrador
-
-    // pueden ejecutar este método.
-
-    [Authorize(Roles = "Administrador")]
-
-    // Método HTTP POST para crear un nuevo descuento.
-
-    [HttpPost]
-
-    public async Task<ActionResult<Descuento>> PostDescuento(Descuento descuento)
-
-    {
-
-        // Se establece el ID en 0 para que la base de datos genere
-
-        // automáticamente el nuevo identificador.
-
-        descuento.IdDescuento = 0;
-
-        // Agrega el nuevo descuento al contexto de la base de datos.
-
-        _context.Descuentos.Add(descuento);
-
-        // Guarda los cambios realizados en la base de datos.
-
-        await _context.SaveChangesAsync();
-
-        // Devuelve una respuesta 201 Created indicando que el descuento
-
-        // fue creado correctamente.
-
-        return CreatedAtAction(
-
-            nameof(GetDescuento),
-
-            new { id = descuento.IdDescuento },
-
-            descuento
-
+        // Devuelve la lista.
+        return Ok(
+            descuentos
         );
-
     }
 
-    // Indica que solamente los usuarios que tengan el rol de Administrador
-
-    // pueden ejecutar este método.
-
-    [Authorize(Roles = "Administrador")]
-
-    // Método HTTP PUT para actualizar un descuento existente.
-
-    [HttpPut("{id}")]
-
-    public async Task<IActionResult> PutDescuento(
-
-        int id,
-
-        Descuento descuento)
-
+    // Obtiene un descuento por id.
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Descuento>>
+        GetDescuento(
+            int id)
     {
+        // Busca un descuento activo.
+        var descuento =
+            await _context.Descuentos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    descuento =>
+                        descuento.IdDescuento == id &&
+                        descuento.Estado
+                );
 
-        // Verifica que el ID recibido en la URL sea igual al ID
-
-        // del descuento que se quiere modificar.
-
-        if (id != descuento.IdDescuento)
-
-            return BadRequest();
-
-        // Busca el descuento existente en la base de datos.
-
-        var existente = await _context.Descuentos.FindAsync(id);
-
-        // Si no existe el descuento, devuelve una respuesta NotFound (404).
-
-        if (existente == null)
-
-            return NotFound();
-
-        // Actualiza el nombre del descuento.
-
-        existente.Nombre = descuento.Nombre;
-
-        // Actualiza la descripción del descuento.
-
-        existente.Descripcion = descuento.Descripcion;
-
-        // Actualiza el porcentaje del descuento.
-
-        existente.Porcentaje = descuento.Porcentaje;
-
-        // Actualiza la fecha de inicio del descuento.
-
-        existente.FechaInicio = descuento.FechaInicio;
-
-        // Actualiza la fecha de finalización del descuento.
-
-        existente.FechaFin = descuento.FechaFin;
-
-        // Actualiza el estado del descuento.
-
-        existente.Estado = descuento.Estado;
-
-        // Guarda los cambios realizados en la base de datos.
-
-        await _context.SaveChangesAsync();
-
-        // Devuelve una respuesta 204 indicando que la actualización
-
-        // se realizó correctamente y no hay contenido que devolver.
-
-        return NoContent();
-
-    }
-
-    // Indica que solamente los usuarios que tengan el rol de Administrador
-
-    // pueden ejecutar este método.
-
-    [Authorize(Roles = "Administrador")]
-
-    // Método HTTP DELETE para eliminar un descuento.
-
-    [HttpDelete("{id}")]
-
-    public async Task<IActionResult> DeleteDescuento(int id)
-
-    {
-
-        // Busca en la base de datos el descuento que corresponde al ID recibido.
-
-        var descuento = await _context.Descuentos.FindAsync(id);
-
-        // Si no existe el descuento, devuelve una respuesta NotFound (404).
-
+        // Verifica que exista.
         if (descuento == null)
+        {
+            // Devuelve error 404.
+            return NotFound(
+                "El descuento no existe."
+            );
+        }
 
-            return NotFound();
+        // Devuelve el descuento.
+        return Ok(
+            descuento
+        );
+    }
 
-        // Elimina el descuento del contexto de la base de datos.
+    // Obtiene el mejor descuento aplicable.
+    [HttpGet("aplicable/{cantidad:int}")]
+    public async Task<ActionResult<Descuento>>
+        GetDescuentoAplicable(
+            int cantidad)
+    {
+        // Valida la cantidad recibida.
+        if (cantidad < 0)
+        {
+            // Devuelve error 400.
+            return BadRequest(
+                "La cantidad no puede ser negativa."
+            );
+        }
 
-        _context.Descuentos.Remove(descuento);
+        // Busca el descuento más alto disponible.
+        var descuento =
+            await _context.Descuentos
+                .AsNoTracking()
+                .Where(
+                    descuento =>
+                        descuento.Estado &&
+                        cantidad >=
+                        descuento.CantidadMinima
+                )
+                .OrderByDescending(
+                    descuento =>
+                        descuento.Porcentaje
+                )
+                .FirstOrDefaultAsync();
 
-        // Guarda los cambios para aplicar la eliminación en la base de datos.
+        // Verifica si aplica algún descuento.
+        if (descuento == null)
+        {
+            // Informa que no aplica descuento.
+            return NotFound(
+                "La compra todavía no cumple con la cantidad mínima para obtener un descuento."
+            );
+        }
 
-        await _context.SaveChangesAsync();
-
-        // Devuelve una respuesta 204 indicando que la eliminación
-
-        // se realizó correctamente.
-
-        return NoContent();
-
+        // Devuelve el descuento aplicable.
+        return Ok(
+            descuento
+        );
     }
 }
-
-

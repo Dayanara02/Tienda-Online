@@ -1,16 +1,34 @@
-// Permite realizar peticiones HTTP.
-import { HttpClient } from '@angular/common/http';
-
 // Permite crear e inyectar servicios.
 import {
   inject,
   Injectable
 } from '@angular/core';
 
-// Permite trabajar con respuestas asíncronas.
-import { Observable } from 'rxjs';
+// Permite realizar peticiones HTTP.
+import {
+  HttpClient
+} from '@angular/common/http';
 
-// Guarda los datos necesarios para pagar.
+// Permite manejar respuestas asíncronas.
+import {
+  Observable
+} from 'rxjs';
+
+// Importa el modelo general de pago.
+import {
+  IPago
+} from '../model/IPago';
+
+// Importa la configuración del ambiente.
+import {
+  environment
+} from '../../environments/environment';
+
+// Guarda la dirección principal.
+const baseUrl =
+  environment.apiUrl;
+
+// Datos necesarios para pagar un pedido.
 export interface PagarPedido {
 
   // Pedido seleccionado.
@@ -21,34 +39,25 @@ export interface PagarPedido {
 }
 
 // Representa la respuesta del pago.
-export interface RespuestaPago {
+export interface RespuestaPago
+  extends Pick<
+    IPago,
+    | 'idPago'
+    | 'idPedido'
+    | 'metodoPago'
+    | 'referencia'
+    | 'monto'
+    | 'fechaPago'
+  > {
 
   // Mensaje recibido.
   mensaje: string;
-
-  // Pedido pagado.
-  idPedido: number;
-
-  // Pago creado.
-  idPago: number;
 
   // Estado del pago.
   estadoPago: string;
 
   // Estado del pedido.
   estadoPedido: string;
-
-  // Método utilizado.
-  metodoPago: string;
-
-  // Monto pagado.
-  monto: number;
-
-  // Referencia generada.
-  referencia: string;
-
-  // Fecha del pago.
-  fechaPago: string;
 
   // Indica si se envió el correo.
   correoEnviado?: boolean;
@@ -57,29 +66,30 @@ export interface RespuestaPago {
   mensajeCorreo?: string;
 }
 
-// Permite usar el servicio.
+// Permite utilizar el servicio.
 @Injectable({
   providedIn: 'root'
 })
-export class Pago {
+export class PagoService {
 
   // Inyecta HttpClient.
   private readonly http =
     inject(HttpClient);
-
-  // Dirección del controlador Pagos.
-  private readonly apiUrl =
-    'https://localhost:7196/api/Pagos';
 
   // Realiza el pago.
   pagar(
     datos: PagarPedido
   ): Observable<RespuestaPago> {
 
-    // Envía el pago a la API.
+    // Envía el pago al backend.
     return this.http.post<RespuestaPago>(
-      `${this.apiUrl}/pagar`,
+      `${baseUrl}/Pagos/pagar`,
       datos
     );
   }
 }
+
+// Mantiene el nombre utilizado anteriormente.
+export {
+  PagoService as Pago
+};

@@ -1,28 +1,45 @@
-﻿using System; // Permite utilizar tipos del sistema, como DateOnly y decimal.
-using System.Collections.Generic; // Permite trabajar con colecciones genéricas.
+﻿// Permite utilizar tipos básicos del sistema.
+using System;
 
-namespace TiendaOnline.Dominio.Entidades; 
+// Define el espacio de nombres de las entidades.
+namespace TiendaOnline.Dominio.Entidades;
 
-public partial class Descuento // Representa un descuento que puede aplicarse a productos o categorías.
+// Representa un descuento disponible en la tienda.
+public partial class Descuento
 {
-    public int IdDescuento { get; set; } // Identificador único del descuento.
+    // Identificador único del descuento.
+    public int IdDescuento { get; set; }
 
-    public string Nombre { get; set; } = null!; // Guarda el nombre del descuento.
+    // Nombre del descuento.
+    public string Nombre { get; set; } = null!;
 
-    public string? Descripcion { get; set; } // Guarda una descripción del descuento, si existe.
+    // Descripción del descuento.
+    public string? Descripcion { get; set; }
 
-    public decimal Porcentaje { get; set; } // Indica el porcentaje de descuento que se aplicará.
+    // Porcentaje que se aplicará.
+    public decimal Porcentaje { get; set; }
 
-    public DateOnly FechaInicio { get; set; } // Guarda la fecha en que comienza el descuento.
+    // Fecha en que inicia el descuento.
+    public DateOnly FechaInicio { get; set; }
 
-    public DateOnly FechaFin { get; set; } // Guarda la fecha en que termina el descuento.
+    // Fecha en que finaliza el descuento.
+    public DateOnly FechaFin { get; set; }
 
-    public bool Estado { get; set; } // Indica si el descuento está activo o inactivo.
+    // Indica si el descuento está activo.
+    public bool Estado { get; set; }
 
-    public virtual ICollection<Categorium> IdCategoria { get; set; } = new List<Categorium>(); // Contiene las categorías relacionadas con el descuento.
+    // Cantidad mínima de productos requerida.
+    public int CantidadMinima { get; set; }
 
-    public virtual ICollection<FamiliaProducto> IdFamilia { get; set; } = new List<FamiliaProducto>(); // Contiene las familias de productos relacionadas con el descuento.
+    // Categorías relacionadas con el descuento.
+    public virtual ICollection<Categorium> IdCategoria { get; set; }
+        = new List<Categorium>();
 
-    public virtual ICollection<Producto> IdProductos { get; set; } = new List<Producto>(); // Contiene los productos relacionados con el descuento.
+    // Familias relacionadas con el descuento.
+    public virtual ICollection<FamiliaProducto> IdFamilia { get; set; }
+        = new List<FamiliaProducto>();
+
+    // Productos relacionados con el descuento.
+    public virtual ICollection<Producto> IdProductos { get; set; }
+        = new List<Producto>();
 }
-

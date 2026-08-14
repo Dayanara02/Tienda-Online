@@ -1,31 +1,42 @@
-// Permite realizar peticiones HTTP.
-import { HttpClient } from '@angular/common/http';
-
 // Permite crear e inyectar servicios.
 import {
   inject,
   Injectable
 } from '@angular/core';
 
-// Permite trabajar con respuestas asíncronas.
-import { Observable } from 'rxjs';
+// Permite realizar peticiones HTTP.
+import {
+  HttpClient
+} from '@angular/common/http';
 
-// Importa el modelo.
-import { IMetodoPago } from '../model/IMetodoPago';
+// Permite trabajar con respuestas asíncronas.
+import {
+  Observable
+} from 'rxjs';
+
+// Importa el modelo de método de pago.
+import {
+  IMetodoPago
+} from '../model/IMetodoPago';
+
+// Importa la configuración.
+import {
+  environment
+} from '../../environments/environment';
+
+// Guarda la dirección principal.
+const baseUrl =
+  environment.apiUrl;
 
 // Permite utilizar el servicio.
 @Injectable({
   providedIn: 'root'
 })
-export class MetodoPago {
+export class MetodoPagoService {
 
   // Inyecta HttpClient.
   private readonly http =
     inject(HttpClient);
-
-  // Dirección del controlador.
-  private readonly apiUrl =
-    'https://localhost:7196/api/MetodoPagos';
 
   // Obtiene los métodos disponibles.
   listarDisponibles():
@@ -33,7 +44,12 @@ export class MetodoPago {
 
     // Consulta los métodos activos.
     return this.http.get<IMetodoPago[]>(
-      `${this.apiUrl}/disponibles`
+      `${baseUrl}/MetodoPagos/disponibles`
     );
   }
 }
+
+// Mantiene el nombre anterior.
+export {
+  MetodoPagoService as MetodoPago
+};

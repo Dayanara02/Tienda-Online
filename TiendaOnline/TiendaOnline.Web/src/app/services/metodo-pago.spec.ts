@@ -1,58 +1,30 @@
-// Importa herramientas de prueba.
+// Importa las herramientas de prueba.
 import { TestBed } from '@angular/core/testing';
 
-// Permite utilizar HttpClient.
-import { provideHttpClient } from '@angular/common/http';
-
-// Permite simular peticiones HTTP.
-import {
-  HttpTestingController,
-  provideHttpClientTesting
-} from '@angular/common/http/testing';
-
-// Importa el servicio.
+// Importa el servicio de métodos de pago.
 import { MetodoPago } from './metodo-pago';
 
-// Agrupa las pruebas.
+// Agrupa las pruebas del servicio.
 describe('MetodoPago', () => {
 
-  // Guarda el servicio.
+  // Guarda una instancia del servicio.
   let service: MetodoPago;
 
-  // Controla las peticiones.
-  let httpMock: HttpTestingController;
-
-  // Configura cada prueba.
+  // Se ejecuta antes de cada prueba.
   beforeEach(() => {
 
-    // Configura Angular.
-    TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting()
-      ]
-    });
+    // Configura el entorno de pruebas.
+    TestBed.configureTestingModule({});
 
     // Obtiene el servicio.
     service =
       TestBed.inject(MetodoPago);
-
-    // Obtiene el controlador HTTP.
-    httpMock =
-      TestBed.inject(HttpTestingController);
   });
 
-  // Se ejecuta al terminar.
-  afterEach(() => {
-
-    // Verifica las peticiones.
-    httpMock.verify();
-  });
-
-  // Comprueba que exista.
+  // Comprueba que el servicio se pueda crear.
   it('should be created', () => {
 
-    // Valida el servicio.
+    // Verifica que exista.
     expect(service).toBeTruthy();
   });
 });

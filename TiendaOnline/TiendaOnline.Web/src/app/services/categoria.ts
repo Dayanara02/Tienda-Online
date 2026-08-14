@@ -1,60 +1,61 @@
-// Permite realizar peticiones HTTP.
-import { HttpClient } from '@angular/common/http';
-
 // Permite crear e inyectar servicios.
 import {
   inject,
   Injectable
 } from '@angular/core';
 
+// Permite realizar peticiones HTTP.
+import {
+  HttpClient
+} from '@angular/common/http';
+
 // Permite trabajar con respuestas asíncronas.
-import { Observable } from 'rxjs';
+import {
+  Observable
+} from 'rxjs';
 
 // Importa el modelo de categoría.
-import { ICategoria } from '../model/ICategoria';
+import {
+  ICategoria
+} from '../model/ICategoria';
+
+// Importa la configuración del ambiente.
+import {
+  environment
+} from '../../environments/environment';
+
+// Guarda la dirección principal de la API.
+const baseUrl =
+  environment.apiUrl;
 
 // Permite utilizar el servicio en toda la aplicación.
 @Injectable({
   providedIn: 'root'
 })
-export class Categoria {
+export class CategoriaService {
 
   // Inyecta HttpClient.
   private readonly http =
     inject(HttpClient);
 
-  // Dirección del controlador Categorias.
-  private readonly apiUrl =
-    'https://localhost:7196/api/Categorias';
-
   // Obtiene todas las categorías.
-  listar(): Observable<ICategoria[]> {
+  listar():
+    Observable<ICategoria[]> {
 
-    // Realiza la consulta GET.
+    // Realiza una petición GET.
     return this.http.get<ICategoria[]>(
-      this.apiUrl
+      `${baseUrl}/Categorias`
     );
   }
 
-  // Obtiene una categoría por id.
-  obtener(
-    id: number
-  ): Observable<ICategoria> {
-
-    // Consulta una categoría.
-    return this.http.get<ICategoria>(
-      `${this.apiUrl}/${id}`
-    );
-  }
-
-  // Crea una categoría.
+  // Crea una nueva categoría.
   crear(
     categoria: ICategoria
   ): Observable<ICategoria> {
 
     // Envía la categoría a la API.
     return this.http.post<ICategoria>(
-      this.apiUrl,
+      `${baseUrl}/Categorias`,
       categoria
     );
   }
@@ -64,21 +65,26 @@ export class Categoria {
     categoria: ICategoria
   ): Observable<void> {
 
-    // Envía los cambios.
+    // Envía los cambios a la API.
     return this.http.put<void>(
-      `${this.apiUrl}/${categoria.idCategoria}`,
+      `${baseUrl}/Categorias/${categoria.idCategoria}`,
       categoria
     );
   }
 
   // Elimina una categoría.
   eliminar(
-    id: number
+    idCategoria: number
   ): Observable<void> {
 
     // Solicita la eliminación.
     return this.http.delete<void>(
-      `${this.apiUrl}/${id}`
+      `${baseUrl}/Categorias/${idCategoria}`
     );
   }
 }
+
+// Mantiene el nombre utilizado anteriormente.
+export {
+  CategoriaService as Categoria
+};

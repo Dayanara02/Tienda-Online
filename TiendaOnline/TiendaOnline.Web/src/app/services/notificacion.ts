@@ -1,25 +1,40 @@
-// Permite realizar peticiones HTTP.
-import { HttpClient } from '@angular/common/http';
-
 // Permite crear e inyectar servicios.
 import {
   inject,
   Injectable
 } from '@angular/core';
 
+// Permite realizar peticiones HTTP.
+import {
+  HttpClient
+} from '@angular/common/http';
+
 // Permite trabajar con respuestas asíncronas.
-import { Observable } from 'rxjs';
+import {
+  Observable
+} from 'rxjs';
 
-// Importa el modelo de notificación.
-import { INotificacion } from '../model/INotificacion';
+// Importa el modelo.
+import {
+  INotificacion
+} from '../model/INotificacion';
 
-// Datos para crear una notificación.
+// Importa la configuración.
+import {
+  environment
+} from '../../environments/environment';
+
+// Guarda la dirección principal.
+const baseUrl =
+  environment.apiUrl;
+
+// Datos necesarios para crear una notificación.
 export interface NotificacionCrear {
 
-  // Usuario que recibe el mensaje.
+  // Usuario que recibe.
   idUsuario: number;
 
-  // Título de la notificación.
+  // Título mostrado.
   titulo: string;
 
   // Mensaje enviado.
@@ -29,19 +44,15 @@ export interface NotificacionCrear {
   tipo: string | null;
 }
 
-// Permite usar el servicio en toda la aplicación.
+// Permite utilizar el servicio.
 @Injectable({
   providedIn: 'root'
 })
-export class Notificacion {
+export class NotificacionService {
 
   // Inyecta HttpClient.
   private readonly http =
     inject(HttpClient);
-
-  // Dirección del controlador.
-  private readonly apiUrl =
-    'https://localhost:7196/api/Notificaciones';
 
   // Obtiene las notificaciones del cliente.
   listarMisNotificaciones():
@@ -49,18 +60,18 @@ export class Notificacion {
 
     // Consulta las notificaciones propias.
     return this.http.get<INotificacion[]>(
-      `${this.apiUrl}/mis-notificaciones`
+      `${baseUrl}/Notificaciones/mis-notificaciones`
     );
   }
 
-  // Crea una notificación manual.
+  // Crea una nueva notificación.
   crear(
     datos: NotificacionCrear
   ): Observable<INotificacion> {
 
     // Envía la notificación.
     return this.http.post<INotificacion>(
-      this.apiUrl,
+      `${baseUrl}/Notificaciones`,
       datos
     );
   }
@@ -70,10 +81,15 @@ export class Notificacion {
     idNotificacion: number
   ): Observable<void> {
 
-    // Actualiza el estado de lectura.
+    // Actualiza la notificación.
     return this.http.put<void>(
-      `${this.apiUrl}/${idNotificacion}/marcar-leida`,
+      `${baseUrl}/Notificaciones/${idNotificacion}/marcar-leida`,
       {}
     );
   }
 }
+
+// Mantiene el nombre anterior.
+export {
+  NotificacionService as Notificacion
+};

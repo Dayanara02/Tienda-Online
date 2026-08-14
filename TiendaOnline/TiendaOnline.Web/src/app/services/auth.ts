@@ -1,16 +1,29 @@
-// Permite realizar peticiones HTTP.
-import { HttpClient } from '@angular/common/http';
-
-// Permite crear servicios e inyectar dependencias.
+// Permite crear e inyectar servicios.
 import {
   inject,
   Injectable
 } from '@angular/core';
 
-// Permite manejar respuestas asíncronas.
-import { Observable } from 'rxjs';
+// Permite realizar peticiones HTTP.
+import {
+  HttpClient
+} from '@angular/common/http';
 
-// Datos necesarios para iniciar sesión.
+// Permite manejar respuestas asíncronas.
+import {
+  Observable
+} from 'rxjs';
+
+// Importa la configuración del ambiente.
+import {
+  environment
+} from '../../environments/environment';
+
+// Guarda la dirección principal de la API.
+const baseUrl =
+  environment.apiUrl;
+
+// Representa los datos del inicio de sesión.
 export interface LoginPeticion {
 
   // Correo del usuario.
@@ -20,7 +33,7 @@ export interface LoginPeticion {
   contrasena: string;
 }
 
-// Datos necesarios para registrarse.
+// Representa los datos del registro.
 export interface RegistroPeticion {
 
   // Nombre del usuario.
@@ -36,10 +49,10 @@ export interface RegistroPeticion {
   contrasena: string;
 }
 
-// Respuesta del inicio de sesión.
+// Representa la respuesta del login.
 export interface LoginRespuesta {
 
-  // Token generado.
+  // Token generado por la API.
   token: string;
 
   // Identificador del usuario.
@@ -55,28 +68,24 @@ export interface LoginRespuesta {
   rol: string;
 }
 
-// Permite usar el servicio en toda la aplicación.
+// Permite utilizar el servicio en toda la aplicación.
 @Injectable({
   providedIn: 'root'
 })
-export class Auth {
+export class AuthService {
 
   // Inyecta HttpClient.
   private readonly http =
     inject(HttpClient);
 
-  // Dirección principal de Auth.
-  private readonly apiUrl =
-    'https://localhost:7196/api/Auth';
-
-  // Envía los datos del login.
+  // Inicia sesión.
   iniciarSesion(
     datos: LoginPeticion
   ): Observable<LoginRespuesta> {
 
-    // Llama al endpoint login.
+    // Envía los datos al endpoint login.
     return this.http.post<LoginRespuesta>(
-      `${this.apiUrl}/login`,
+      `${baseUrl}/Auth/login`,
       datos
     );
   }
@@ -86,9 +95,9 @@ export class Auth {
     datos: RegistroPeticion
   ): Observable<any> {
 
-    // Llama al endpoint registrar.
-    return this.http.post(
-      `${this.apiUrl}/registrar`,
+    // Envía los datos al endpoint registrar.
+    return this.http.post<any>(
+      `${baseUrl}/Auth/registrar`,
       datos
     );
   }
@@ -98,17 +107,18 @@ export class Auth {
     token: string
   ): void {
 
-    // Guarda el token.
+    // Guarda el token en el navegador.
     localStorage.setItem(
       'token',
       token
     );
   }
 
-  // Obtiene el token.
-  obtenerToken(): string | null {
+  // Obtiene el token guardado.
+  obtenerToken():
+    string | null {
 
-    // Devuelve el token guardado.
+    // Devuelve el token.
     return localStorage.getItem(
       'token'
     );
@@ -126,19 +136,21 @@ export class Auth {
     );
   }
 
-  // Obtiene el rol.
-  obtenerRol(): string | null {
+  // Obtiene el rol guardado.
+  obtenerRol():
+    string | null {
 
-    // Devuelve el rol guardado.
+    // Devuelve el rol.
     return localStorage.getItem(
       'rol'
     );
   }
 
   // Comprueba si existe sesión.
-  estaAutenticado(): boolean {
+  estaAutenticado():
+    boolean {
 
-    // Comprueba si existe token.
+    // Verifica si existe token.
     return !!this.obtenerToken();
   }
 
@@ -146,18 +158,33 @@ export class Auth {
   cerrarSesion(): void {
 
     // Elimina el token.
-    localStorage.removeItem('token');
+    localStorage.removeItem(
+      'token'
+    );
 
     // Elimina el rol.
-    localStorage.removeItem('rol');
+    localStorage.removeItem(
+      'rol'
+    );
 
-    // Elimina el usuario.
-    localStorage.removeItem('idUsuario');
+    // Elimina el identificador.
+    localStorage.removeItem(
+      'idUsuario'
+    );
 
     // Elimina el nombre.
-    localStorage.removeItem('nombreUsuario');
+    localStorage.removeItem(
+      'nombreUsuario'
+    );
 
     // Elimina el correo.
-    localStorage.removeItem('correoUsuario');
+    localStorage.removeItem(
+      'correoUsuario'
+    );
   }
 }
+
+// Mantiene el nombre usado por los componentes.
+export {
+  AuthService as Auth
+};
