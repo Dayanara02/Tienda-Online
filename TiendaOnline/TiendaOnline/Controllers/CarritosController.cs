@@ -1,163 +1,430 @@
-﻿// Importa las funcionalidades para controlar la autorización de los usuarios.
-using Microsoft.AspNetCore.Authorization;
-
-// Importa las herramientas necesarias para crear controladores y respuestas HTTP.
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-// Importa Entity Framework Core para trabajar con la base de datos.
 using Microsoft.EntityFrameworkCore;
-
-// Importa el contexto de la base de datos de la tienda.
+using System.Security.Claims;
 using TiendaOnline.AccesoDatos.Context;
-
-// Importa las entidades utilizadas por el controlador.
 using TiendaOnline.Dominio.Entidades;
 
-// Define el espacio de nombres donde se encuentra este controlador.
 namespace TiendaOnline.API.Controllers;
 
-// Indica que esta clase es un controlador de API.
 [ApiController]
-
-// Define la ruta base para acceder al controlador.
 [Route("api/[controller]")]
-
-// Indica que todas las acciones requieren un usuario autenticado.
 [Authorize]
 public class CarritosController : ControllerBase
 {
-    // Almacena el contexto para acceder a la base de datos.
     private readonly TiendaOnlineContext _context;
 
-    // Constructor que recibe el contexto mediante inyección de dependencias.
-    public CarritosController(TiendaOnlineContext context)
+    public CarritosController(
+        TiendaOnlineContext context)
     {
-        // Guarda el contexto recibido para utilizarlo en el controlador.
         _context = context;
     }
 
-    // GET: api/Carritos
-    // Obtiene todos los carritos registrados.
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Carrito>>> GetCarritos()
+
+    // Obtiene el usuario conectado.
+    private async Task<int?>
+        ObtenerIdUsuarioActual()
     {
-        // Consulta los carritos sin realizar seguimiento de cambios.
-        return await _context.Carritos
-            // Mejora el rendimiento al tratarse de una consulta de solo lectura.
+        string?[] posiblesIds =
+        {
+            User.FindFirst(
+                ClaimTypes.NameIdentifier
+            )?.Value,
+
+            User.FindFirst(
+                "idUsuario"
+            )?.Value,
+
+            User.FindFirst(
+                "IdUsuario"
+            )?.Value,
+
+            User.FindFirst(
+                "sub"
+            )?.Value,
+
+            User.FindFirst(
+                "nameid"
+            )?.Value
+        };
+
+
+        foreach (
+            string? valor in posiblesIds
+        )
+        {
+            if (
+                int.TryParse(
+                    valor,
+                    out int idUsuario
+                )
+                &&
+                idUsuario > 0
+            )
+            {
+                return idUsuario;
+            }
+        }
+
+
+        var correo =
+            User.FindFirst(
+                ClaimTypes.Email
+            )?.Value
+            ??
+            User.FindFirst(
+                "email"
+            )?.Value;
+
+
+        if (
+            !string.IsNullOrWhiteSpace(
+                correo
+            )
+        )
+        {
+            return await _context
+                .Usuarios
+                .Where(
+                    usuario =>
+                        usuario.Correo ==
+                        correo
+                )
+                .Select(
+                    usuario =>
+                        (int?)
+                        usuario.IdUsuario
+                )
+                .FirstOrDefaultAsync();
+        }
+
+
+        return null;
+    }
+
+
+    // Obtiene todos los carritos.
+    [HttpGet]
+    public async Task<
+        ActionResult<IEnumerable<Carrito>>>
+        GetCarritos()
+    {
+        return await _context
+            .Carritos
             .AsNoTracking()
-            // Ejecuta la consulta y obtiene todos los registros.
             .ToListAsync();
     }
 
-    // GET: api/Carritos/5
-    // Obtiene un carrito específico utilizando su ID.
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Carrito>> GetCarrito(int id)
-    {
-        // Busca el carrito por su identificador.
-        var carrito = await _context.Carritos.FindAsync(id);
 
-        // Verifica si el carrito no existe.
+    // Obtiene un carrito.
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Carrito>>
+        GetCarrito(
+            int id)
+    {
+        var carrito =
+            await _context
+                .Carritos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    c =>
+                        c.IdCarrito ==
+                        id
+                );
+
+
         if (carrito == null)
         {
-            // Devuelve una respuesta 404 indicando que no fue encontrado.
             return NotFound();
         }
 
-        // Devuelve el carrito encontrado.
-        return carrito;
-    }
 
-    // POST: api/Carritos
-    // Crea un nuevo carrito en la base de datos.
-    [HttpPost]
-    public async Task<ActionResult<Carrito>> PostCarrito(
-        Carrito carrito)
-    {
-        // Establece el ID en cero para que la base de datos lo genere.
-        carrito.IdCarrito = 0;
-
-        // Registra la fecha y hora de creación del carrito.
-        carrito.FechaCreacion = DateTime.Now;
-
-        // Verifica si el estado no fue indicado.
-        if (string.IsNullOrWhiteSpace(carrito.Estado))
-        {
-            // Establece el carrito como activo por defecto.
-            carrito.Estado = "Activo";
-        }
-
-        // Agrega el nuevo carrito al contexto.
-        _context.Carritos.Add(carrito);
-
-        // Guarda los cambios realizados en la base de datos.
-        await _context.SaveChangesAsync();
-
-        // Devuelve una respuesta 201 indicando que el carrito fue creado.
-        return CreatedAtAction(
-            // Indica la acción utilizada para consultar el carrito creado.
-            nameof(GetCarrito),
-
-            // Envía el ID del carrito creado en la URL.
-            new { id = carrito.IdCarrito },
-
-            // Devuelve los datos del carrito creado.
+        return Ok(
             carrito
         );
     }
 
-    // PUT: api/Carritos/5
-    // Actualiza los datos de un carrito existente.
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutCarrito(
-        int id,
-        Carrito carrito)
-    {
-        // Busca el carrito existente utilizando el ID recibido.
-        var carritoActual = await _context.Carritos.FindAsync(id);
 
-        // Verifica si el carrito no existe.
-        if (carritoActual == null)
+    // Obtiene o crea el carrito
+    // activo del usuario conectado.
+    [HttpPost("actual")]
+    public async Task<ActionResult<Carrito>>
+        ObtenerOCrearCarritoActual()
+    {
+        var idUsuario =
+            await ObtenerIdUsuarioActual();
+
+
+        if (!idUsuario.HasValue)
         {
-            // Devuelve una respuesta 404 indicando que no fue encontrado.
+            return Unauthorized(
+                "No se pudo identificar al usuario."
+            );
+        }
+
+
+        // Busca todos los carritos
+        // activos del usuario.
+        var carritosActivos =
+            await _context
+                .Carritos
+                .Where(
+                    c =>
+                        c.IdUsuario ==
+                        idUsuario.Value
+                        &&
+                        c.Estado ==
+                        "Activo"
+                )
+                .OrderByDescending(
+                    c =>
+                        c.FechaCreacion
+                )
+                .ThenByDescending(
+                    c =>
+                        c.IdCarrito
+                )
+                .ToListAsync();
+
+
+        // Si existe alguno...
+        if (
+            carritosActivos.Count > 0
+        )
+        {
+            // Conserva solamente el más nuevo.
+            var carritoActual =
+                carritosActivos[0];
+
+
+            // Si por algún error había
+            // más de uno activo...
+            foreach (
+                var carritoAnterior
+                in carritosActivos.Skip(1)
+            )
+            {
+                carritoAnterior.Estado =
+                    "Inactivo";
+            }
+
+
+            if (
+                carritosActivos.Count > 1
+            )
+            {
+                await _context
+                    .SaveChangesAsync();
+            }
+
+
+            return Ok(
+                carritoActual
+            );
+        }
+
+
+        // Crea un carrito nuevo.
+        var nuevoCarrito =
+            new Carrito
+            {
+                IdUsuario =
+                    idUsuario.Value,
+
+                FechaCreacion =
+                    DateTime.Now,
+
+                Estado =
+                    "Activo"
+            };
+
+
+        _context.Carritos.Add(
+            nuevoCarrito
+        );
+
+
+        await _context
+            .SaveChangesAsync();
+
+
+        return Ok(
+            nuevoCarrito
+        );
+    }
+
+
+    // Marca el carrito actual
+    // como Inactivo.
+    [HttpPut("actual/inactivar")]
+    public async Task<IActionResult>
+        InactivarCarritoActual()
+    {
+        var idUsuario =
+            await ObtenerIdUsuarioActual();
+
+
+        if (!idUsuario.HasValue)
+        {
+            return Unauthorized();
+        }
+
+
+        var carrito =
+            await _context
+                .Carritos
+                .Where(
+                    c =>
+                        c.IdUsuario ==
+                        idUsuario.Value
+                        &&
+                        c.Estado ==
+                        "Activo"
+                )
+                .OrderByDescending(
+                    c =>
+                        c.FechaCreacion
+                )
+                .FirstOrDefaultAsync();
+
+
+        if (carrito == null)
+        {
+            return NotFound(
+                "No existe un carrito activo."
+            );
+        }
+
+
+        carrito.Estado =
+            "Inactivo";
+
+
+        await _context
+            .SaveChangesAsync();
+
+
+        return Ok(
+            new
+            {
+                mensaje =
+                    "Carrito marcado como Inactivo.",
+
+                idCarrito =
+                    carrito.IdCarrito,
+
+                estado =
+                    carrito.Estado
+            }
+        );
+    }
+
+
+    // Crea un carrito manualmente.
+    [HttpPost]
+    public async Task<ActionResult<Carrito>>
+        PostCarrito(
+            Carrito carrito)
+    {
+        carrito.IdCarrito =
+            0;
+
+        carrito.FechaCreacion =
+            DateTime.Now;
+
+
+        if (
+            string.IsNullOrWhiteSpace(
+                carrito.Estado
+            )
+        )
+        {
+            carrito.Estado =
+                "Activo";
+        }
+
+
+        _context.Carritos.Add(
+            carrito
+        );
+
+
+        await _context
+            .SaveChangesAsync();
+
+
+        return CreatedAtAction(
+            nameof(GetCarrito),
+
+            new
+            {
+                id =
+                    carrito.IdCarrito
+            },
+
+            carrito
+        );
+    }
+
+
+    // Actualiza un carrito.
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult>
+        PutCarrito(
+            int id,
+            Carrito carrito)
+    {
+        var actual =
+            await _context
+                .Carritos
+                .FindAsync(id);
+
+
+        if (actual == null)
+        {
             return NotFound();
         }
 
-        // Actualiza el usuario asociado al carrito.
-        carritoActual.IdUsuario = carrito.IdUsuario;
 
-        // Actualiza el estado del carrito.
-        carritoActual.Estado = carrito.Estado;
+        actual.Estado =
+            carrito.Estado;
 
-        // Guarda los cambios realizados.
-        await _context.SaveChangesAsync();
 
-        // Devuelve una respuesta 204 indicando que la actualización fue exitosa.
+        await _context
+            .SaveChangesAsync();
+
+
         return NoContent();
     }
 
-    // DELETE: api/Carritos/5
-    // Elimina un carrito existente.
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCarrito(int id)
-    {
-        // Busca el carrito por su identificador.
-        var carrito = await _context.Carritos.FindAsync(id);
 
-        // Verifica si el carrito no existe.
+    // Elimina un carrito.
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult>
+        DeleteCarrito(
+            int id)
+    {
+        var carrito =
+            await _context
+                .Carritos
+                .FindAsync(id);
+
+
         if (carrito == null)
         {
-            // Devuelve una respuesta 404 indicando que no fue encontrado.
             return NotFound();
         }
 
-        // Marca el carrito para ser eliminado de la base de datos.
-        _context.Carritos.Remove(carrito);
 
-        // Guarda la eliminación en la base de datos.
-        await _context.SaveChangesAsync();
+        _context.Carritos.Remove(
+            carrito
+        );
 
-        // Devuelve una respuesta 204 indicando que la eliminación fue exitosa.
+
+        await _context
+            .SaveChangesAsync();
+
+
         return NoContent();
     }
 }

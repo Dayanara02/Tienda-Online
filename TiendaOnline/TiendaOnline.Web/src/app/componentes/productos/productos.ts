@@ -1,17 +1,21 @@
 // Importa CommonModule para usar directivas y pipes de Angular.
 import { CommonModule } from '@angular/common';
 
-// Importa Component y ChangeDetectorRef para crear y actualizar la pantalla.
+// Importa Component y ChangeDetectorRef.
 import {
   ChangeDetectorRef,
   Component
 } from '@angular/core';
 
-// Importa FormsModule para utilizar ngModel en el buscador.
+// Importa FormsModule para utilizar ngModel.
 import { FormsModule } from '@angular/forms';
 
-// Importa HttpClient para consultar los productos de la API.
-import { HttpClient } from '@angular/common/http';
+// Importa HttpClient para consultar directamente la API.
+// HttpHeaders permite enviar el token JWT.
+import {
+  HttpClient,
+  HttpHeaders
+} from '@angular/common/http';
 
 // Importa Router para navegar entre pantallas.
 import { Router } from '@angular/router';
@@ -28,59 +32,142 @@ import { MatButtonModule } from '@angular/material/button';
 // Importa ayudas visuales de Angular Material.
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-// Define la respuesta enviada por la API.
+
+// =====================================================
+// PRODUCTO RECIBIDO DESDE LA API
+// =====================================================
+
+// Define la respuesta enviada por ProductosController.
 interface ProductoApi {
+
   idProducto: number;
+
   idCategoria: number;
+
   categoria: string;
+
   nombre: string;
+
   descripcion: string | null;
+
   precio: number;
+
   imagen: string | null;
+
   stock: number;
 }
 
-// Define la estructura utilizada dentro de Productos.
+
+// =====================================================
+// PRODUCTO MOSTRADO EN PANTALLA
+// =====================================================
+
 interface Producto {
+
   id: number;
+
   idCategoria: number;
+
   nombre: string;
+
   marca: string;
+
   categoria: string;
+
   precio: number;
+
   stock: number;
+
   imagen: string;
+
   descripcion: string;
+
   cantidad: number;
 }
 
-// Define la estructura utilizada en el carrito.
+
+// =====================================================
+// PRODUCTO DEL CARRITO
+// =====================================================
+
 interface ProductoCarrito {
+
   id: number;
+
   nombre: string;
+
   marca: string;
+
   precio: number;
+
   imagen: string;
+
   cantidad: number;
+
   stock: number;
 }
 
-// Define la estructura utilizada en favoritos.
+
+// =====================================================
+// PRODUCTO FAVORITO
+// =====================================================
+
 interface ProductoFavorito {
+
   id: number;
+
   nombre: string;
+
   marca: string;
+
   precio: number;
+
   imagen: string;
+
   stock: number;
+
   categoria: string;
 }
 
-// Configura el componente Productos.
+
+// =====================================================
+// RESPUESTA DEL CARRITO DESDE SQL
+// =====================================================
+
+interface CarritoSql {
+
+  idCarrito: number;
+
+  idUsuario: number;
+
+  fechaCreacion: string;
+
+  estado: string;
+}
+
+
+// =====================================================
+// RESPUESTA DE LISTA DE DESEOS DESDE SQL
+// =====================================================
+
+interface ListaDeseosSql {
+
+  idListaDeseos: number;
+
+  idUsuario: number;
+
+  fechaCreacion: string;
+}
+
+
+// =====================================================
+// COMPONENTE PRODUCTOS
+// =====================================================
+
 @Component({
+
   selector: 'app-productos',
 
-  // Registra los módulos utilizados por el HTML.
   imports: [
     CommonModule,
     FormsModule,
@@ -90,204 +177,476 @@ interface ProductoFavorito {
     MatTooltipModule
   ],
 
-  // Define los archivos visuales del componente.
   templateUrl: './productos.html',
+
   styleUrl: './productos.css'
 })
 export class Productos {
 
-  // Guarda la dirección del endpoint de productos.
-  private readonly apiUrl =
+
+  // ===================================================
+  // DIRECCIONES DE LA API
+  // ===================================================
+
+  // Productos.
+  apiProductos =
     'https://localhost:7196/api/Productos';
+
+  // Carritos.
+  apiCarritos =
+    'https://localhost:7196/api/Carritos';
+
+  // Detalles del carrito.
+  apiDetalleCarritos =
+    'https://localhost:7196/api/DetalleCarritos';
+
+  // Lista de deseos.
+  apiListaDeseos =
+    'https://localhost:7196/api/ListaDeseos';
+
+  // Detalles de lista de deseos.
+  apiDetalleListaDeseos =
+    'https://localhost:7196/api/DetalleListaDeseos';
+
+
+  // ===================================================
+  // VARIABLES
+  // ===================================================
 
   // Guarda los productos obtenidos desde SQL Server.
   productos: Producto[] = [];
 
-  // Guarda el texto escrito en el buscador.
+  // Texto utilizado en el buscador.
   textoBusqueda = '';
 
-  // Guarda la categoría actualmente seleccionada.
+  // Categoría seleccionada.
   categoriaSeleccionada = 'Todos';
 
-  // Guarda la cantidad de artículos del carrito.
+  // Cantidad total del carrito.
   cantidadCarrito = 0;
 
-  // Guarda la cantidad de productos favoritos.
+  // Cantidad total de favoritos.
   cantidadDeseos = 0;
 
-  // Indica si los productos todavía se están cargando.
+  // Indica si los productos están cargando.
   cargando = false;
 
-  // Guarda mensajes temporales.
+  // Mensaje temporal.
   mensaje = '';
 
-  // Guarda el tipo del mensaje mostrado.
-  tipoMensaje: 'exito' | 'info' | 'error' =
+  // Tipo de mensaje.
+  tipoMensaje:
+    'exito' |
+    'info' |
+    'error' =
     'info';
 
-  // Inyecta los servicios necesarios.
+
+  // ===================================================
+  // CONSTRUCTOR
+  // ===================================================
+
   constructor(
     private http: HttpClient,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
-    // Carga productos y contadores al abrir la pantalla.
+
+    // Carga productos.
     this.cargarProductos();
+
+    // Actualiza los contadores.
     this.actualizarContadores();
   }
 
-  // Obtiene los productos reales desde la API.
-  cargarProductos(): void {
-    // Activa el mensaje de carga.
-    this.cargando = true;
 
-    // Consulta el endpoint público de productos.
-    this.http.get<ProductoApi[]>(
-      this.apiUrl
-    ).subscribe({
+  // ===================================================
+  // TOKEN JWT
+  // ===================================================
 
-      // Se ejecuta cuando la API responde correctamente.
-      next: (respuesta) => {
+  // Obtiene el token del usuario que inició sesión.
+  private obtenerHeaders():
+    HttpHeaders | null {
 
-        // Convierte los datos recibidos al formato de la pantalla.
-        this.productos =
-          respuesta.map(
-            producto => ({
-              // Utiliza el identificador real de SQL Server.
-              id:
-                producto.idProducto,
+    const token =
+      localStorage.getItem(
+        'token'
+      );
 
-              // Guarda la categoría real.
-              idCategoria:
-                producto.idCategoria,
 
-              // Utiliza el nombre real del producto.
-              nombre:
-                producto.nombre,
+    // Si no existe token,
+    // no se pueden utilizar los endpoints protegidos.
+    if (!token) {
 
-              // Mantiene Esencia como marca visual de la tienda.
-              marca:
-                'Esencia',
+      return null;
+    }
 
-              // Utiliza el nombre real de la categoría.
-              categoria:
-                producto.categoria,
 
-              // Utiliza el precio real de SQL Server.
-              precio:
-                Number(producto.precio),
+    // Envía el JWT en Authorization.
+    return new HttpHeaders({
 
-              // Utiliza el stock real del inventario.
-              stock:
-                Number(producto.stock),
-
-              // Construye la ruta hacia public/productos.
-              imagen:
-                producto.imagen
-                  ? `/productos/${producto.imagen}`
-                  : '',
-
-              // Utiliza la descripción real del producto.
-              descripcion:
-                producto.descripcion ||
-                'Sin descripción disponible.',
-
-              // Cada producto inicia con una unidad seleccionada.
-              cantidad:
-                1
-            })
-          );
-
-        // Indica que la carga terminó.
-        this.cargando = false;
-
-        // Fuerza a Angular a actualizar la pantalla.
-        this.cdr.detectChanges();
-      },
-
-      // Se ejecuta cuando ocurre un error.
-      error: (error) => {
-
-        // Muestra el error completo durante el desarrollo.
-        console.error(
-          'Error al cargar los productos:',
-          error
-        );
-
-        // Limpia la lista si la consulta falla.
-        this.productos = [];
-
-        // Finaliza el estado de carga.
-        this.cargando = false;
-
-        // Informa el problema al cliente.
-        this.mostrarMensaje(
-          'No se pudieron cargar los productos.',
-          'error'
-        );
-
-        // Actualiza inmediatamente la pantalla.
-        this.cdr.detectChanges();
-      }
+      Authorization:
+        `Bearer ${token}`
     });
   }
 
-  // Obtiene las categorías reales sin repetirlas.
+
+  // ===================================================
+  // CARGAR PRODUCTOS
+  // ===================================================
+
+  // Obtiene los productos desde SQL Server.
+  cargarProductos(): void {
+
+    // Activa estado de carga.
+    this.cargando = true;
+
+
+    // Consulta ProductosController.
+    this.http
+      .get<ProductoApi[]>(
+        this.apiProductos
+      )
+      .subscribe({
+
+        // Si funciona correctamente.
+        next: respuesta => {
+
+          // Convierte los productos
+          // al formato utilizado por Angular.
+          this.productos =
+            respuesta.map(
+              producto => ({
+
+                // ID real del producto.
+                id:
+                  producto.idProducto,
+
+                // ID real de categoría.
+                idCategoria:
+                  producto.idCategoria,
+
+                // Nombre.
+                nombre:
+                  producto.nombre,
+
+                // Marca utilizada visualmente.
+                marca:
+                  'Esencia',
+
+                // Categoría.
+                categoria:
+                  producto.categoria,
+
+                // Precio.
+                precio:
+                  Number(
+                    producto.precio
+                  ),
+
+                // Stock.
+                stock:
+                  Number(
+                    producto.stock
+                  ),
+
+                // Imagen.
+                imagen:
+                  this.obtenerImagenProducto(
+                    producto
+                  ),
+
+                // Descripción.
+                descripcion:
+                  producto.descripcion ||
+                  'Sin descripción disponible.',
+
+                // Cantidad inicial.
+                cantidad:
+                  1
+              })
+            );
+
+
+          // Finaliza carga.
+          this.cargando = false;
+
+          // Actualiza pantalla.
+          this.cdr.detectChanges();
+        },
+
+
+        // Si ocurre un error.
+        error: error => {
+
+          console.error(
+            'Error al cargar los productos:',
+            error
+          );
+
+
+          // Limpia productos.
+          this.productos = [];
+
+          // Finaliza carga.
+          this.cargando = false;
+
+
+          // Muestra error.
+          this.mostrarMensaje(
+            'No se pudieron cargar los productos.',
+            'error'
+          );
+
+
+          // Actualiza pantalla.
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+
+  // ===================================================
+  // IMÁGENES
+  // ===================================================
+
+  // Obtiene la imagen correspondiente
+  // a cada producto.
+  private obtenerImagenProducto(
+    producto: ProductoApi
+  ): string {
+
+    // Si SQL tiene una imagen,
+    // utiliza ese archivo.
+    if (
+      producto.imagen &&
+      producto.imagen.trim() !== ''
+    ) {
+
+      // Reemplaza barras de Windows.
+      const partes =
+        producto.imagen
+          .replace(/\\/g, '/')
+          .split('/');
+
+
+      // Obtiene únicamente
+      // el nombre del archivo.
+      const archivo =
+        partes[
+        partes.length - 1
+        ];
+
+
+      return (
+        `/productosImagenes/${archivo}`
+      );
+    }
+
+
+    // Normaliza el nombre.
+    const nombre =
+      producto.nombre
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(
+          /[\u0300-\u036f]/g,
+          ''
+        );
+
+
+    // BODY MIST FLORAL
+    if (
+      nombre.includes(
+        'body mist'
+      )
+    ) {
+
+      return '/productosImagenes/body-mist-floral.jpg';
+    }
+
+
+    // CREMA CORPORAL
+    if (
+      nombre.includes(
+        'crema corporal'
+      )
+    ) {
+
+      return '/productosImagenes/crema-corporal.jpg';
+    }
+
+
+    // EXFOLIANTE CORPORAL
+    if (
+      nombre.includes(
+        'exfoliante'
+      )
+    ) {
+
+      return '/productosImagenes/exfoliante-corporal.jpg';
+    }
+
+
+    // KIT SKINCARE
+    if (
+      nombre.includes(
+        'skincare'
+      )
+    ) {
+
+      return '/productosImagenes/kit-skincare.jpg';
+    }
+
+
+    // KIT SPA
+    if (
+      nombre.includes(
+        'spa'
+      )
+    ) {
+
+      return '/productosImagenes/kit-spa-relax.jpg';
+    }
+
+
+    // LIMPIADOR FACIAL
+    if (
+      nombre.includes(
+        'limpiador'
+      )
+    ) {
+
+      return '/productosImagenes/limpiador-facial.jpg';
+    }
+
+
+    // MASCARILLA CAPILAR
+    if (
+      nombre.includes(
+        'mascarilla'
+      )
+    ) {
+
+      return '/productosImagenes/mascarilla-capilar.jpg';
+    }
+
+
+    // PERFUME
+    if (
+      nombre.includes(
+        'perfume'
+      ) ||
+      nombre.includes(
+        'elegance'
+      )
+    ) {
+
+      return '/productosImagenes/perfume-elegance.jpg';
+    }
+
+
+    // SERUM
+    if (
+      nombre.includes(
+        'serum'
+      )
+    ) {
+
+      return '/productosImagenes/serum-facial.jpg';
+    }
+
+
+    // SHAMPOO
+    if (
+      nombre.includes(
+        'shampoo'
+      )
+    ) {
+
+      return '/productosImagenes/shampoo-nutritivo.jpg';
+    }
+
+
+    // Si no existe imagen.
+    return '';
+  }
+
+
+  // ===================================================
+  // CATEGORÍAS
+  // ===================================================
+
+  // Obtiene las categorías sin repetirlas.
   get categorias(): string[] {
 
-    // Extrae los nombres de las categorías.
     const categorias =
       this.productos.map(
         producto =>
           producto.categoria
       );
 
-    // Agrega Todos y elimina categorías repetidas.
+
     return [
       'Todos',
+
       ...Array.from(
-        new Set(categorias)
+        new Set(
+          categorias
+        )
       )
     ];
   }
 
-  // Filtra los productos por búsqueda y categoría.
-  get productosFiltrados(): Producto[] {
 
-    // Prepara el texto para realizar la búsqueda.
+  // ===================================================
+  // FILTROS
+  // ===================================================
+
+  // Devuelve los productos filtrados.
+  get productosFiltrados():
+    Producto[] {
+
+    // Obtiene el texto escrito.
     const busqueda =
       this.textoBusqueda
         .trim()
         .toLowerCase();
 
-    // Filtra todos los productos cargados.
+
+    // Filtra productos.
     return this.productos.filter(
       producto => {
 
-        // Comprueba la categoría seleccionada.
+        // Comprueba categoría.
         const coincideCategoria =
           this.categoriaSeleccionada ===
           'Todos' ||
           producto.categoria ===
           this.categoriaSeleccionada;
 
-        // Comprueba nombre, marca, categoría y descripción.
+
+        // Comprueba texto.
         const coincideBusqueda =
           !busqueda ||
+
           producto.nombre
             .toLowerCase()
             .includes(busqueda) ||
+
           producto.marca
             .toLowerCase()
             .includes(busqueda) ||
+
           producto.categoria
             .toLowerCase()
             .includes(busqueda) ||
+
           producto.descripcion
             .toLowerCase()
             .includes(busqueda);
 
-        // Devuelve solamente las coincidencias.
+
         return (
           coincideCategoria &&
           coincideBusqueda
@@ -296,64 +655,76 @@ export class Productos {
     );
   }
 
-  // Cambia la categoría seleccionada.
+
+  // Cambia categoría.
   seleccionarCategoria(
     categoria: string
   ): void {
 
-    // Guarda la nueva categoría.
     this.categoriaSeleccionada =
       categoria;
   }
 
-  // Limpia el buscador y la categoría.
+
+  // Limpia filtros.
   limpiarFiltros(): void {
 
-    // Vuelve a mostrar todas las categorías.
     this.categoriaSeleccionada =
       'Todos';
 
-    // Limpia el texto del buscador.
     this.textoBusqueda =
       '';
   }
 
-  // Aumenta la cantidad sin superar el stock.
+
+  // ===================================================
+  // CANTIDAD
+  // ===================================================
+
+  // Aumenta cantidad.
   aumentarCantidad(
     producto: Producto
   ): void {
 
-    // Comprueba que existan más unidades disponibles.
     if (
       producto.cantidad <
       producto.stock
     ) {
-      // Aumenta una unidad.
+
       producto.cantidad++;
     }
   }
 
-  // Disminuye la cantidad sin bajar de uno.
+
+  // Disminuye cantidad.
   disminuirCantidad(
     producto: Producto
   ): void {
 
-    // Comprueba que exista más de una unidad.
     if (
       producto.cantidad > 1
     ) {
-      // Reduce una unidad.
+
       producto.cantidad--;
     }
   }
 
-  // Agrega un producto al carrito.
+
+  // ===================================================
+  // AGREGAR AL CARRITO
+  // ===================================================
+
+  // Agrega el producto tanto
+  // al carrito local como a SQL Server.
   agregarAlCarrito(
     producto: Producto
   ): void {
 
-    // Impide agregar productos sin stock.
-    if (producto.stock <= 0) {
+    // Comprueba que exista stock.
+    if (
+      producto.stock <= 0
+    ) {
+
       this.mostrarMensaje(
         'Este producto no tiene existencias disponibles.',
         'error'
@@ -362,30 +733,43 @@ export class Productos {
       return;
     }
 
-    // Obtiene el carrito actual.
+
+    // Obtiene carrito local.
     const carrito =
       this.obtenerCarrito();
 
-    // Busca si el producto ya fue agregado.
+
+    // Busca si el producto
+    // ya está en el carrito.
     const productoExistente =
       carrito.find(
         item =>
           item.id === producto.id
       );
 
-    // Actualiza el producto si ya existe.
-    if (productoExistente) {
 
-      // Calcula la nueva cantidad.
+    // Cantidad final que debe quedar.
+    let cantidadFinal =
+      producto.cantidad;
+
+
+    // Si ya existe...
+    if (
+      productoExistente
+    ) {
+
+      // Calcula nueva cantidad.
       const nuevaCantidad =
         productoExistente.cantidad +
         producto.cantidad;
 
-      // Impide superar el stock real.
+
+      // No permite superar stock.
       if (
         nuevaCantidad >
         producto.stock
       ) {
+
         this.mostrarMensaje(
           'No puedes agregar una cantidad mayor al stock disponible.',
           'error'
@@ -394,206 +778,673 @@ export class Productos {
         return;
       }
 
-      // Actualiza la cantidad.
+
+      // Actualiza cantidad local.
       productoExistente.cantidad =
         nuevaCantidad;
 
-      // Actualiza el stock almacenado.
+
+      // Actualiza stock.
       productoExistente.stock =
         producto.stock;
+
+
+      // Guarda cantidad final.
+      cantidadFinal =
+        nuevaCantidad;
+
     } else {
 
-      // Crea el producto para guardarlo en el carrito.
+      // Crea nuevo producto
+      // para el carrito.
       const nuevoProducto:
         ProductoCarrito = {
+
         id:
           producto.id,
+
         nombre:
           producto.nombre,
+
         marca:
           producto.marca,
+
         precio:
           producto.precio,
+
         imagen:
           producto.imagen,
+
         cantidad:
           producto.cantidad,
+
         stock:
           producto.stock
       };
 
-      // Agrega el nuevo producto al carrito.
+
+      // Agrega producto local.
       carrito.push(
         nuevoProducto
       );
     }
 
-    // Guarda el carrito actualizado.
+
+    // Guarda carrito en navegador.
     localStorage.setItem(
       'carrito',
-      JSON.stringify(carrito)
+      JSON.stringify(
+        carrito
+      )
     );
 
-    // Actualiza el contador del carrito.
+
+    // Actualiza contador visual.
     this.actualizarContadores();
 
-    // Regresa la cantidad seleccionada a uno.
+
+    // =================================================
+    // AHORA GUARDA EN SQL
+    // =================================================
+
+    this.guardarProductoCarritoSql(
+      producto,
+      cantidadFinal
+    );
+
+
+    // Reinicia selector.
     producto.cantidad =
       1;
-
-    // Informa que se agregó correctamente.
-    this.mostrarMensaje(
-      'Producto agregado al carrito.',
-      'exito'
-    );
   }
 
-  // Agrega o elimina un producto de favoritos.
+
+  // ===================================================
+  // GUARDAR CARRITO EN SQL
+  // ===================================================
+
+  // Obtiene o crea el carrito activo
+  // del usuario y después guarda
+  // el producto en DetalleCarrito.
+  private guardarProductoCarritoSql(
+    producto: Producto,
+    cantidadFinal: number
+  ): void {
+
+    // Obtiene JWT.
+    const headers =
+      this.obtenerHeaders();
+
+
+    // Si no existe sesión...
+    if (!headers) {
+
+      this.mostrarMensaje(
+        'Debes iniciar sesión para agregar productos al carrito.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    // =================================================
+    // PASO 1:
+    // OBTENER O CREAR CARRITO ACTIVO
+    // =================================================
+
+    this.http
+      .post<CarritoSql>(
+        `${this.apiCarritos}/actual`,
+        {},
+        {
+          headers
+        }
+      )
+      .subscribe({
+
+        // Si obtiene el carrito...
+        next: carrito => {
+
+          // Guarda el ID real del carrito.
+          localStorage.setItem(
+            'idCarritoActual',
+            String(
+              carrito.idCarrito
+            )
+          );
+
+
+          // Prepara el detalle.
+          const detalle = {
+
+            // Carrito real de SQL.
+            idCarrito:
+              carrito.idCarrito,
+
+            // Producto real.
+            idProducto:
+              producto.id,
+
+            // Cantidad final.
+            cantidad:
+              cantidadFinal,
+
+            // Precio actual.
+            precioUnitario:
+              Number(
+                producto.precio
+              )
+          };
+
+
+          // ============================================
+          // PASO 2:
+          // GUARDAR EN DETALLECARRITO
+          // ============================================
+
+          this.http
+            .post(
+              this.apiDetalleCarritos,
+              detalle,
+              {
+                headers
+              }
+            )
+            .subscribe({
+
+              // Todo correcto.
+              next: () => {
+
+                this.mostrarMensaje(
+                  'Producto agregado al carrito.',
+                  'exito'
+                );
+              },
+
+
+              // Error guardando detalle.
+              error: error => {
+
+                console.error(
+                  'Error guardando DetalleCarrito:',
+                  error
+                );
+
+
+                this.mostrarMensaje(
+                  'El carrito fue creado, pero no se pudo guardar el producto.',
+                  'error'
+                );
+              }
+            });
+        },
+
+
+        // Error obteniendo carrito.
+        error: error => {
+
+          console.error(
+            'Error obteniendo carrito activo:',
+            error
+          );
+
+
+          this.mostrarMensaje(
+            'No se pudo guardar el carrito en la base de datos.',
+            'error'
+          );
+        }
+      });
+  }
+
+
+  // ===================================================
+  // FAVORITOS
+  // ===================================================
+
+  // Agrega o elimina un favorito
+  // tanto localmente como en SQL.
   cambiarFavorito(
     producto: Producto
   ): void {
 
-    // Obtiene la lista actual de favoritos.
+    // Obtiene favoritos.
     const favoritos =
       this.obtenerFavoritos();
 
-    // Busca el producto dentro de favoritos.
+
+    // Busca producto.
     const indice =
       favoritos.findIndex(
         item =>
-          item.id === producto.id
+          item.id ===
+          producto.id
       );
 
-    // Elimina el producto si ya estaba guardado.
-    if (indice >= 0) {
 
-      // Quita el producto de favoritos.
+    // =================================================
+    // SI YA ERA FAVORITO:
+    // ELIMINAR
+    // =================================================
+
+    if (
+      indice >= 0
+    ) {
+
+      // Lo elimina localmente.
       favoritos.splice(
         indice,
         1
       );
 
-      // Informa el cambio.
-      this.mostrarMensaje(
-        'Producto eliminado de favoritos.',
-        'info'
-      );
-    } else {
 
-      // Crea el producto favorito.
-      const favorito:
-        ProductoFavorito = {
-        id:
-          producto.id,
-        nombre:
-          producto.nombre,
-        marca:
-          producto.marca,
-        precio:
-          producto.precio,
-        imagen:
-          producto.imagen,
-        stock:
-          producto.stock,
-        categoria:
-          producto.categoria
-      };
-
-      // Agrega el producto a favoritos.
-      favoritos.push(
-        favorito
+      // Guarda favoritos actualizados.
+      localStorage.setItem(
+        'listaDeseos',
+        JSON.stringify(
+          favoritos
+        )
       );
 
-      // Informa el cambio.
-      this.mostrarMensaje(
-        'Producto agregado a favoritos.',
-        'exito'
+
+      // Actualiza contador.
+      this.actualizarContadores();
+
+
+      // También elimina de SQL.
+      this.eliminarFavoritoSql(
+        producto.id
       );
+
+
+      return;
     }
 
-    // Guarda los favoritos actualizados.
-    localStorage.setItem(
-      'listaDeseos',
-      JSON.stringify(favoritos)
+
+    // =================================================
+    // SI NO ERA FAVORITO:
+    // AGREGAR
+    // =================================================
+
+    const favorito:
+      ProductoFavorito = {
+
+      id:
+        producto.id,
+
+      nombre:
+        producto.nombre,
+
+      marca:
+        producto.marca,
+
+      precio:
+        producto.precio,
+
+      imagen:
+        producto.imagen,
+
+      stock:
+        producto.stock,
+
+      categoria:
+        producto.categoria
+    };
+
+
+    // Agrega localmente.
+    favoritos.push(
+      favorito
     );
 
-    // Actualiza el contador.
+
+    // Guarda en localStorage.
+    localStorage.setItem(
+      'listaDeseos',
+      JSON.stringify(
+        favoritos
+      )
+    );
+
+
+    // Actualiza contador.
     this.actualizarContadores();
+
+
+    // También guarda en SQL.
+    this.guardarFavoritoSql(
+      producto.id
+    );
   }
 
-  // Comprueba si un producto está guardado en favoritos.
+
+  // ===================================================
+  // GUARDAR FAVORITO EN SQL
+  // ===================================================
+
+  // Obtiene o crea ListaDeseos
+  // y después registra el producto.
+  private guardarFavoritoSql(
+    idProducto: number
+  ): void {
+
+    // Obtiene JWT.
+    const headers =
+      this.obtenerHeaders();
+
+
+    // Comprueba sesión.
+    if (!headers) {
+
+      this.mostrarMensaje(
+        'Debes iniciar sesión para agregar favoritos.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    // =================================================
+    // PASO 1:
+    // OBTENER O CREAR LISTA DE DESEOS
+    // =================================================
+
+    this.http
+      .post<ListaDeseosSql>(
+        `${this.apiListaDeseos}/actual`,
+        {},
+        {
+          headers
+        }
+      )
+      .subscribe({
+
+        // Lista obtenida correctamente.
+        next: lista => {
+
+          // Guarda ID real.
+          localStorage.setItem(
+            'idListaDeseosActual',
+            String(
+              lista.idListaDeseos
+            )
+          );
+
+
+          // Prepara detalle.
+          const detalle = {
+
+            // Lista real.
+            idListaDeseos:
+              lista.idListaDeseos,
+
+            // Producto seleccionado.
+            idProducto:
+              idProducto
+          };
+
+
+          // ============================================
+          // PASO 2:
+          // GUARDAR PRODUCTO FAVORITO
+          // ============================================
+
+          this.http
+            .post(
+              this.apiDetalleListaDeseos,
+              detalle,
+              {
+                headers
+              }
+            )
+            .subscribe({
+
+              // Correcto.
+              next: () => {
+
+                this.mostrarMensaje(
+                  'Producto agregado a favoritos.',
+                  'exito'
+                );
+              },
+
+
+              // Error.
+              error: error => {
+
+                console.error(
+                  'Error guardando DetalleListaDeseos:',
+                  error
+                );
+
+
+                this.mostrarMensaje(
+                  'La lista fue creada, pero no se pudo guardar el producto.',
+                  'error'
+                );
+              }
+            });
+        },
+
+
+        // Error obteniendo lista.
+        error: error => {
+
+          console.error(
+            'Error obteniendo ListaDeseos:',
+            error
+          );
+
+
+          this.mostrarMensaje(
+            'No se pudo guardar el favorito en la base de datos.',
+            'error'
+          );
+        }
+      });
+  }
+
+
+  // ===================================================
+  // ELIMINAR FAVORITO DE SQL
+  // ===================================================
+
+  // Obtiene la lista actual
+  // y elimina el producto favorito.
+  private eliminarFavoritoSql(
+    idProducto: number
+  ): void {
+
+    // Obtiene JWT.
+    const headers =
+      this.obtenerHeaders();
+
+
+    if (!headers) {
+
+      return;
+    }
+
+
+    // Obtiene la lista actual.
+    this.http
+      .post<ListaDeseosSql>(
+        `${this.apiListaDeseos}/actual`,
+        {},
+        {
+          headers
+        }
+      )
+      .subscribe({
+
+        // Si encuentra la lista...
+        next: lista => {
+
+          // Guarda ID.
+          localStorage.setItem(
+            'idListaDeseosActual',
+            String(
+              lista.idListaDeseos
+            )
+          );
+
+
+          // Elimina el detalle.
+          this.http
+            .delete(
+              `${this.apiDetalleListaDeseos}/${lista.idListaDeseos}/${idProducto}`,
+              {
+                headers
+              }
+            )
+            .subscribe({
+
+              // Eliminado correctamente.
+              next: () => {
+
+                this.mostrarMensaje(
+                  'Producto eliminado de favoritos.',
+                  'info'
+                );
+              },
+
+
+              // Si ya no estaba en SQL,
+              // muestra el error en consola.
+              error: error => {
+
+                console.error(
+                  'Error eliminando favorito de SQL:',
+                  error
+                );
+
+
+                this.mostrarMensaje(
+                  'Producto eliminado de favoritos.',
+                  'info'
+                );
+              }
+            });
+        },
+
+
+        // Error obteniendo lista.
+        error: error => {
+
+          console.error(
+            'Error obteniendo lista para eliminar favorito:',
+            error
+          );
+        }
+      });
+  }
+
+
+  // ===================================================
+  // COMPROBAR FAVORITO
+  // ===================================================
+
+  // Comprueba si un producto
+  // se encuentra marcado como favorito.
   esFavorito(
     producto: Producto
   ): boolean {
 
-    // Busca el producto por identificador.
     return this.obtenerFavoritos()
       .some(
         item =>
-          item.id === producto.id
+          item.id ===
+          producto.id
       );
   }
 
-  // Obtiene el carrito guardado en localStorage.
+
+  // ===================================================
+  // OBTENER CARRITO LOCAL
+  // ===================================================
+
   private obtenerCarrito():
     ProductoCarrito[] {
 
-    // Busca el carrito almacenado.
+    // Obtiene carrito guardado.
     const carritoGuardado =
       localStorage.getItem(
         'carrito'
       );
 
-    // Devuelve una lista vacía si no existe.
+
+    // Si no existe...
     if (!carritoGuardado) {
+
       return [];
     }
 
+
     try {
-      // Convierte el JSON nuevamente en una lista.
+
+      // Convierte JSON.
       return JSON.parse(
         carritoGuardado
       );
+
     } catch {
-      // Devuelve una lista vacía si el JSON es inválido.
+
+      // Si está dañado...
       return [];
     }
   }
 
-  // Obtiene los favoritos guardados.
+
+  // ===================================================
+  // OBTENER FAVORITOS LOCALES
+  // ===================================================
+
   private obtenerFavoritos():
     ProductoFavorito[] {
 
-    // Busca la lista almacenada.
+    // Obtiene favoritos guardados.
     const favoritosGuardados =
       localStorage.getItem(
         'listaDeseos'
       );
 
-    // Devuelve una lista vacía si no existe.
+
+    // Si no existen...
     if (!favoritosGuardados) {
+
       return [];
     }
 
+
     try {
-      // Convierte el JSON nuevamente en una lista.
+
+      // Convierte JSON.
       return JSON.parse(
         favoritosGuardados
       );
+
     } catch {
-      // Devuelve una lista vacía si el JSON es inválido.
+
+      // Si existe un error...
       return [];
     }
   }
 
-  // Actualiza los contadores superiores.
+
+  // ===================================================
+  // CONTADORES
+  // ===================================================
+
   actualizarContadores(): void {
 
-    // Obtiene el carrito actual.
+    // Obtiene carrito.
     const carrito =
       this.obtenerCarrito();
 
-    // Suma todas las unidades del carrito.
+
+    // Suma cantidades.
     this.cantidadCarrito =
       carrito.reduce(
         (
@@ -601,78 +1452,97 @@ export class Productos {
           producto
         ) =>
           total +
-          Number(producto.cantidad),
+          Number(
+            producto.cantidad
+          ),
         0
       );
 
-    // Cuenta los productos favoritos.
+
+    // Cuenta favoritos.
     this.cantidadDeseos =
-      this.obtenerFavoritos().length;
+      this.obtenerFavoritos()
+        .length;
   }
 
-  // Muestra un mensaje temporal.
+
+  // ===================================================
+  // MENSAJES
+  // ===================================================
+
   mostrarMensaje(
     texto: string,
-    tipo: 'exito' | 'info' | 'error'
+    tipo:
+      'exito' |
+      'info' |
+      'error'
   ): void {
 
-    // Guarda el contenido del mensaje.
+    // Guarda mensaje.
     this.mensaje =
       texto;
 
-    // Guarda el tipo del mensaje.
+
+    // Guarda tipo.
     this.tipoMensaje =
       tipo;
 
-    // Actualiza inmediatamente la pantalla.
+
+    // Actualiza pantalla.
     this.cdr.detectChanges();
 
-    // Limpia el mensaje después de unos segundos.
+
+    // Oculta el mensaje
+    // después de 2.5 segundos.
     setTimeout(
       () => {
 
-        // Borra el mensaje.
         this.mensaje =
           '';
 
-        // Actualiza nuevamente la pantalla.
+
         this.cdr.detectChanges();
       },
+
       2500
     );
   }
 
+
+  // ===================================================
+  // NAVEGACIÓN
+  // ===================================================
+
   // Regresa al Dashboard.
   volverDashboard(): void {
 
-    // Navega hacia Dashboard.
     this.router.navigate([
       '/dashboard'
     ]);
   }
 
-  // Abre el Carrito.
+
+  // Abre carrito.
   irAlCarrito(): void {
 
-    // Navega hacia Carrito.
     this.router.navigate([
       '/carrito'
     ]);
   }
 
-  // Abre la lista de favoritos.
+
+  // Abre favoritos.
   irAFavoritos(): void {
 
-    // Navega hacia Lista de deseos.
     this.router.navigate([
       '/lista-deseos'
     ]);
   }
 
+
   // Abre Mis Pedidos.
   irAMisPedidos(): void {
 
-    // Navega hacia Mis Pedidos.
     this.router.navigate([
       '/mis-pedidos'
     ]);

@@ -19,7 +19,9 @@ using TiendaOnline.Dominio.Entidades;
 // Importa los servicios.
 using TiendaOnline.Dominio.InterfacesLN;
 
+
 namespace TiendaOnline.API.Controllers;
+
 
 // Requiere usuario autenticado.
 [Authorize]
@@ -43,6 +45,11 @@ public class PagosController : ControllerBase
     // Permite registrar errores.
     private readonly ILogger<PagosController> _logger;
 
+
+    // =====================================================
+    // CONSTRUCTOR
+    // =====================================================
+
     // Recibe las dependencias.
     public PagosController(
         TiendaOnlineContext context,
@@ -63,6 +70,11 @@ public class PagosController : ControllerBase
         _logger = logger;
     }
 
+
+    // =====================================================
+    // OBTENER TODOS LOS PAGOS
+    // =====================================================
+
     // Obtiene todos los pagos.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpGet]
@@ -82,6 +94,11 @@ public class PagosController : ControllerBase
         return Ok(pagos);
     }
 
+
+    // =====================================================
+    // OBTENER UN PAGO
+    // =====================================================
+
     // Obtiene un pago.
     [HttpGet("{id:int}")]
     public async Task<IActionResult>
@@ -92,7 +109,8 @@ public class PagosController : ControllerBase
             await _context.Pagos
                 .AsNoTracking()
                 .Where(
-                    p => p.IdPago == id
+                    p =>
+                        p.IdPago == id
                 )
                 .Select(
                     p => new
@@ -141,6 +159,7 @@ public class PagosController : ControllerBase
                 )
                 .FirstOrDefaultAsync();
 
+
         // Valida que exista.
         if (pago == null)
         {
@@ -149,11 +168,13 @@ public class PagosController : ControllerBase
             );
         }
 
+
         // Obtiene el rol.
         var rol =
             User.FindFirstValue(
                 ClaimTypes.Role
             );
+
 
         // Admin y empleado pueden verlo.
         if (
@@ -164,11 +185,13 @@ public class PagosController : ControllerBase
             return Ok(pago);
         }
 
+
         // Obtiene el usuario del token.
         var idUsuarioTexto =
             User.FindFirstValue(
                 ClaimTypes.NameIdentifier
             );
+
 
         // Valida el usuario.
         if (
@@ -183,17 +206,25 @@ public class PagosController : ControllerBase
             );
         }
 
+
         // Evita ver pagos ajenos.
         if (
-            pago.idUsuario != idUsuario
+            pago.idUsuario !=
+            idUsuario
         )
         {
             return Forbid();
         }
 
+
         // Devuelve el pago.
         return Ok(pago);
     }
+
+
+    // =====================================================
+    // REALIZAR PAGO
+    // =====================================================
 
     // Realiza el pago.
     [Authorize(Roles = "Cliente")]
@@ -208,6 +239,7 @@ public class PagosController : ControllerBase
                 ClaimTypes.NameIdentifier
             );
 
+
         // Valida el usuario.
         if (
             !int.TryParse(
@@ -221,21 +253,32 @@ public class PagosController : ControllerBase
             );
         }
 
+
         // Valida el pedido.
-        if (dto.IdPedido <= 0)
+        if (
+            dto.IdPedido <= 0
+        )
         {
             return BadRequest(
                 "Debe indicar un pedido válido."
             );
         }
 
+
         // Valida el método.
-        if (dto.IdMetodoPago <= 0)
+        if (
+            dto.IdMetodoPago <= 0
+        )
         {
             return BadRequest(
                 "Debe seleccionar un método de pago."
             );
         }
+
+
+        // =================================================
+        // BUSCAR PEDIDO
+        // =================================================
 
         // Busca el pedido.
         var pedido =
@@ -246,13 +289,17 @@ public class PagosController : ControllerBase
                         dto.IdPedido
                 );
 
+
         // Valida que exista.
-        if (pedido == null)
+        if (
+            pedido == null
+        )
         {
             return NotFound(
                 "El pedido no existe."
             );
         }
+
 
         // Valida el propietario.
         if (
@@ -262,6 +309,7 @@ public class PagosController : ControllerBase
         {
             return Forbid();
         }
+
 
         // Evita pagar cancelados.
         if (
@@ -274,6 +322,11 @@ public class PagosController : ControllerBase
             );
         }
 
+
+        // =================================================
+        // COMPROBAR SI YA ESTÁ PAGADO
+        // =================================================
+
         // Revisa si ya fue pagado.
         var yaEstaPagado =
             await _context.Pagos
@@ -285,13 +338,21 @@ public class PagosController : ControllerBase
                             "Aprobado"
                 );
 
+
         // Evita pagos duplicados.
-        if (yaEstaPagado)
+        if (
+            yaEstaPagado
+        )
         {
             return BadRequest(
                 "Este pedido ya se encuentra pagado."
             );
         }
+
+
+        // =================================================
+        // MÉTODO DE PAGO
+        // =================================================
 
         // Busca el método de pago.
         var metodoPago =
@@ -304,13 +365,21 @@ public class PagosController : ControllerBase
                         m.Estado
                 );
 
+
         // Valida el método.
-        if (metodoPago == null)
+        if (
+            metodoPago == null
+        )
         {
             return BadRequest(
                 "El método de pago seleccionado no existe o está inactivo."
             );
         }
+
+
+        // =================================================
+        // ESTADO APROBADO
+        // =================================================
 
         // Busca el estado Aprobado.
         var estadoPagoAprobado =
@@ -323,13 +392,21 @@ public class PagosController : ControllerBase
                         e.Estado
                 );
 
+
         // Valida el estado.
-        if (estadoPagoAprobado == null)
+        if (
+            estadoPagoAprobado == null
+        )
         {
             return BadRequest(
                 "No se encontró el estado de pago Aprobado."
             );
         }
+
+
+        // =================================================
+        // ESTADO PAGADO DEL PEDIDO
+        // =================================================
 
         // Busca el estado Pagado.
         var estadoPedidoPagado =
@@ -342,13 +419,21 @@ public class PagosController : ControllerBase
                         e.Estado
                 );
 
+
         // Valida el estado.
-        if (estadoPedidoPagado == null)
+        if (
+            estadoPedidoPagado == null
+        )
         {
             return BadRequest(
                 "No se encontró el estado de pedido Pagado."
             );
         }
+
+
+        // =================================================
+        // CREAR PAGO
+        // =================================================
 
         // Crea el pago.
         var nuevoPago =
@@ -388,34 +473,129 @@ public class PagosController : ControllerBase
                         .IdEstadoPago
             };
 
+
         // Agrega el pago.
         _context.Pagos.Add(
             nuevoPago
         );
+
+
+        // =================================================
+        // CAMBIAR PEDIDO A PAGADO
+        // =================================================
 
         // Cambia el estado del pedido.
         pedido.IdEstadoPedido =
             estadoPedidoPagado
                 .IdEstadoPedido;
 
+
         // Guarda el nombre Pagado.
         pedido.Estado =
             estadoPedidoPagado
                 .Nombre;
 
-        // Guarda primero el pago.
+
+        // Guarda primero el pago
+        // y el cambio del pedido.
         await _context
             .SaveChangesAsync();
+
+
+        // =====================================================
+        // REGISTRAR FACTURA EN SQL
+        // =====================================================
+
+        // Comprueba si el pedido
+        // ya tiene una factura registrada.
+        var facturaExistente =
+            await _context.Facturas
+                .FirstOrDefaultAsync(
+                    f =>
+                        f.IdPedido ==
+                        pedido.IdPedido
+                );
+
+
+        // Solo crea la factura
+        // si todavía no existe.
+        if (
+            facturaExistente == null
+        )
+        {
+            // Genera el número de factura.
+            var numeroFactura =
+                $"FAC-{pedido.IdPedido:D6}";
+
+
+            // Crea la factura.
+            var factura =
+                new Factura
+                {
+                    // Pedido relacionado.
+                    IdPedido =
+                        pedido.IdPedido,
+
+                    // Número único
+                    // de la factura.
+                    NumeroFactura =
+                        numeroFactura,
+
+                    // Fecha de emisión.
+                    FechaEmision =
+                        DateTime.Now,
+
+                    // Subtotal real.
+                    Subtotal =
+                        pedido.Subtotal,
+
+                    // Impuesto real.
+                    Impuesto =
+                        pedido.Impuesto,
+
+                    // Descuento aplicado.
+                    Descuento =
+                        pedido.Descuento,
+
+                    // Total final.
+                    Total =
+                        pedido.Total,
+
+                    // Guarda la ruta lógica
+                    // correspondiente al PDF.
+                    UrlPdf =
+                        $"facturas/{numeroFactura}.pdf"
+                };
+
+
+            // Agrega la factura
+            // a Entity Framework.
+            _context.Facturas.Add(
+                factura
+            );
+
+
+            // Guarda la factura
+            // físicamente en SQL Server.
+            await _context
+                .SaveChangesAsync();
+        }
+
+
+        // =====================================================
+        // CREAR NOTIFICACIÓN
+        // =====================================================
 
         // Crea una notificación del pago.
         var notificacionPago =
             new Notificacion
             {
-                // Usuario que recibirá la notificación.
+                // Usuario que recibirá
+                // la notificación.
                 IdUsuario =
                     pedido.IdUsuario,
 
-                // Título mostrado en la pantalla.
+                // Título mostrado.
                 Titulo =
                     "Pago aprobado",
 
@@ -440,26 +620,36 @@ public class PagosController : ControllerBase
                     true
             };
 
+
         // Agrega la notificación.
         _context.Notificacions.Add(
             notificacionPago
         );
 
+
         // Guarda la notificación.
         await _context
             .SaveChangesAsync();
+
+
+        // =====================================================
+        // GENERAR PDF Y ENVIAR CORREO
+        // =====================================================
 
         // Indica si se envió el correo.
         var correoEnviado =
             false;
 
+
         // Mensaje para Angular.
         var mensajeCorreo =
             "Comprobante enviado al correo.";
 
+
         try
         {
-            // Busca los datos para el PDF.
+            // Busca los datos necesarios
+            // para generar el PDF.
             var pedidoComprobante =
                 await _context.Pedidos
                     .AsNoTracking()
@@ -470,11 +660,13 @@ public class PagosController : ControllerBase
                             p.IdUsuarioNavigation
                     )
 
-                    // Incluye los productos.
+                    // Incluye los detalles.
                     .Include(
                         p =>
                             p.DetallePedidos
                     )
+
+                    // Incluye los productos.
                     .ThenInclude(
                         d =>
                             d.IdProductoNavigation
@@ -487,12 +679,16 @@ public class PagosController : ControllerBase
                             pedido.IdPedido
                     );
 
+
             // Valida los datos.
             if (
                 pedidoComprobante != null
             )
             {
-                // Genera el PDF.
+                // =================================================
+                // GENERAR PDF
+                // =================================================
+
                 var pdf =
                     _pdfServicio
                         .GenerarComprobante(
@@ -500,16 +696,22 @@ public class PagosController : ControllerBase
                             nuevoPago
                         );
 
+
                 // Obtiene el cliente.
                 var usuario =
                     pedidoComprobante
                         .IdUsuarioNavigation;
 
+
                 // Forma el nombre completo.
                 var nombreCliente =
                     $"{usuario.Nombre} {usuario.Apellido}";
 
-                // Envía el correo.
+
+                // =================================================
+                // ENVIAR CORREO
+                // =================================================
+
                 await _correoServicio
                     .EnviarComprobanteAsync(
                         usuario.Correo,
@@ -518,12 +720,15 @@ public class PagosController : ControllerBase
                         pdf
                     );
 
+
                 // Confirma el envío.
                 correoEnviado =
                     true;
             }
         }
-        catch (Exception ex)
+        catch (
+            Exception ex
+        )
         {
             // Registra el error del correo.
             _logger.LogError(
@@ -532,10 +737,17 @@ public class PagosController : ControllerBase
                 pedido.IdPedido
             );
 
-            // El pago sigue aprobado.
+
+            // El pago sigue aprobado
+            // aunque el correo falle.
             mensajeCorreo =
                 "El pago fue aprobado, pero el comprobante no pudo enviarse.";
         }
+
+
+        // =====================================================
+        // RESPUESTA PARA ANGULAR
+        // =====================================================
 
         // Devuelve el resultado.
         return Ok(
@@ -586,6 +798,11 @@ public class PagosController : ControllerBase
         );
     }
 
+
+    // =====================================================
+    // MODIFICAR PAGO
+    // =====================================================
+
     // Modifica un pago.
     [Authorize(Roles = "Administrador,Empleado")]
     [HttpPut("{id:int}")]
@@ -599,53 +816,71 @@ public class PagosController : ControllerBase
             await _context.Pagos
                 .FindAsync(id);
 
+
         // Valida que exista.
-        if (pagoActual == null)
+        if (
+            pagoActual == null
+        )
         {
             return NotFound(
                 "El pago no existe."
             );
         }
 
+
         // Actualiza el pedido.
         pagoActual.IdPedido =
             pago.IdPedido;
+
 
         // Actualiza el método.
         pagoActual.MetodoPago =
             pago.MetodoPago;
 
+
         // Actualiza la referencia.
         pagoActual.Referencia =
             pago.Referencia;
+
 
         // Actualiza el monto.
         pagoActual.Monto =
             pago.Monto;
 
+
         // Actualiza la fecha.
         pagoActual.FechaPago =
             pago.FechaPago;
+
 
         // Actualiza el estado.
         pagoActual.Estado =
             pago.Estado;
 
+
         // Actualiza el método relacionado.
         pagoActual.IdMetodoPago =
             pago.IdMetodoPago;
+
 
         // Actualiza el estado relacionado.
         pagoActual.IdEstadoPago =
             pago.IdEstadoPago;
 
+
         // Guarda los cambios.
         await _context
             .SaveChangesAsync();
 
+
         // Devuelve respuesta vacía.
         return NoContent();
     }
+
+
+    // =====================================================
+    // ELIMINAR PAGO
+    // =====================================================
 
     // Elimina un pago.
     [Authorize(Roles = "Administrador")]
@@ -658,34 +893,54 @@ public class PagosController : ControllerBase
             await _context.Pagos
                 .FindAsync(id);
 
+
         // Valida que exista.
-        if (pago == null)
+        if (
+            pago == null
+        )
         {
             return NotFound(
                 "El pago no existe."
             );
         }
 
+
         // Elimina el pago.
         _context.Pagos.Remove(
             pago
         );
 
+
         // Guarda el cambio.
         await _context
             .SaveChangesAsync();
+
 
         // Devuelve respuesta vacía.
         return NoContent();
     }
 }
 
+
+// =====================================================
+// DTO PARA PAGAR
+// =====================================================
+
 // Datos necesarios para pagar.
 public class PagarPedidoDto
 {
     // Pedido seleccionado.
-    public int IdPedido { get; set; }
+    public int IdPedido
+    {
+        get;
+        set;
+    }
+
 
     // Método seleccionado.
-    public int IdMetodoPago { get; set; }
+    public int IdMetodoPago
+    {
+        get;
+        set;
+    }
 }

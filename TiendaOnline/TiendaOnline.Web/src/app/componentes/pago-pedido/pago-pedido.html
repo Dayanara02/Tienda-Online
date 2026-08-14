@@ -1,30 +1,28 @@
 <!-- Crea la estructura general de la pantalla de pago. -->
 <div class="pago-page">
 
-  <!-- Crea el encabezado principal. -->
+  <!-- Encabezado. -->
   <header class="pago-header">
 
-    <!-- Agrupa el título y la descripción. -->
     <div>
 
-      <!-- Muestra una etiqueta pequeña. -->
       <span class="header-etiqueta">
         ESENCIA · Tienda Online
       </span>
 
-      <!-- Muestra el título principal. -->
       <h1>
         Confirmar pago
       </h1>
 
-      <!-- Muestra una descripción corta. -->
       <p>
-        Selecciona un método de pago y completa la información necesaria.
+        Selecciona un método de pago y completa
+        la información necesaria.
       </p>
 
     </div>
 
-    <!-- Permite regresar al detalle sin pagar. -->
+
+    <!-- Regresa al pedido. -->
     <button mat-stroked-button
             type="button"
             (click)="cancelar()">
@@ -34,82 +32,84 @@
       </mat-icon>
 
       Volver al pedido
+
     </button>
 
   </header>
 
-  <!-- Muestra el estado mientras se cargan los datos. -->
+
+  <!-- Estado de carga. -->
   <section class="estado-pantalla"
            *ngIf="cargando">
 
-    <!-- Muestra un icono de carga. -->
     <mat-icon>
       sync
     </mat-icon>
 
-    <!-- Muestra el título. -->
     <h2>
       Cargando información
     </h2>
 
-    <!-- Muestra una explicación. -->
     <p>
-      Estamos consultando tu pedido y los métodos de pago disponibles.
+      Estamos consultando tu pedido y
+      los métodos de pago disponibles.
     </p>
 
   </section>
 
-  <!-- Muestra errores generales. -->
-  <div class="mensaje mensaje-error"
-       *ngIf="!cargando && mensajeError">
 
-    <!-- Muestra el icono de error. -->
+  <!-- Error. -->
+  <div class="mensaje mensaje-error"
+       *ngIf="
+         !cargando &&
+         mensajeError
+       ">
+
     <mat-icon>
       error_outline
     </mat-icon>
 
-    <!-- Muestra el mensaje recibido. -->
     <span>
       {{ mensajeError }}
     </span>
 
   </div>
 
-  <!-- Muestra el mensaje cuando el pago fue correcto. -->
+
+  <!-- Éxito. -->
   <div class="mensaje mensaje-exito"
        *ngIf="mensajeExito">
 
-    <!-- Muestra el icono de éxito. -->
     <mat-icon>
       check_circle
     </mat-icon>
 
-    <!-- Muestra el mensaje. -->
     <span>
       {{ mensajeExito }}
     </span>
 
   </div>
 
-  <!-- Muestra el contenido cuando el pedido fue cargado. -->
-  <main class="pago-contenido"
-        *ngIf="!cargando && pedido">
 
-    <!-- Divide el formulario y el resumen. -->
+  <!-- Contenido principal. -->
+  <main class="pago-contenido"
+        *ngIf="
+          !cargando &&
+          pedido
+        ">
+
     <div class="pago-grid">
 
-      <!-- Crea el panel principal de pago. -->
+
+      <!-- PANEL DE PAGO -->
       <section class="panel panel-pago">
 
-        <!-- Crea el encabezado del panel. -->
         <div class="panel-titulo">
 
-          <!-- Muestra un icono. -->
           <mat-icon>
             payments
           </mat-icon>
 
-          <!-- Agrupa título y descripción. -->
           <div>
 
             <h2>
@@ -124,43 +124,80 @@
 
         </div>
 
-        <!-- Muestra los métodos permitidos recibidos desde la API. -->
+
+        <!-- MÉTODOS DISPONIBLES -->
         <div class="metodos-grid">
 
-          <!-- Recorre todos los métodos disponibles. -->
           <button type="button"
                   class="metodo-pago"
-                  *ngFor="let metodo of metodosPago"
+                  *ngFor="
+                    let metodo of metodosPago
+                  "
                   [class.metodo-seleccionado]="
-              idMetodoPagoSeleccionado === metodo.idMetodoPago
-            "
-                  (click)="seleccionarMetodo(metodo)">
+                    idMetodoPagoSeleccionado ===
+                    metodo.idMetodoPago
+                  "
+                  (click)="
+                    seleccionarMetodo(
+                      metodo
+                    )
+                  ">
 
-            <!-- Muestra el icono de tarjeta. -->
-            <mat-icon *ngIf="metodo.nombre.toLowerCase().includes('tarjeta')">
+
+            <!-- SINPE -->
+            <mat-icon *ngIf="
+                metodo.nombre
+                  .toLowerCase()
+                  .includes('sinpe')
+              ">
+              smartphone
+            </mat-icon>
+
+
+            <!-- TARJETA -->
+            <mat-icon *ngIf="
+                metodo.nombre
+                  .toLowerCase()
+                  .includes('tarjeta')
+              ">
               credit_card
             </mat-icon>
 
-            <!-- Muestra el icono de transferencia. -->
-            <mat-icon *ngIf="metodo.nombre.toLowerCase().includes('transferencia')">
+
+            <!-- TRANSFERENCIA -->
+            <mat-icon *ngIf="
+                metodo.nombre
+                  .toLowerCase()
+                  .includes('transferencia')
+              ">
               account_balance
             </mat-icon>
 
-            <!-- Muestra un icono general para cualquier otro permitido. -->
+
+            <!-- OTRO -->
             <mat-icon *ngIf="
-                !metodo.nombre.toLowerCase().includes('tarjeta') &&
-                !metodo.nombre.toLowerCase().includes('transferencia')
+                !metodo.nombre
+                  .toLowerCase()
+                  .includes('sinpe') &&
+                !metodo.nombre
+                  .toLowerCase()
+                  .includes('tarjeta') &&
+                !metodo.nombre
+                  .toLowerCase()
+                  .includes('transferencia')
               ">
               payments
             </mat-icon>
 
-            <!-- Muestra el nombre del método. -->
+
             <strong>
               {{ metodo.nombre }}
             </strong>
 
-            <!-- Muestra la descripción si existe. -->
-            <span *ngIf="metodo.descripcion">
+
+            <span *ngIf="
+              metodo.descripcion
+            ">
               {{ metodo.descripcion }}
             </span>
 
@@ -168,11 +205,86 @@
 
         </div>
 
-        <!-- Muestra el formulario para tarjeta. -->
+
+        <!-- ======================================= -->
+        <!-- SINPE MÓVIL -->
+        <!-- ======================================= -->
+
+        <section class="formulario-metodo"
+                 *ngIf="esSinpe()">
+
+          <div class="subtitulo-metodo">
+
+            <mat-icon>
+              smartphone
+            </mat-icon>
+
+            <div>
+
+              <h3>
+                Pago por SINPE Móvil
+              </h3>
+
+              <p>
+                Realiza el SINPE al número de ESENCIA
+                para completar tu compra.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Número SINPE. -->
+          <div class="dato-sinpe">
+
+            <span>
+              Número SINPE Móvil de ESENCIA
+            </span>
+
+            <strong>
+              {{ numeroSinpeEsencia }}
+            </strong>
+
+            <small>
+              Envía el monto total del pedido
+              a este número.
+            </small>
+
+          </div>
+
+
+          <!-- Instrucción SINPE. -->
+          <div class="nota-sinpe">
+
+            <mat-icon>
+              info
+            </mat-icon>
+
+            <span>
+              Realiza el pago mediante SINPE Móvil al
+              número
+
+              <strong>
+                {{ numeroSinpeEsencia }}
+              </strong>
+
+              y luego continúa con la confirmación
+              del pago.
+            </span>
+
+          </div>
+
+        </section>
+
+
+        <!-- ======================================= -->
+        <!-- TARJETA -->
+        <!-- ======================================= -->
+
         <section class="formulario-metodo"
                  *ngIf="esTarjeta()">
 
-          <!-- Muestra el título del formulario. -->
           <div class="subtitulo-metodo">
 
             <mat-icon>
@@ -186,14 +298,16 @@
               </h3>
 
               <p>
-                Ingresa los datos solicitados para validar el pago.
+                Ingresa los datos solicitados
+                para validar el pago.
               </p>
 
             </div>
 
           </div>
 
-          <!-- Campo para el nombre del titular. -->
+
+          <!-- Titular. -->
           <mat-form-field appearance="outline">
 
             <mat-label>
@@ -202,9 +316,16 @@
 
             <input matInput
                    type="text"
-                   placeholder="Nombre como aparece en la tarjeta"
+                   placeholder="
+                     Nombre como aparece
+                     en la tarjeta
+                   "
                    [value]="nombreTarjeta"
-                   (input)="cambiarNombreTarjeta($event)">
+                   (input)="
+                     cambiarNombreTarjeta(
+                       $event
+                     )
+                   ">
 
             <mat-icon matSuffix>
               person
@@ -212,7 +333,8 @@
 
           </mat-form-field>
 
-          <!-- Campo para el número de tarjeta. -->
+
+          <!-- Número. -->
           <mat-form-field appearance="outline">
 
             <mat-label>
@@ -223,9 +345,15 @@
                    type="text"
                    inputmode="numeric"
                    maxlength="19"
-                   placeholder="0000 0000 0000 0000"
+                   placeholder="
+                     0000 0000 0000 0000
+                   "
                    [value]="numeroTarjeta"
-                   (input)="cambiarNumeroTarjeta($event)">
+                   (input)="
+                     cambiarNumeroTarjeta(
+                       $event
+                     )
+                   ">
 
             <mat-icon matSuffix>
               credit_card
@@ -233,10 +361,11 @@
 
           </mat-form-field>
 
-          <!-- Agrupa vencimiento y CVV. -->
+
+          <!-- Vencimiento y CVV. -->
           <div class="campos-dobles">
 
-            <!-- Campo para vencimiento. -->
+
             <mat-form-field appearance="outline">
 
               <mat-label>
@@ -247,12 +376,18 @@
                      type="text"
                      maxlength="5"
                      placeholder="MM/AA"
-                     [value]="vencimientoTarjeta"
-                     (input)="cambiarVencimientoTarjeta($event)">
+                     [value]="
+                       vencimientoTarjeta
+                     "
+                     (input)="
+                       cambiarVencimientoTarjeta(
+                         $event
+                       )
+                     ">
 
             </mat-form-field>
 
-            <!-- Campo para CVV. -->
+
             <mat-form-field appearance="outline">
 
               <mat-label>
@@ -265,13 +400,17 @@
                      maxlength="4"
                      placeholder="123"
                      [value]="cvvTarjeta"
-                     (input)="cambiarCvvTarjeta($event)">
+                     (input)="
+                       cambiarCvvTarjeta(
+                         $event
+                       )
+                     ">
 
             </mat-form-field>
 
           </div>
 
-          <!-- Muestra una nota de seguridad. -->
+
           <div class="nota-metodo">
 
             <mat-icon>
@@ -279,18 +418,23 @@
             </mat-icon>
 
             <span>
-              Los datos de la tarjeta se utilizan únicamente para validar esta simulación de pago.
+              Los datos de la tarjeta se utilizan
+              únicamente para validar esta
+              simulación de pago.
             </span>
 
           </div>
 
         </section>
 
-        <!-- Muestra el formulario para transferencia. -->
+
+        <!-- ======================================= -->
+        <!-- TRANSFERENCIA -->
+        <!-- ======================================= -->
+
         <section class="formulario-metodo"
                  *ngIf="esTransferencia()">
 
-          <!-- Muestra el título del formulario. -->
           <div class="subtitulo-metodo">
 
             <mat-icon>
@@ -304,14 +448,16 @@
               </h3>
 
               <p>
-                Realiza la transferencia e ingresa la referencia.
+                Realiza la transferencia e
+                ingresa la referencia.
               </p>
 
             </div>
 
           </div>
 
-          <!-- Muestra la cuenta del negocio. -->
+
+          <!-- Cuenta. -->
           <div class="dato-transferencia">
 
             <span>
@@ -324,7 +470,8 @@
 
           </div>
 
-          <!-- Campo para la referencia bancaria. -->
+
+          <!-- Referencia. -->
           <mat-form-field appearance="outline">
 
             <mat-label>
@@ -333,9 +480,17 @@
 
             <input matInput
                    type="text"
-                   placeholder="Ingresa la referencia"
-                   [value]="referenciaTransferencia"
-                   (input)="cambiarReferenciaTransferencia($event)">
+                   placeholder="
+                     Ingresa la referencia
+                   "
+                   [value]="
+                     referenciaTransferencia
+                   "
+                   (input)="
+                     cambiarReferenciaTransferencia(
+                       $event
+                     )
+                   ">
 
             <mat-icon matSuffix>
               receipt
@@ -345,11 +500,17 @@
 
         </section>
 
-        <!-- Crea la sección de validación de saldo. -->
-        <section class="formulario-metodo"
-                 *ngIf="idMetodoPagoSeleccionado > 0">
 
-          <!-- Muestra el título de la validación. -->
+        <!-- ======================================= -->
+        <!-- DINERO DISPONIBLE -->
+        <!-- ======================================= -->
+
+        <section class="formulario-metodo"
+                 *ngIf="
+                 idMetodoPagoSeleccionado>
+          0
+          ">
+
           <div class="subtitulo-metodo">
 
             <mat-icon>
@@ -363,14 +524,15 @@
               </h3>
 
               <p>
-                Indica el monto disponible para realizar esta compra.
+                Indica el monto disponible
+                para realizar esta compra.
               </p>
 
             </div>
 
           </div>
 
-          <!-- Campo para el dinero disponible. -->
+
           <mat-form-field appearance="outline">
 
             <mat-label>
@@ -385,7 +547,11 @@
                    type="number"
                    min="0"
                    [value]="montoDisponible"
-                   (input)="cambiarMontoDisponible($event)">
+                   (input)="
+                     cambiarMontoDisponible(
+                       $event
+                     )
+                   ">
 
             <mat-icon matSuffix>
               savings
@@ -393,9 +559,15 @@
 
           </mat-form-field>
 
-          <!-- Muestra cuánto falta cuando el saldo es insuficiente. -->
-          <div class="resultado-saldo saldo-error"
-               *ngIf="saldoInsuficiente">
+
+          <!-- Saldo insuficiente. -->
+          <div class="
+                 resultado-saldo
+                 saldo-error
+               "
+               *ngIf="
+                 saldoInsuficiente
+               ">
 
             <mat-icon>
               warning
@@ -408,16 +580,26 @@
               </span>
 
               <strong>
-                Faltan ₡{{ montoFaltante | number:'1.0-0' }}
+                Faltan
+                ₡{{
+                  montoFaltante
+                    | number:'1.0-0'
+                }}
               </strong>
 
             </div>
 
           </div>
 
-          <!-- Muestra el saldo restante cuando el dinero alcanza. -->
-          <div class="resultado-saldo saldo-correcto"
-               *ngIf="tieneFondosSuficientes()">
+
+          <!-- Saldo suficiente. -->
+          <div class="
+                 resultado-saldo
+                 saldo-correcto
+               "
+               *ngIf="
+                 tieneFondosSuficientes()
+               ">
 
             <mat-icon>
               check_circle
@@ -430,7 +612,11 @@
               </span>
 
               <strong>
-                Saldo restante: ₡{{ saldoRestante | number:'1.0-0' }}
+                Saldo restante:
+                ₡{{
+                  saldoRestante
+                    | number:'1.0-0'
+                }}
               </strong>
 
             </div>
@@ -441,10 +627,13 @@
 
       </section>
 
-      <!-- Crea el resumen del pedido. -->
+
+      <!-- ======================================= -->
+      <!-- RESUMEN -->
+      <!-- ======================================= -->
+
       <aside class="panel resumen-pago">
 
-        <!-- Crea el encabezado del resumen. -->
         <div class="panel-titulo">
 
           <mat-icon>
@@ -465,7 +654,8 @@
 
         </div>
 
-        <!-- Muestra el estado actual. -->
+
+        <!-- Estado pedido. -->
         <div class="fila-resumen">
 
           <span>
@@ -478,7 +668,8 @@
 
         </div>
 
-        <!-- Muestra el estado del pago. -->
+
+        <!-- Estado pago. -->
         <div class="fila-resumen">
 
           <span>
@@ -491,11 +682,12 @@
 
         </div>
 
-        <!-- Separa visualmente el total. -->
+
         <div class="separador">
         </div>
 
-        <!-- Muestra el monto total a pagar. -->
+
+        <!-- Total. -->
         <div class="total-pago">
 
           <span>
@@ -503,14 +695,20 @@
           </span>
 
           <strong>
-            ₡{{ pedido.total | number:'1.0-0' }}
+            ₡{{
+              pedido.total
+                | number:'1.0-0'
+            }}
           </strong>
 
         </div>
 
-        <!-- Muestra el método seleccionado. -->
+
+        <!-- Método seleccionado. -->
         <div class="metodo-resumen"
-             *ngIf="nombreMetodoSeleccionado">
+             *ngIf="
+               nombreMetodoSeleccionado
+             ">
 
           <mat-icon>
             payments
@@ -530,7 +728,8 @@
 
         </div>
 
-        <!-- Informa que SINPE no está habilitado. -->
+
+        <!-- Nota. -->
         <div class="nota-resumen">
 
           <mat-icon>
@@ -538,12 +737,14 @@
           </mat-icon>
 
           <span>
-            Los métodos disponibles son los habilitados por la tienda.
+            Los métodos disponibles son
+            los habilitados por la tienda.
           </span>
 
         </div>
 
-        <!-- Ejecuta el pago. -->
+
+        <!-- Confirmar. -->
         <p-button label="Confirmar pago"
                   icon="pi pi-check"
                   styleClass="boton-confirmar-pago"
@@ -555,7 +756,8 @@
           (onClick)="pagar()">
         </p-button>
 
-        <!-- Permite cancelar y regresar. -->
+
+        <!-- Cancelar. -->
         <button mat-button
                 type="button"
                 class="boton-cancelar"
@@ -563,6 +765,7 @@
                 (click)="cancelar()">
 
           Cancelar
+
         </button>
 
       </aside>

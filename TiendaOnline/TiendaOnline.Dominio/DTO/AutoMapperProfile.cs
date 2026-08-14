@@ -392,7 +392,7 @@ public class AutoMapperProfile : Profile
             );
 
 
-    
+
         // Convierte Pedido a TPedido.
 
         CreateMap<Pedido, TPedido>()
@@ -746,18 +746,459 @@ public class AutoMapperProfile : Profile
         // =====================================================
         // DETALLE PEDIDO
         // =====================================================
+        //
+        //Convierte DetallePedido a TDetallePedido.
+        CreateMap<DetallePedido, TDetallePedido>()
 
-        // Mapea detalle de pedido.
+      // Mapea el identificador del detalle.
+
+      .ForMember(
+
+          destino => destino.IdDetallePedido,
+
+          opcion => opcion.MapFrom(
+
+              origen => origen.IdDetallePedido
+
+          )
+
+      )
+
+      // Mapea el identificador del pedido.
+
+      .ForMember(
+
+          destino => destino.IdPedido,
+
+          opcion => opcion.MapFrom(
+
+              origen => origen.IdPedido
+
+          )
+
+      )
+
+      // Mapea el identificador del producto.
+
+      .ForMember(
+
+          destino => destino.IdProducto,
+
+          opcion => opcion.MapFrom(
+
+              origen => origen.IdProducto
+
+          )
+
+      )
+
+      // Mapea la cantidad.
+
+      .ForMember(
+
+          destino => destino.Cantidad,
+
+          opcion => opcion.MapFrom(
+
+              origen => origen.Cantidad
+
+          )
+
+      )
+
+      // Mapea el precio unitario.
+
+      .ForMember(
+
+          destino => destino.PrecioUnitario,
+
+          opcion => opcion.MapFrom(
+
+              origen => origen.PrecioUnitario
+
+          )
+
+      )
+
+      // Mapea el descuento.
+
+      .ForMember(
+
+          destino => destino.Descuento,
+
+          opcion => opcion.MapFrom(
+
+              origen => origen.Descuento
+
+          )
+
+      )
+
+      // Mapea el impuesto.
+
+      .ForMember(
+
+          destino => destino.Impuesto,
+
+          opcion => opcion.MapFrom(
+
+              origen => origen.Impuesto
+
+          )
+
+      )
+
+      // Mapea el subtotal.
+
+      .ForMember(
+
+          destino => destino.Subtotal,
+
+          opcion => opcion.MapFrom(
+
+              origen => origen.Subtotal
+
+          )
+
+      );
+
+        // Convierte TDetallePedido a DetallePedido.
+
         CreateMap<TDetallePedido, DetallePedido>()
-            .ReverseMap();
 
+            // Mapea el identificador del detalle.
+
+            .ForMember(
+
+                destino => destino.IdDetallePedido,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.IdDetallePedido
+
+                )
+
+            )
+
+            // Mapea el identificador del pedido.
+
+            .ForMember(
+
+                destino => destino.IdPedido,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.IdPedido
+
+                )
+
+            )
+
+            // Mapea el identificador del producto.
+
+            .ForMember(
+
+                destino => destino.IdProducto,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.IdProducto
+
+                )
+
+            )
+
+            // Mapea la cantidad.
+
+            .ForMember(
+
+                destino => destino.Cantidad,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Cantidad
+
+                )
+
+            )
+
+            // Mapea el precio unitario.
+
+            .ForMember(
+
+                destino => destino.PrecioUnitario,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.PrecioUnitario
+
+                )
+
+            )
+
+            // Mapea el descuento.
+
+            .ForMember(
+
+                destino => destino.Descuento,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Descuento
+
+                )
+
+            )
+
+            // Mapea el impuesto.
+
+            .ForMember(
+
+                destino => destino.Impuesto,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Impuesto
+
+                )
+
+            )
+
+            // Mapea el subtotal.
+
+            .ForMember(
+
+                destino => destino.Subtotal,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Subtotal
+
+                )
+
+            )
+
+            // Ignora la navegación del pedido.
+
+            .ForMember(
+
+                destino => destino.IdPedidoNavigation,
+
+                opcion => opcion.Ignore()
+
+            )
+
+            // Ignora la navegación del producto.
+
+            .ForMember(
+
+                destino => destino.IdProductoNavigation,
+
+                opcion => opcion.Ignore()
+
+            );
+
+
+        // =====================================================
+        // DESCUENTO
+        // =====================================================
+
+        // Convierte Descuento a TDescuento.
+        CreateMap<Descuento, TDescuento>()
+
+            // Mapea el identificador.
+            .ForMember(
+                destino => destino.IdDescuento,
+                opcion => opcion.MapFrom(
+                    origen => origen.IdDescuento
+                )
+            )
+
+            // Mapea la cantidad mínima.
+            .ForMember(
+                destino => destino.CantidadMinima,
+                opcion => opcion.MapFrom(
+                    origen => origen.CantidadMinima
+                )
+            )
+
+            // Mapea el porcentaje.
+            .ForMember(
+                destino => destino.Porcentaje,
+                opcion => opcion.MapFrom(
+                    origen => origen.Porcentaje
+                )
+            )
+
+            // Mapea el estado.
+            .ForMember(
+                destino => destino.Estado,
+                opcion => opcion.MapFrom(
+                    origen => origen.Estado
+                )
+            );
+
+
+        // Convierte TDescuento a Descuento.
+        CreateMap<TDescuento, Descuento>()
+
+            // Mapea el identificador.
+            .ForMember(
+                destino => destino.IdDescuento,
+                opcion => opcion.MapFrom(
+                    origen => origen.IdDescuento
+                )
+            )
+
+            // Mapea la cantidad mínima.
+            .ForMember(
+                destino => destino.CantidadMinima,
+                opcion => opcion.MapFrom(
+                    origen => origen.CantidadMinima
+                )
+            )
+
+            // Mapea el porcentaje.
+            .ForMember(
+                destino => destino.Porcentaje,
+                opcion => opcion.MapFrom(
+                    origen => origen.Porcentaje
+                )
+            )
+
+            // Mapea el estado.
+            .ForMember(
+                destino => destino.Estado,
+                opcion => opcion.MapFrom(
+                    origen => origen.Estado
+                )
+            );
 
         // =====================================================
         // USUARIO
         // =====================================================
+        // Convierte Usuario a TUsuario.
 
-        // Mapea usuario.
-        CreateMap<TUsuario, Usuario>()
-            .ReverseMap();
+        CreateMap<Usuario, TUsuario>()
+
+            // Mapea el identificador.
+
+            .ForMember(
+
+                destino => destino.IdUsuario,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.IdUsuario
+
+                )
+
+            )
+
+            // Mapea el rol.
+
+            .ForMember(
+
+                destino => destino.IdRol,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.IdRol
+
+                )
+
+            )
+
+            // Mapea el nombre.
+
+            .ForMember(
+
+                destino => destino.Nombre,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Nombre
+
+                )
+
+            )
+
+            // Mapea el apellido.
+
+            .ForMember(
+
+                destino => destino.Apellido,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Apellido
+
+                )
+
+            )
+
+            // Mapea el correo.
+
+            .ForMember(
+
+                destino => destino.Correo,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Correo
+
+                )
+
+            )
+
+            // Mapea la contraseña.
+
+            .ForMember(
+
+                destino => destino.Contrasena,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Contrasena
+
+                )
+
+            )
+
+            // Mapea el teléfono.
+
+            .ForMember(
+
+                destino => destino.Telefono,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Telefono
+
+                )
+
+            )
+
+            // Mapea el estado.
+
+            .ForMember(
+
+                destino => destino.Estado,
+
+                opcion => opcion.MapFrom(
+
+                    origen => origen.Estado
+
+                )
+
+            );
+
+        // Convierte TUsuario a Usuario.
+
+        CreateMap<TUsuario, Usuario>(
+
+            MemberList.None
+
+        );
     }
 }

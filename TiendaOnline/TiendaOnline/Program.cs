@@ -56,9 +56,9 @@ public partial class Program
 
         // Registra AutoMapper y busca los perfiles del proyecto.
         builder.Services.AddAutoMapper(
-            config => { },
-            typeof(AutoMapperProfile)
-        );
+         cfg => { },
+         typeof(AutoMapperProfile)
+);
 
         // =====================================================
         // MANEJO DE ERRORES

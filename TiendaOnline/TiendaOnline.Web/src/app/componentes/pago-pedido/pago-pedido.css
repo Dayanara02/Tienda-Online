@@ -13,7 +13,13 @@
   --rojo: #b42318;
   --rojo-claro: #fdecec;
   --amarillo-claro: #fff7df;
+  /* Colores utilizados para SINPE Móvil. */
+  --sinpe-verde: #16835c;
+  --sinpe-verde-oscuro: #0f6244;
+  --sinpe-verde-claro: #e8f7f1;
+  --sinpe-borde: #a9dcc9;
 }
+
 
 /* Configura la estructura general de la pantalla. */
 .pago-page {
@@ -23,6 +29,7 @@
   font-family: Arial, Helvetica, sans-serif;
   color: var(--texto-principal);
 }
+
 
 /* Organiza el encabezado superior. */
 .pago-header {
@@ -34,6 +41,7 @@
   gap: 20px;
 }
 
+
 /* Configura la etiqueta superior. */
 .header-etiqueta {
   display: block;
@@ -43,12 +51,14 @@
   font-weight: 700;
 }
 
+
 /* Configura el título principal. */
 .pago-header h1 {
   margin: 0;
   color: var(--azul-oscuro);
   font-size: 30px;
 }
+
 
 /* Configura la descripción del encabezado. */
 .pago-header p {
@@ -57,11 +67,13 @@
   line-height: 1.5;
 }
 
+
 /* Define el ancho máximo del contenido. */
 .pago-contenido {
   max-width: 1300px;
   margin: 0 auto;
 }
+
 
 /* Divide el formulario y el resumen. */
 .pago-grid {
@@ -71,6 +83,7 @@
   align-items: start;
 }
 
+
 /* Crea el estilo general de los paneles. */
 .panel {
   background: var(--blanco);
@@ -79,10 +92,12 @@
   box-shadow: 0 2px 8px rgba(31, 78, 121, 0.06);
 }
 
+
 /* Da espacio al panel principal de pago. */
 .panel-pago {
   padding: 24px;
 }
+
 
 /* Organiza los títulos internos. */
 .panel-titulo {
@@ -92,10 +107,12 @@
   margin-bottom: 22px;
 }
 
+
   /* Configura el icono del título. */
   .panel-titulo > mat-icon {
     color: var(--azul-principal);
   }
+
 
   /* Configura los títulos internos. */
   .panel-titulo h2 {
@@ -104,12 +121,14 @@
     font-size: 20px;
   }
 
+
   /* Configura las descripciones internas. */
   .panel-titulo p {
     margin: 4px 0 0;
     color: var(--gris-texto);
     font-size: 13px;
   }
+
 
 /* Organiza los métodos de pago. */
 .metodos-grid {
@@ -118,6 +137,7 @@
   gap: 14px;
   margin-bottom: 24px;
 }
+
 
 /* Crea cada opción de método de pago. */
 .metodo-pago {
@@ -132,14 +152,17 @@
   border-radius: 10px;
   cursor: pointer;
   text-align: left;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
+
 
   /* Cambia la apariencia al pasar sobre un método. */
   .metodo-pago:hover {
     border-color: var(--azul-principal);
     background: var(--azul-claro);
+    transform: translateY(-1px);
   }
+
 
 /* Resalta el método seleccionado. */
 .metodo-seleccionado {
@@ -147,16 +170,19 @@
   background: var(--azul-claro);
 }
 
+
 /* Configura el icono de cada método. */
 .metodo-pago mat-icon {
   color: var(--azul-principal);
 }
+
 
 /* Configura el nombre del método. */
 .metodo-pago strong {
   color: var(--azul-oscuro);
   font-size: 14px;
 }
+
 
 /* Configura la descripción del método. */
 .metodo-pago span {
@@ -165,12 +191,14 @@
   line-height: 1.4;
 }
 
+
 /* Crea cada bloque de formulario. */
 .formulario-metodo {
   margin-top: 22px;
   padding-top: 22px;
   border-top: 1px solid var(--gris-borde);
 }
+
 
 /* Organiza el subtítulo del formulario. */
 .subtitulo-metodo {
@@ -180,10 +208,12 @@
   margin-bottom: 18px;
 }
 
+
   /* Configura el icono del subtítulo. */
   .subtitulo-metodo > mat-icon {
     color: var(--azul-principal);
   }
+
 
   /* Configura el título pequeño. */
   .subtitulo-metodo h3 {
@@ -192,18 +222,22 @@
     font-size: 17px;
   }
 
+
   /* Configura la explicación pequeña. */
   .subtitulo-metodo p {
     margin: 4px 0 0;
     color: var(--gris-texto);
     font-size: 12px;
+    line-height: 1.5;
   }
+
 
 /* Hace que los campos Material ocupen todo el ancho. */
 mat-form-field {
   width: 100%;
   margin-bottom: 6px;
 }
+
 
 /* Organiza dos campos en una misma fila. */
 .campos-dobles {
@@ -212,7 +246,8 @@ mat-form-field {
   gap: 14px;
 }
 
-/* Crea la nota informativa de tarjeta. */
+
+/* Crea las notas informativas. */
 .nota-metodo {
   display: flex;
   align-items: flex-start;
@@ -225,12 +260,14 @@ mat-form-field {
   line-height: 1.4;
 }
 
+
   /* Ajusta el icono de la nota. */
   .nota-metodo mat-icon {
     width: 18px;
     height: 18px;
     font-size: 18px;
   }
+
 
 /* Muestra la cuenta para transferencia. */
 .dato-transferencia {
@@ -243,17 +280,95 @@ mat-form-field {
   border-radius: 9px;
 }
 
+
   /* Configura el título de la cuenta. */
   .dato-transferencia span {
     color: var(--gris-texto);
     font-size: 12px;
   }
 
+
   /* Configura el número de cuenta. */
   .dato-transferencia strong {
     color: var(--azul-oscuro);
     font-size: 14px;
   }
+
+
+/* =====================================================
+   SINPE MÓVIL
+   ===================================================== */
+
+
+/* Crea una tarjeta especial para el número SINPE. */
+.dato-sinpe {
+  margin-bottom: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: var(--sinpe-verde-claro);
+  border: 1px solid var(--sinpe-borde);
+  border-radius: 12px;
+  text-align: center;
+}
+
+
+  /* Configura el título del número SINPE. */
+  .dato-sinpe span {
+    color: var(--sinpe-verde-oscuro);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+
+  /* Hace destacar el número de SINPE. */
+  .dato-sinpe strong {
+    color: var(--sinpe-verde-oscuro);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+
+
+  /* Configura un texto secundario dentro de SINPE. */
+  .dato-sinpe small {
+    color: var(--gris-texto);
+    font-size: 11px;
+  }
+
+
+/* Crea una nota específica para SINPE. */
+.nota-sinpe {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 13px;
+  background: var(--sinpe-verde-claro);
+  border-left: 4px solid var(--sinpe-verde);
+  border-radius: 8px;
+  color: var(--sinpe-verde-oscuro);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+  /* Ajusta el icono de la nota SINPE. */
+  .nota-sinpe mat-icon {
+    width: 19px;
+    height: 19px;
+    min-width: 19px;
+    font-size: 19px;
+    color: var(--sinpe-verde);
+  }
+
+
+  /* Resalta el número dentro de un texto SINPE. */
+  .nota-sinpe strong {
+    color: var(--sinpe-verde-oscuro);
+  }
+
 
 /* Configura el resultado de la validación de saldo. */
 .resultado-saldo {
@@ -265,6 +380,7 @@ mat-form-field {
   border-radius: 8px;
 }
 
+
   /* Organiza el texto del resultado. */
   .resultado-saldo div {
     display: flex;
@@ -272,15 +388,18 @@ mat-form-field {
     gap: 3px;
   }
 
+
   /* Configura el texto secundario. */
   .resultado-saldo span {
     font-size: 12px;
   }
 
+
   /* Configura el valor principal. */
   .resultado-saldo strong {
     font-size: 13px;
   }
+
 
 /* Muestra saldo insuficiente en rojo. */
 .saldo-error {
@@ -288,11 +407,13 @@ mat-form-field {
   color: var(--rojo);
 }
 
+
 /* Muestra saldo suficiente en verde. */
 .saldo-correcto {
   background: var(--verde-claro);
   color: var(--verde);
 }
+
 
 /* Configura el panel del resumen. */
 .resumen-pago {
@@ -300,6 +421,7 @@ mat-form-field {
   position: sticky;
   top: 20px;
 }
+
 
 /* Organiza cada fila del resumen. */
 .fila-resumen {
@@ -310,10 +432,12 @@ mat-form-field {
   font-size: 14px;
 }
 
+
   /* Configura el texto secundario. */
   .fila-resumen span {
     color: var(--gris-texto);
   }
+
 
   /* Configura los valores del resumen. */
   .fila-resumen strong {
@@ -321,12 +445,14 @@ mat-form-field {
     text-align: right;
   }
 
+
 /* Crea una línea divisoria. */
 .separador {
   height: 1px;
   margin: 10px 0;
   background: var(--gris-borde);
 }
+
 
 /* Organiza el total del pedido. */
 .total-pago {
@@ -337,6 +463,7 @@ mat-form-field {
   padding: 12px 0;
 }
 
+
   /* Configura el texto del total. */
   .total-pago span {
     color: var(--azul-oscuro);
@@ -344,11 +471,13 @@ mat-form-field {
     font-weight: 700;
   }
 
+
   /* Configura el monto total. */
   .total-pago strong {
     color: var(--azul-principal);
     font-size: 24px;
   }
+
 
 /* Muestra el método seleccionado en el resumen. */
 .metodo-resumen {
@@ -361,10 +490,12 @@ mat-form-field {
   border-radius: 8px;
 }
 
+
   /* Configura el icono del método seleccionado. */
   .metodo-resumen mat-icon {
     color: var(--azul-principal);
   }
+
 
   /* Organiza el texto del método seleccionado. */
   .metodo-resumen div {
@@ -373,17 +504,20 @@ mat-form-field {
     gap: 3px;
   }
 
+
   /* Configura el texto secundario. */
   .metodo-resumen span {
     color: var(--gris-texto);
     font-size: 11px;
   }
 
+
   /* Configura el nombre del método. */
   .metodo-resumen strong {
     color: var(--azul-oscuro);
     font-size: 13px;
   }
+
 
 /* Crea una nota dentro del resumen. */
 .nota-resumen {
@@ -399,6 +533,7 @@ mat-form-field {
   line-height: 1.4;
 }
 
+
   /* Ajusta el icono de la nota. */
   .nota-resumen mat-icon {
     width: 18px;
@@ -406,11 +541,13 @@ mat-form-field {
     font-size: 18px;
   }
 
+
 /* Hace que el botón PrimeNG ocupe todo el ancho. */
 :host ::ng-deep .boton-confirmar-pago {
   width: 100%;
   margin-top: 4px;
 }
+
 
 /* Ajusta el botón de cancelar. */
 .boton-cancelar {
@@ -418,6 +555,7 @@ mat-form-field {
   margin-top: 8px;
   color: var(--gris-texto) !important;
 }
+
 
 /* Configura los mensajes generales. */
 .mensaje {
@@ -432,17 +570,20 @@ mat-form-field {
   font-weight: 600;
 }
 
+
 /* Configura los mensajes de error. */
 .mensaje-error {
   background: var(--rojo-claro);
   color: var(--rojo);
 }
 
+
 /* Configura los mensajes exitosos. */
 .mensaje-exito {
   background: var(--verde-claro);
   color: var(--verde);
 }
+
 
 /* Configura la pantalla de carga. */
 .estado-pantalla {
@@ -455,6 +596,7 @@ mat-form-field {
   text-align: center;
 }
 
+
   /* Configura el icono de carga. */
   .estado-pantalla > mat-icon {
     width: 52px;
@@ -463,11 +605,13 @@ mat-form-field {
     font-size: 52px;
   }
 
+
   /* Configura el título del estado. */
   .estado-pantalla h2 {
     margin: 15px 0 8px;
     color: var(--azul-oscuro);
   }
+
 
   /* Configura la descripción del estado. */
   .estado-pantalla p {
@@ -475,8 +619,10 @@ mat-form-field {
     color: var(--gris-texto);
   }
 
+
 /* Ajusta la pantalla en ventanas medianas. */
 @media (max-width: 1000px) {
+
   .pago-grid {
     grid-template-columns: 1fr;
   }
@@ -486,8 +632,10 @@ mat-form-field {
   }
 }
 
+
 /* Ajusta la pantalla en ventanas más pequeñas. */
 @media (max-width: 750px) {
+
   .pago-page {
     padding: 20px;
   }
@@ -502,5 +650,10 @@ mat-form-field {
 
   .campos-dobles {
     grid-template-columns: 1fr;
+  }
+
+  /* Reduce ligeramente el número SINPE en celular. */
+  .dato-sinpe strong {
+    font-size: 24px;
   }
 }

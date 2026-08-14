@@ -30,6 +30,12 @@ interface Notificacion {
   mensaje: string;
   tipo: string | null;
   fechaCreacion: string;
+
+  // NUEVO:
+  // Guarda la fecha convertida
+  // a la hora de Costa Rica.
+  fechaCreacionCostaRica?: string;
+
   leida: boolean;
 }
 
@@ -146,9 +152,21 @@ export class Notificaciones implements OnInit {
         );
 
         // Guarda las notificaciones.
+        // NUEVO:
+        // También convierte la fecha
+        // a la hora de Costa Rica.
         this.notificaciones =
           Array.isArray(respuesta)
-            ? respuesta
+            ? respuesta.map(
+              notificacion => ({
+                ...notificacion,
+
+                fechaCreacionCostaRica:
+                  this.convertirHoraCostaRica(
+                    notificacion.fechaCreacion
+                  )
+              })
+            )
             : [];
 
         // Finaliza la carga.
@@ -185,6 +203,96 @@ export class Notificaciones implements OnInit {
       }
     });
   }
+
+
+  // =====================================================
+  // NUEVO:
+  // CONVERTIR HORA A COSTA RICA
+  // =====================================================
+
+  // Convierte la fecha recibida desde
+  // la API a la zona horaria de Costa Rica.
+  private convertirHoraCostaRica(
+    fecha: string
+  ): string {
+
+    // Si no existe fecha,
+    // devuelve un texto vacío.
+    if (!fecha) {
+      return '';
+    }
+
+    // Comprueba si la fecha ya incluye
+    // información de zona horaria.
+    const tieneZonaHoraria =
+      fecha.endsWith('Z') ||
+      /[+-]\d{2}:\d{2}$/.test(
+        fecha
+      );
+
+    // Si el backend envía la fecha
+    // sin zona horaria, se interpreta
+    // como UTC.
+    const fechaNormalizada =
+      tieneZonaHoraria
+        ? fecha
+        : `${fecha}Z`;
+
+    // Convierte el texto a fecha.
+    const fechaConvertida =
+      new Date(
+        fechaNormalizada
+      );
+
+    // Si la fecha no es válida,
+    // devuelve la fecha original.
+    if (
+      isNaN(
+        fechaConvertida.getTime()
+      )
+    ) {
+      return fecha;
+    }
+
+    // Formatea específicamente
+    // para Costa Rica.
+    return new Intl.DateTimeFormat(
+      'es-CR',
+      {
+        // Zona horaria oficial
+        // de Costa Rica.
+        timeZone:
+          'America/Costa_Rica',
+
+        // Día.
+        day:
+          '2-digit',
+
+        // Mes.
+        month:
+          '2-digit',
+
+        // Año.
+        year:
+          'numeric',
+
+        // Hora.
+        hour:
+          'numeric',
+
+        // Minutos.
+        minute:
+          '2-digit',
+
+        // Formato 12 horas.
+        hour12:
+          true
+      }
+    ).format(
+      fechaConvertida
+    );
+  }
+
 
   // Marca una notificación como leída.
   marcarComoLeida(

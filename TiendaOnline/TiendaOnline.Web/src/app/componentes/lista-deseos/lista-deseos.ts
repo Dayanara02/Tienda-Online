@@ -1,244 +1,590 @@
-// Importa CommonModule para poder utilizar
-// directivas comunes como *ngIf y *ngFor.
-import { CommonModule } from '@angular/common';
+// Importa CommonModule para utilizar
+// directivas como *ngIf y *ngFor.
+import {
+  CommonModule
+} from '@angular/common';
 
 
 // Importa Component para crear
 // el componente Lista de deseos.
-import { Component } from '@angular/core';
+import {
+  Component
+} from '@angular/core';
 
 
 // Importa Router para navegar
-// hacia otras páginas del cliente.
-import { Router } from '@angular/router';
+// entre las pantallas de Angular.
+import {
+  Router
+} from '@angular/router';
 
 
-// Importa ButtonModule de PrimeNG
-// para utilizar botones PrimeNG.
-import { ButtonModule } from 'primeng/button';
+// Importa HttpClient para comunicarse
+// directamente con la API.
+//
+// HttpHeaders permite enviar el token JWT.
+import {
+  HttpClient,
+  HttpHeaders
+} from '@angular/common/http';
 
 
-// Importa MatIconModule de Angular Material
-// para utilizar iconos Material.
-import { MatIconModule } from '@angular/material/icon';
+// Importa los botones de PrimeNG.
+import {
+  ButtonModule
+} from 'primeng/button';
 
 
-// Importa MatButtonModule de Angular Material
-// para utilizar botones Material.
-import { MatButtonModule } from '@angular/material/button';
+// Importa los iconos de Angular Material.
+import {
+  MatIconModule
+} from '@angular/material/icon';
 
 
-// Importa MatTooltipModule de Angular Material
-// para mostrar pequeños mensajes de ayuda.
-import { MatTooltipModule } from '@angular/material/tooltip';
+// Importa los botones de Angular Material.
+import {
+  MatButtonModule
+} from '@angular/material/button';
 
 
-// Define la estructura de los productos
-// que pueden aparecer en la lista de deseos.
+// Importa los mensajes emergentes
+// de Angular Material.
+import {
+  MatTooltipModule
+} from '@angular/material/tooltip';
+
+
+// =====================================================
+// PRODUCTO DE LISTA DE DESEOS
+// =====================================================
+
+// Representa un producto favorito.
 interface Producto {
 
-  // Guarda el identificador del producto.
+  // Identificador real del producto.
   id: number;
 
-  // Guarda el nombre del producto.
+  // Nombre del producto.
   nombre: string;
 
-  // Guarda la marca del producto.
+  // Marca del producto.
   marca: string;
 
-  // Guarda el precio unitario.
+  // Precio unitario.
   precio: number;
 
-  // Guarda la imagen del producto.
+  // Ruta de la imagen.
   imagen: string;
 
-  // Guarda el stock cuando esté disponible.
-  // Es opcional porque algunos favoritos antiguos
-  // pueden no tener este dato guardado.
+  // Stock actual.
   stock?: number;
 
-  // Mantiene compatibilidad con favoritos antiguos
-  // que utilizaban el nombre disponibles.
+  // Mantiene compatibilidad
+  // con productos antiguos.
   disponibles?: number;
 
-  // Guarda la categoría cuando exista.
+  // Nombre de la categoría.
   categoria?: string;
 
-  // Mantiene compatibilidad con productos antiguos.
+  // Identificador antiguo
+  // de la categoría.
   categoriaId?: number;
 
-  // Guarda una descripción cuando exista.
+  // Descripción opcional.
   descripcion?: string;
 
-  // Guarda una cantidad cuando sea necesaria.
+  // Cantidad opcional.
   cantidad?: number;
 }
 
 
-// Define la estructura de un producto
-// cuando se guarda dentro del carrito.
+// =====================================================
+// PRODUCTO DEL CARRITO
+// =====================================================
+
+// Representa un producto guardado
+// dentro del carrito.
 interface ProductoCarrito {
 
-  // Guarda el identificador.
+  // Identificador.
   id: number;
 
-  // Guarda el nombre.
+  // Nombre.
   nombre: string;
 
-  // Guarda la marca.
+  // Marca.
   marca: string;
 
-  // Guarda el precio.
+  // Precio.
   precio: number;
 
-  // Guarda la imagen.
+  // Imagen.
   imagen: string;
 
-  // Guarda la cantidad agregada.
+  // Cantidad agregada.
   cantidad: number;
 
-  // Guarda el stock conocido del producto.
+  // Stock disponible.
   stock: number;
 }
 
 
-// Configura el componente Lista de deseos.
+// =====================================================
+// RESPUESTA DE LISTA DE DESEOS
+// =====================================================
+
+// Representa la lista creada
+// en SQL Server.
+interface ListaDeseosSql {
+
+  // Identificador real de la lista.
+  idListaDeseos: number;
+
+  // Usuario dueño de la lista.
+  idUsuario: number;
+
+  // Fecha de creación.
+  fechaCreacion: string;
+}
+
+
+// =====================================================
+// RESPUESTA DEL CARRITO
+// =====================================================
+
+// Representa el carrito activo
+// creado en SQL Server.
+interface CarritoSql {
+
+  // Identificador del carrito.
+  idCarrito: number;
+
+  // Usuario dueño del carrito.
+  idUsuario: number;
+
+  // Fecha de creación.
+  fechaCreacion: string;
+
+  // Activo o Inactivo.
+  estado: string;
+}
+
+
+// =====================================================
+// COMPONENTE
+// =====================================================
+
 @Component({
 
-  // Define el selector del componente.
-  selector: 'app-lista-deseos',
+  // Nombre utilizado por Angular.
+  selector:
+    'app-lista-deseos',
 
-  // Registra los módulos utilizados en el HTML.
+  // Módulos utilizados por este componente.
   imports: [
 
-    // Permite utilizar funciones comunes de Angular.
+    // Directivas comunes.
     CommonModule,
 
-    // Permite utilizar botones PrimeNG.
+    // Botones PrimeNG.
     ButtonModule,
 
-    // Permite utilizar iconos Angular Material.
+    // Iconos Material.
     MatIconModule,
 
-    // Permite utilizar botones Angular Material.
+    // Botones Material.
     MatButtonModule,
 
-    // Permite utilizar mensajes emergentes.
+    // Tooltips Material.
     MatTooltipModule
   ],
 
-  // Define el archivo HTML.
-  templateUrl: './lista-deseos.html',
+  // Archivo HTML.
+  templateUrl:
+    './lista-deseos.html',
 
-  // Define el archivo CSS.
-  styleUrl: './lista-deseos.css'
+  // Archivo CSS.
+  styleUrl:
+    './lista-deseos.css'
 })
 export class ListaDeseos {
 
 
-  // Guarda todos los productos
-  // marcados como favoritos.
-  productosDeseados: Producto[] = [];
+  // ===================================================
+  // VARIABLES PRINCIPALES
+  // ===================================================
+
+  // Guarda los productos favoritos
+  // que se muestran en pantalla.
+  productosDeseados:
+    Producto[] = [];
 
 
   // Guarda la cantidad total
-  // de productos del carrito.
-  cantidadCarrito = 0;
+  // de artículos del carrito.
+  cantidadCarrito =
+    0;
 
 
-  // Guarda un mensaje temporal
-  // después de realizar una acción.
-  mensaje = '';
+  // Guarda mensajes temporales.
+  mensaje =
+    '';
 
 
-  // Define el tipo del mensaje mostrado.
-  tipoMensaje: 'exito' | 'info' | 'error' =
+  // Define el tipo de mensaje.
+  tipoMensaje:
+    'exito' |
+    'info' |
+    'error' =
     'info';
 
 
-  // Constructor del componente.
+  // Guarda el identificador real
+  // de ListaDeseos en SQL Server.
+  idListaDeseosActual =
+    0;
+
+
+  // ===================================================
+  // ENDPOINTS DE LA API
+  // ===================================================
+
+  // Dirección del controlador ListaDeseos.
+  apiListaDeseos =
+    'https://localhost:7196/api/ListaDeseos';
+
+  // Dirección del controlador DetalleListaDeseos.
+  apiDetalleLista =
+    'https://localhost:7196/api/DetalleListaDeseos';
+
+  // Dirección del controlador Carritos.
+  apiCarritos =
+    'https://localhost:7196/api/Carritos';
+
+  // Dirección del controlador DetalleCarritos.
+  apiDetalleCarritos =
+    'https://localhost:7196/api/DetalleCarritos';
+
+  // ===================================================
+  // CONSTRUCTOR
+  // ===================================================
+
   constructor(
 
-    // Permite navegar entre las páginas.
-    private router: Router
+    // Permite navegar entre páginas.
+    private router: Router,
+
+    // Permite comunicarse directamente
+    // con la API.
+    private http: HttpClient
+
   ) {
 
-
-    // Carga los favoritos guardados.
+    // Carga los favoritos almacenados
+    // actualmente en el navegador.
     this.cargarDeseos();
 
+    // Obtiene o crea la lista real
+    // del usuario en SQL.
+    this.sincronizarListaConSql();
 
-    // Actualiza la cantidad del carrito.
+    // Actualiza el contador del carrito.
     this.actualizarCantidadCarrito();
   }
 
 
-  // Carga la lista de deseos
-  // guardada dentro del navegador.
+  // ===================================================
+  // AUTORIZACIÓN
+  // ===================================================
+
+  // Obtiene el token JWT y crea
+  // los encabezados para la API.
+  private obtenerHeaders():
+    HttpHeaders | null {
+
+    // Busca el token almacenado
+    // después del inicio de sesión.
+    const token =
+      localStorage.getItem(
+        'token'
+      );
+
+
+    // Si no existe token,
+    // no puede realizar solicitudes protegidas.
+    if (!token) {
+
+      return null;
+    }
+
+
+    // Devuelve el encabezado Authorization.
+    return new HttpHeaders({
+
+      Authorization:
+        `Bearer ${token}`
+    });
+  }
+
+
+  // ===================================================
+  // CARGAR FAVORITOS LOCALES
+  // ===================================================
+
+  // Carga los favoritos guardados
+  // actualmente en localStorage.
   cargarDeseos(): void {
 
-
-    // Busca el contenido guardado.
+    // Obtiene los favoritos.
     const deseosGuardados =
       localStorage.getItem(
         'listaDeseos'
       );
 
 
-    // Si no existe ninguna lista guardada...
+    // Si no existe nada guardado...
     if (!deseosGuardados) {
 
-
-      // Utiliza un arreglo vacío.
+      // Utiliza una lista vacía.
       this.productosDeseados =
         [];
 
-
-      // Detiene el método.
       return;
     }
 
 
-    // Intenta convertir el texto JSON
-    // nuevamente a un arreglo.
     try {
 
-
-      // Guarda los productos obtenidos.
+      // Convierte el JSON
+      // nuevamente en productos.
       this.productosDeseados =
         JSON.parse(
           deseosGuardados
         );
 
-
-      // Si el contenido guardado no es válido...
     } catch {
 
-
-      // Deja la lista vacía.
+      // Si el JSON está dañado,
+      // utiliza una lista vacía.
       this.productosDeseados =
         [];
     }
   }
 
 
-  // Elimina un producto
-  // de la lista de deseos.
+  // ===================================================
+  // OBTENER O CREAR LISTA EN SQL
+  // ===================================================
+
+  // Obtiene la ListaDeseos del usuario.
+  //
+  // Si todavía no existe,
+  // el backend la crea automáticamente.
+  private obtenerOCrearListaActual(
+    alTerminar?:
+      (
+        idListaDeseos: number
+      ) => void
+  ): void {
+
+    // Obtiene autorización.
+    const headers =
+      this.obtenerHeaders();
+
+
+    // Si no existe sesión...
+    if (!headers) {
+
+      this.mostrarMensaje(
+        'No existe una sesión activa.',
+        'error'
+      );
+
+      return;
+    }
+
+
+    // Llama:
+    //
+    // POST api/ListaDeseos/actual
+    this.http
+      .post<ListaDeseosSql>(
+        `${this.apiListaDeseos}/actual`,
+        {},
+        {
+          headers
+        }
+      )
+      .subscribe({
+
+        // Si funciona...
+        next: lista => {
+
+          // Guarda el ID real de SQL.
+          this.idListaDeseosActual =
+            lista.idListaDeseos;
+
+
+          // También lo conserva
+          // en localStorage.
+          localStorage.setItem(
+            'idListaDeseosActual',
+            String(
+              lista.idListaDeseos
+            )
+          );
+
+
+          // Ejecuta la acción recibida,
+          // si existe.
+          if (alTerminar) {
+
+            alTerminar(
+              lista.idListaDeseos
+            );
+          }
+        },
+
+
+        // Si ocurre un error...
+        error: error => {
+
+          console.error(
+            'Error obteniendo la lista de deseos:',
+            error
+          );
+
+
+          this.mostrarMensaje(
+            'No se pudo conectar la lista de deseos con la base de datos.',
+            'error'
+          );
+        }
+      });
+  }
+
+
+  // ===================================================
+  // SINCRONIZAR FAVORITOS CON SQL
+  // ===================================================
+
+  // Crea u obtiene la lista
+  // y registra los productos favoritos
+  // actuales dentro de SQL Server.
+  sincronizarListaConSql(): void {
+
+    this.obtenerOCrearListaActual(
+      (
+        idListaDeseos
+      ) => {
+
+        // Recorre todos los favoritos
+        // actualmente guardados.
+        this.productosDeseados
+          .forEach(
+            producto => {
+
+              // Guarda cada producto
+              // dentro de DetalleListaDeseo.
+              this.guardarDeseoSql(
+                idListaDeseos,
+                producto.id
+              );
+            }
+          );
+      }
+    );
+  }
+
+
+  // ===================================================
+  // GUARDAR FAVORITO EN SQL
+  // ===================================================
+
+  // Guarda un producto dentro
+  // de DetalleListaDeseo.
+  private guardarDeseoSql(
+    idListaDeseos: number,
+    idProducto: number
+  ): void {
+
+    // Obtiene autorización.
+    const headers =
+      this.obtenerHeaders();
+
+
+    // Si no existe token...
+    if (!headers) {
+
+      return;
+    }
+
+
+    // Crea el objeto que recibirá
+    // DetalleListaDeseosController.
+    const detalle = {
+
+      // Lista a la que pertenece.
+      idListaDeseos:
+        idListaDeseos,
+
+      // Producto favorito.
+      idProducto:
+        idProducto
+    };
+
+
+    // Envía el favorito al backend.
+    this.http
+      .post(
+        this.apiDetalleLista,
+        detalle,
+        {
+          headers
+        }
+      )
+      .subscribe({
+
+        // No necesita hacer nada
+        // si funciona.
+        next: () => {
+        },
+
+
+        // Muestra posibles errores.
+        error: error => {
+
+          console.error(
+            'Error guardando favorito en SQL:',
+            error
+          );
+        }
+      });
+  }
+
+
+  // ===================================================
+  // ELIMINAR FAVORITO
+  // ===================================================
+
+  // Elimina un producto tanto
+  // del navegador como de SQL.
   eliminarDeseo(
     idProducto: number
   ): void {
 
-
-    // Filtra la lista y conserva solamente
-    // los productos diferentes al eliminado.
+    // Primero elimina el producto
+    // de la lista visible.
     this.productosDeseados =
-      this.productosDeseados.filter(
-        producto =>
-          producto.id !== idProducto
-      );
+      this.productosDeseados
+        .filter(
+          producto =>
+            producto.id !==
+            idProducto
+        );
 
 
-    // Guarda nuevamente la lista actualizada.
+    // Actualiza localStorage.
     localStorage.setItem(
       'listaDeseos',
       JSON.stringify(
@@ -247,7 +593,38 @@ export class ListaDeseos {
     );
 
 
-    // Muestra un mensaje al cliente.
+    // Si ya conocemos el ID
+    // de la lista...
+    if (
+      this.idListaDeseosActual > 0
+    ) {
+
+      // Elimina directamente de SQL.
+      this.eliminarDeseoSql(
+        this.idListaDeseosActual,
+        idProducto
+      );
+
+    } else {
+
+      // Si todavía no conocemos la lista,
+      // primero la obtiene.
+      this.obtenerOCrearListaActual(
+        (
+          idListaDeseos
+        ) => {
+
+          // Después elimina el producto.
+          this.eliminarDeseoSql(
+            idListaDeseos,
+            idProducto
+          );
+        }
+      );
+    }
+
+
+    // Informa al usuario.
     this.mostrarMensaje(
       'Producto eliminado de favoritos.',
       'info'
@@ -255,56 +632,105 @@ export class ListaDeseos {
   }
 
 
+  // Elimina físicamente el favorito
+  // desde DetalleListaDeseo.
+  private eliminarDeseoSql(
+    idListaDeseos: number,
+    idProducto: number
+  ): void {
+
+    // Obtiene autorización.
+    const headers =
+      this.obtenerHeaders();
+
+
+    if (!headers) {
+
+      return;
+    }
+
+
+    // Llama:
+    //
+    // DELETE
+    // api/DetalleListaDeseos/lista/producto
+    this.http
+      .delete(
+        `${this.apiDetalleLista}/${idListaDeseos}/${idProducto}`,
+        {
+          headers
+        }
+      )
+      .subscribe({
+
+        // No necesita hacer nada
+        // adicional si funciona.
+        next: () => {
+        },
+
+
+        // Maneja errores.
+        error: error => {
+
+          console.error(
+            'Error eliminando favorito de SQL:',
+            error
+          );
+        }
+      });
+  }
+
+
+  // ===================================================
+  // AGREGAR FAVORITO AL CARRITO
+  // ===================================================
+
   // Agrega un producto favorito
   // al carrito de compras.
   agregarAlCarrito(
     producto: Producto
   ): void {
 
-
-    // Obtiene el carrito actual.
+    // Obtiene el carrito local.
     const carrito =
       this.obtenerCarrito();
 
 
     // Busca si el producto
-    // ya se encuentra en el carrito.
+    // ya estaba agregado.
     const existente =
       carrito.find(
         item =>
-          item.id === producto.id
+          item.id ===
+          producto.id
       );
 
 
-    // Obtiene el stock conocido.
-    // Primero intenta utilizar stock.
-    // Si no existe, intenta utilizar disponibles.
+    // Obtiene el stock disponible.
     const stockProducto =
-      producto.stock ??
-      producto.disponibles ??
-      1;
+      Number(
+        producto.stock
+        ??
+        producto.disponibles
+        ??
+        1
+      );
 
 
-    // Si el producto ya existe en el carrito...
+    // Si ya existe...
     if (existente) {
 
-
-      // Comprueba si todavía puede
-      // agregarse otra unidad.
+      // Comprueba que exista stock.
       if (
         existente.cantidad >=
         existente.stock
       ) {
 
-
-        // Muestra un mensaje de error.
         this.mostrarMensaje(
           'No puedes agregar más unidades de este producto.',
           'error'
         );
 
-
-        // Detiene el método.
         return;
       }
 
@@ -313,57 +739,79 @@ export class ListaDeseos {
       existente.cantidad +=
         1;
 
-
-      // Si todavía no se encuentra
-      // dentro del carrito...
     } else {
 
+      // Si todavía no existe,
+      // crea el producto.
+      const nuevoProducto:
+        ProductoCarrito = {
 
-      // Crea un nuevo producto para el carrito.
-      const nuevoProducto: ProductoCarrito = {
+        id:
+          producto.id,
 
-        // Guarda el identificador.
-        id: producto.id,
+        nombre:
+          producto.nombre,
 
-        // Guarda el nombre.
-        nombre: producto.nombre,
+        marca:
+          producto.marca,
 
-        // Guarda la marca.
-        marca: producto.marca,
+        precio:
+          Number(
+            producto.precio
+          ),
 
-        // Guarda el precio.
-        precio: producto.precio,
+        imagen:
+          producto.imagen,
 
-        // Guarda la imagen.
-        imagen: producto.imagen,
+        cantidad:
+          1,
 
-        // Agrega inicialmente una unidad.
-        cantidad: 1,
-
-        // Guarda el stock conocido.
-        stock: stockProducto
+        stock:
+          stockProducto
       };
 
 
-      // Agrega el producto al carrito.
+      // Agrega el producto.
       carrito.push(
         nuevoProducto
       );
     }
 
 
-    // Guarda nuevamente el carrito.
+    // Guarda el carrito local.
     localStorage.setItem(
       'carrito',
-      JSON.stringify(carrito)
+      JSON.stringify(
+        carrito
+      )
     );
 
 
-    // Actualiza el contador.
+    // Busca el producto ya actualizado.
+    const productoCarrito =
+      carrito.find(
+        item =>
+          item.id ===
+          producto.id
+      );
+
+
+    // Si lo encontró...
+    if (productoCarrito) {
+
+      // También lo registra
+      // en SQL Server.
+      this.sincronizarProductoCarritoSql(
+        productoCarrito
+      );
+    }
+
+
+    // Actualiza contador.
     this.actualizarCantidadCarrito();
 
 
-    // Muestra un mensaje de éxito.
+    // Muestra mensaje.
     this.mostrarMensaje(
       'Producto agregado al carrito.',
       'exito'
@@ -371,11 +819,126 @@ export class ListaDeseos {
   }
 
 
-  // Obtiene el carrito guardado
-  // dentro del navegador.
+  // ===================================================
+  // SINCRONIZAR CARRITO CON SQL
+  // ===================================================
+
+  // Obtiene o crea el carrito activo
+  // y registra el producto.
+  private sincronizarProductoCarritoSql(
+    producto: ProductoCarrito
+  ): void {
+
+    // Obtiene autorización.
+    const headers =
+      this.obtenerHeaders();
+
+
+    if (!headers) {
+
+      return;
+    }
+
+
+    // Obtiene o crea el carrito actual.
+    this.http
+      .post<CarritoSql>(
+        `${this.apiCarritos}/actual`,
+        {},
+        {
+          headers
+        }
+      )
+      .subscribe({
+
+        // Si obtiene carrito...
+        next: carrito => {
+
+          // Guarda el ID del carrito
+          // para otras pantallas.
+          localStorage.setItem(
+            'idCarritoActual',
+            String(
+              carrito.idCarrito
+            )
+          );
+
+
+          // Prepara el detalle.
+          const detalle = {
+
+            idCarrito:
+              carrito.idCarrito,
+
+            idProducto:
+              producto.id,
+
+            cantidad:
+              producto.cantidad,
+
+            precioUnitario:
+              Number(
+                producto.precio
+              )
+          };
+
+
+          // Registra el producto
+          // en DetalleCarrito.
+          this.http
+            .post(
+              this.apiDetalleCarritos,
+              detalle,
+              {
+                headers
+              }
+            )
+            .subscribe({
+
+              // No necesita hacer nada
+              // si funciona.
+              next: () => {
+              },
+
+
+              // Maneja errores.
+              error: error => {
+
+                console.error(
+                  'Error guardando producto en DetalleCarrito:',
+                  error
+                );
+              }
+            });
+        },
+
+
+        // Error obteniendo carrito.
+        error: error => {
+
+          console.error(
+            'Error obteniendo carrito activo:',
+            error
+          );
+
+
+          this.mostrarMensaje(
+            'El producto se agregó localmente, pero no se pudo guardar en SQL.',
+            'error'
+          );
+        }
+      });
+  }
+
+
+  // ===================================================
+  // OBTENER CARRITO LOCAL
+  // ===================================================
+
+  // Obtiene los productos
+  // almacenados en el carrito.
   private obtenerCarrito():
     ProductoCarrito[] {
-
 
     // Busca el carrito.
     const carritoGuardado =
@@ -384,47 +947,43 @@ export class ListaDeseos {
       );
 
 
-    // Si todavía no existe...
+    // Si no existe...
     if (!carritoGuardado) {
 
-
-      // Devuelve un arreglo vacío.
       return [];
     }
 
 
-    // Intenta convertir el contenido.
     try {
 
-
-      // Devuelve el carrito convertido.
+      // Convierte el JSON.
       return JSON.parse(
         carritoGuardado
       );
 
-
-      // Si existe algún problema con el JSON...
     } catch {
 
-
-      // Devuelve una lista vacía.
+      // Si existe un error,
+      // devuelve lista vacía.
       return [];
     }
   }
 
 
-  // Actualiza el contador
-  // de productos del carrito.
+  // ===================================================
+  // CONTADOR DEL CARRITO
+  // ===================================================
+
+  // Actualiza la cantidad total
+  // mostrada en pantalla.
   actualizarCantidadCarrito(): void {
 
-
-    // Obtiene el carrito actual.
+    // Obtiene el carrito.
     const carrito =
       this.obtenerCarrito();
 
 
-    // Suma las cantidades
-    // de todos los productos.
+    // Suma las cantidades.
     this.cantidadCarrito =
       carrito.reduce(
         (
@@ -432,71 +991,76 @@ export class ListaDeseos {
           producto
         ) =>
           total +
-          producto.cantidad,
+          Number(
+            producto.cantidad
+          ),
         0
       );
   }
 
 
-  // Muestra un mensaje temporal
-  // dentro de la pantalla.
+  // ===================================================
+  // MENSAJES
+  // ===================================================
+
+  // Muestra un mensaje temporal.
   mostrarMensaje(
     texto: string,
-    tipo: 'exito' | 'info' | 'error'
+    tipo:
+      'exito' |
+      'info' |
+      'error'
   ): void {
 
-
-    // Guarda el texto recibido.
+    // Guarda el texto.
     this.mensaje =
       texto;
 
 
-    // Guarda el tipo del mensaje.
+    // Guarda el tipo.
     this.tipoMensaje =
       tipo;
 
 
-    // Espera dos segundos y medio.
+    // Lo elimina después
+    // de dos segundos y medio.
     setTimeout(
       () => {
 
-
-        // Limpia el mensaje.
         this.mensaje =
           '';
+
       },
       2500
     );
   }
 
 
-  // Regresa al Dashboard del cliente.
+  // ===================================================
+  // NAVEGACIÓN
+  // ===================================================
+
+  // Regresa al Dashboard.
   volverDashboard(): void {
 
-
-    // Navega hacia el Dashboard.
     this.router.navigate([
       '/dashboard'
     ]);
   }
 
 
-  // Abre la pantalla Productos.
+  // Abre Productos.
   irAProductos(): void {
 
-
-    // Navega hacia Productos.
     this.router.navigate([
       '/productos'
     ]);
   }
 
 
-  // Abre el carrito.
+  // Abre Carrito.
   irAlCarrito(): void {
 
-
-    // Navega hacia Carrito.
     this.router.navigate([
       '/carrito'
     ]);
