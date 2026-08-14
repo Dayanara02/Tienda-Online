@@ -10,6 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 // Permite configurar Swagger.
 using Microsoft.OpenApi;
 
+// Importa el perfil de AutoMapper.
+using TiendaOnline.Dominio.DTO;
+
 // Permite configurar QuestPDF.
 using QuestPDF.Infrastructure;
 
@@ -51,6 +54,11 @@ public partial class Program
         var builder =
             WebApplication.CreateBuilder(args);
 
+        // Registra AutoMapper y busca los perfiles del proyecto.
+        builder.Services.AddAutoMapper(
+            config => { },
+            typeof(AutoMapperProfile)
+        );
 
         // =====================================================
         // MANEJO DE ERRORES

@@ -2,7 +2,7 @@
 using System;
 
 
-namespace TiendaOnline.Dominio.EntidadesTipadas;
+namespace TiendaOnline.Dominio.Entidades;
 
 // Representa la información de los productos más vendidos.
 // Esta clase corresponde a una vista de la base de datos.

@@ -1,28 +1,29 @@
-﻿
-namespace TiendaOnline.Dominio.DTO;
+﻿// Permite utilizar DateTime.
+using System;
 
-// Guarda los datos para modificar un producto.
-public class ProductoModificarDto
+// Define el espacio de nombres.
+namespace TiendaOnline.Dominio.EntidadesTipadas;
+
+// Representa la información principal de un producto.
+public class TProducto
 {
-    // Producto que se modificará.
+    // Identificador del producto.
     public int IdProducto { get; set; }
 
-    // Categoría del producto.
+    // Identificador de la categoría.
     public int IdCategoria { get; set; }
 
-    // Impuesto aplicado.
+    // Identificador del impuesto.
     public int IdImpuesto { get; set; }
 
     // Nombre del producto.
-    public string Nombre { get; set; } =
-        string.Empty;
+    public string Nombre { get; set; } = null!;
 
     // Descripción del producto.
     public string? Descripcion { get; set; }
 
     // Código del producto.
-    public string Codigo { get; set; } =
-        string.Empty;
+    public string Codigo { get; set; } = null!;
 
     // Precio de venta.
     public decimal Precio { get; set; }
@@ -38,4 +39,7 @@ public class ProductoModificarDto
 
     // Indica si está activo.
     public bool Estado { get; set; }
+
+    // Fecha de registro.
+    public DateTime FechaRegistro { get; set; }
 }

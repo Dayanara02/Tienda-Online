@@ -2,7 +2,7 @@
 using System;
 
 
-namespace TiendaOnline.Dominio.EntidadesTipadas;
+namespace TiendaOnline.Dominio.Entidades;
 
 // Representa los productos que tienen un nivel de inventario bajo.
 // Esta clase corresponde a una vista de la base de datos.

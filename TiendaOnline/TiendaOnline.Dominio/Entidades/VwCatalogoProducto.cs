@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace TiendaOnline.Dominio.EntidadesTipadas;
+namespace TiendaOnline.Dominio.Entidades;
 
 // Representa la información del catálogo de productos.
 // Esta clase corresponde a una vista de la base de datos.

@@ -1,7 +1,7 @@
 ﻿// Permite utilizar funcionalidades básicas de C#.
 using System;
 
-namespace TiendaOnline.Dominio.EntidadesTipadas;
+namespace TiendaOnline.Dominio.Entidades;
 
 // Representa la información de las ventas agrupadas por fecha.
 // Esta clase corresponde a una vista de la base de datos.

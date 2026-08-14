@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 // Importa las entidades tipadas que representan vistas SQL.
-using TiendaOnline.Dominio.EntidadesTipadas;
 
 // Importa las entidades normales que representan tablas.
 using TiendaOnline.Dominio.Entidades;
