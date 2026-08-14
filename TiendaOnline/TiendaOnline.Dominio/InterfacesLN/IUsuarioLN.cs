@@ -3,8 +3,7 @@ using TiendaOnline.Utilidades;
 
 namespace TiendaOnline.Dominio.InterfacesLN
 {
-    // Esta interfaz define las operaciones de lógica de negocio
-    // que se pueden realizar con los usuarios.
+    // Esta interfaz define las operaciones de usuarios en el sistema.
     public interface IUsuarioLN
     {
         // Registra un nuevo usuario en el sistema.

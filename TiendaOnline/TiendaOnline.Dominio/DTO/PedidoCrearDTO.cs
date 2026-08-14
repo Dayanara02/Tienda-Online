@@ -1,4 +1,4 @@
-﻿// Define el espacio de nombres donde se encuentran los DTO del proyecto.
+﻿
 namespace TiendaOnline.Dominio.DTO;
 
 // Representa la información que recibe la API para crear un pedido.

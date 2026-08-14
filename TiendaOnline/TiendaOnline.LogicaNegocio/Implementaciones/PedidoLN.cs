@@ -1,51 +1,50 @@
-﻿using Microsoft.Extensions.Logging;
+﻿// Permite registrar errores.
+using Microsoft.Extensions.Logging;
+
+// Importa las entidades.
 using TiendaOnline.Dominio.Entidades;
+
+// Importa la unidad de trabajo.
 using TiendaOnline.Dominio.InterfacesAD;
+
+// Importa la interfaz de lógica de negocio.
 using TiendaOnline.Dominio.InterfacesLN;
+
+// Importa la clase Respuesta.
 using TiendaOnline.Utilidades;
 
 namespace TiendaOnline.LogicaNegocio.Implementaciones
 {
-    // Esta clase contiene las reglas de negocio generales de los pedidos.
-    // Implementa IPedidoLN para cumplir con las operaciones definidas
-    // para insertar, consultar, modificar, eliminar y buscar pedidos.
+    // Contiene la lógica de negocio de los pedidos.
     public class PedidoLN : IPedidoLN
     {
-        // Guarda la unidad de trabajo.
-        // Por medio de ella se obtiene el repositorio TPedido,
-        // evitando acceder directamente al contexto de Entity Framework.
+        // Permite acceder a los repositorios.
         private readonly IUnidadTrabajoEF _unidadDeTrabajo;
 
-        // Permite registrar errores que ocurran dentro de la lógica de pedidos.
-        // Esto ayuda a identificar problemas durante la ejecución del sistema.
+        // Permite registrar errores.
         private readonly ILogger<PedidoLN> _logger;
 
 
-        // El constructor recibe las dependencias que necesita esta clase.
-        // Estas dependencias pueden ser entregadas por inyección de dependencias.
+        // Recibe las dependencias necesarias.
         public PedidoLN(
             IUnidadTrabajoEF unidadDeTrabajo,
             ILogger<PedidoLN> logger)
         {
-            // Guarda la unidad de trabajo recibida para utilizar TPedido.
             _unidadDeTrabajo = unidadDeTrabajo;
-
-            // Guarda el logger para poder registrar errores.
             _logger = logger;
         }
 
 
-        // Este método registra un nuevo pedido en la base de datos.
-        public async Task<Respuesta<Pedido>> InsertarAsync(Pedido datos)
+        // Registra un nuevo pedido.
+        public async Task<Respuesta<Pedido>> InsertarAsync(
+            Pedido datos)
         {
-            // Crea una respuesta donde se devolverá
-            // el pedido registrado o un mensaje de error.
+            // Crea la respuesta de la operación.
             var resultado = new Respuesta<Pedido>();
 
             try
             {
-                // Verifica que el pedido pertenezca a un usuario válido.
-                // Un IdUsuario menor o igual a cero no representa un usuario válido.
+                // Valida el usuario.
                 if (datos.IdUsuario <= 0)
                 {
                     resultado.Error =
@@ -55,8 +54,7 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Verifica que el subtotal no sea negativo.
-                // Un pedido no debería tener un subtotal menor que cero.
+                // Valida el subtotal.
                 if (datos.Subtotal < 0)
                 {
                     resultado.Error =
@@ -66,7 +64,7 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Verifica que el impuesto no tenga un valor negativo.
+                // Valida el impuesto.
                 if (datos.Impuesto < 0)
                 {
                     resultado.Error =
@@ -76,7 +74,7 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Verifica que el descuento no sea negativo.
+                // Valida el descuento.
                 if (datos.Descuento < 0)
                 {
                     resultado.Error =
@@ -86,7 +84,7 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Verifica que el total final del pedido sea válido.
+                // Valida el total.
                 if (datos.Total < 0)
                 {
                     resultado.Error =
@@ -96,117 +94,118 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Si no se recibió una fecha válida,
-                // se utiliza la fecha y hora actual.
+                // Asigna la fecha actual si viene vacía.
                 if (datos.FechaPedido == default)
                 {
                     datos.FechaPedido = DateTime.Now;
                 }
 
 
-                // Si el estado viene vacío, se asigna un estado inicial.
-                // Esto evita guardar pedidos sin información sobre su estado.
+                // Asigna un estado inicial.
                 if (string.IsNullOrWhiteSpace(datos.Estado))
                 {
                     datos.Estado = "Pendiente";
                 }
 
 
-                // Envía el pedido al repositorio para insertarlo
-                // realmente en la base de datos.
+                // Guarda el pedido.
                 var respuestaRepositorio =
-                    await _unidadDeTrabajo.TPedido.InsertarAsync(datos);
+                    await _unidadDeTrabajo.TPedido.InsertarAsync(
+                        datos);
 
 
-                // Verifica si el repositorio produjo algún error.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                // Comprueba si ocurrió un error.
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
-                    // Copia el error para devolverlo a la capa superior.
-                    resultado.Error = respuestaRepositorio.Error;
+                    resultado.Error =
+                        respuestaRepositorio.Error;
 
                     return resultado;
                 }
 
 
-                // Guarda en la respuesta el pedido que fue registrado.
-                resultado.Data = respuestaRepositorio.Data;
+                // Guarda el pedido registrado.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
-                // Registra el error indicando el usuario
-                // para el cual se intentaba crear el pedido.
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
                     "Error al insertar un pedido para el usuario {IdUsuario}",
                     datos.IdUsuario);
 
-                // Guarda el mensaje del error dentro de la respuesta.
                 resultado.Error = ex.Message;
             }
 
-            // Devuelve el resultado final de la operación.
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Este método obtiene todos los pedidos registrados.
+        // Obtiene todos los pedidos.
         public async Task<Respuesta<IEnumerable<Pedido>>> ListarAsync()
         {
-            // Crea una respuesta que puede almacenar varios pedidos.
+            // Crea la respuesta con varios pedidos.
             var resultado =
                 new Respuesta<IEnumerable<Pedido>>();
 
             try
             {
-                // Solicita al repositorio todos los registros
-                // existentes en la tabla de pedidos.
+                // Consulta todos los pedidos.
                 var respuestaRepositorio =
                     await _unidadDeTrabajo.TPedido.ListarAsync();
 
 
-                // Comprueba si ocurrió algún error durante la consulta.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                // Comprueba si ocurrió un error.
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
-                    resultado.Error = respuestaRepositorio.Error;
+                    resultado.Error =
+                        respuestaRepositorio.Error;
 
                     return resultado;
                 }
 
 
-                // Guarda la lista de pedidos obtenida.
-                resultado.Data = respuestaRepositorio.Data;
+                // Guarda los pedidos encontrados.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
-                // Registra cualquier error ocurrido al listar los pedidos.
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
                     "Error al listar los pedidos.");
 
-                // Guarda el mensaje del error para devolverlo.
                 resultado.Error = ex.Message;
             }
 
-            // Devuelve los pedidos encontrados o el error.
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Este método modifica los datos generales de un pedido existente.
-        public async Task<Respuesta<Pedido>> ModificarAsync(Pedido datos)
+        // Modifica un pedido existente.
+        public async Task<Respuesta<Pedido>> ModificarAsync(
+            Pedido datos)
         {
-            // Crea la respuesta que devolverá el pedido modificado.
+            // Crea la respuesta de la operación.
             var resultado = new Respuesta<Pedido>();
 
             try
             {
-                // Busca primero el pedido utilizando su IdPedido.
+                // Busca el pedido.
                 var pedidoActual =
                     await _unidadDeTrabajo.TPedido.ObtenerEntidadAsync(
-                        x => x.IdPedido == datos.IdPedido);
+                        x => x.IdPedido ==
+                             datos.IdPedido);
 
 
-                // Comprueba que el pedido exista antes de intentar modificarlo.
+                // Comprueba que exista.
                 if (pedidoActual.Data == null)
                 {
                     resultado.Error =
@@ -216,7 +215,7 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Valida que el usuario relacionado con el pedido sea válido.
+                // Valida el usuario.
                 if (datos.IdUsuario <= 0)
                 {
                     resultado.Error =
@@ -226,7 +225,7 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Valida que los valores monetarios no sean negativos.
+                // Valida los valores monetarios.
                 if (datos.Subtotal < 0 ||
                     datos.Impuesto < 0 ||
                     datos.Descuento < 0 ||
@@ -239,93 +238,101 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Actualiza el usuario relacionado con el pedido.
-                pedidoActual.Data.IdUsuario = datos.IdUsuario;
+                // Actualiza el usuario.
+                pedidoActual.Data.IdUsuario =
+                    datos.IdUsuario;
 
-                // Actualiza la fecha del pedido.
-                pedidoActual.Data.FechaPedido = datos.FechaPedido;
+                // Actualiza la fecha.
+                pedidoActual.Data.FechaPedido =
+                    datos.FechaPedido;
 
-                // Actualiza el estado textual del pedido.
-                pedidoActual.Data.Estado = datos.Estado;
+                // Actualiza el estado.
+                pedidoActual.Data.Estado =
+                    datos.Estado;
 
-                // Actualiza el subtotal antes de impuestos y descuentos.
-                pedidoActual.Data.Subtotal = datos.Subtotal;
+                // Actualiza el subtotal.
+                pedidoActual.Data.Subtotal =
+                    datos.Subtotal;
 
-                // Actualiza el monto correspondiente a impuestos.
-                pedidoActual.Data.Impuesto = datos.Impuesto;
+                // Actualiza el impuesto.
+                pedidoActual.Data.Impuesto =
+                    datos.Impuesto;
 
-                // Actualiza el descuento aplicado al pedido.
-                pedidoActual.Data.Descuento = datos.Descuento;
+                // Actualiza el descuento.
+                pedidoActual.Data.Descuento =
+                    datos.Descuento;
 
-                // Actualiza el total final que debe pagar el usuario.
-                pedidoActual.Data.Total = datos.Total;
+                // Actualiza el total.
+                pedidoActual.Data.Total =
+                    datos.Total;
 
-                // Actualiza la dirección en la que se entregará el pedido.
-                pedidoActual.Data.DireccionEntrega = datos.DireccionEntrega;
+                // Actualiza la dirección de entrega.
+                pedidoActual.Data.DireccionEntrega =
+                    datos.DireccionEntrega;
 
-                // Actualiza el identificador del estado del pedido.
-                pedidoActual.Data.IdEstadoPedido = datos.IdEstadoPedido;
+                // Actualiza el estado relacionado.
+                pedidoActual.Data.IdEstadoPedido =
+                    datos.IdEstadoPedido;
 
 
-                // Envía la entidad actualizada al repositorio
-                // para guardar los cambios en la base de datos.
+                // Guarda los cambios.
                 var respuestaRepositorio =
                     await _unidadDeTrabajo.TPedido.ModificarAsync(
                         pedidoActual.Data);
 
 
-                // Verifica si el repositorio produjo algún error.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                // Comprueba si ocurrió un error.
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
-                    resultado.Error = respuestaRepositorio.Error;
+                    resultado.Error =
+                        respuestaRepositorio.Error;
 
                     return resultado;
                 }
 
 
-                // Guarda en la respuesta el pedido ya modificado.
-                resultado.Data = respuestaRepositorio.Data;
+                // Guarda el pedido modificado.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
-                // Registra cuál pedido se intentaba modificar
-                // cuando ocurrió el error.
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al modificar el pedido con IdPedido {IdPedido}",
+                    "Error al modificar el pedido {IdPedido}",
                     datos.IdPedido);
 
-                // Guarda el mensaje del error.
                 resultado.Error = ex.Message;
             }
 
-            // Devuelve el resultado de la modificación.
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Este método elimina un pedido existente.
-        public async Task<Respuesta<bool>> EliminarAsync(Pedido datos)
+        // Elimina un pedido.
+        public async Task<Respuesta<bool>> EliminarAsync(
+            Pedido datos)
         {
-            // Crea una respuesta booleana.
-            // True significa que se eliminó y false que la operación falló.
+            // Crea la respuesta booleana.
             var resultado = new Respuesta<bool>();
 
             try
             {
-                // Busca primero el pedido utilizando su identificador.
+                // Busca el pedido.
                 var pedido =
                     await _unidadDeTrabajo.TPedido.ObtenerEntidadAsync(
-                        x => x.IdPedido == datos.IdPedido);
+                        x => x.IdPedido ==
+                             datos.IdPedido);
 
 
-                // Si no encuentra el pedido, no se puede eliminar.
+                // Comprueba que exista.
                 if (pedido.Data == null)
                 {
-                    // Indica que la eliminación no fue realizada.
                     resultado.Data = false;
 
-                    // Explica por qué no se pudo realizar.
                     resultado.Error =
                         "No existe el pedido que desea eliminar.";
 
@@ -333,113 +340,114 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Envía el pedido encontrado al repositorio
-                // para eliminarlo de la base de datos.
+                // Elimina el pedido.
                 var respuestaRepositorio =
                     await _unidadDeTrabajo.TPedido.EliminarAsync(
                         pedido.Data);
 
 
-                // Comprueba si ocurrió un error durante la eliminación.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                // Comprueba si ocurrió un error.
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
                     resultado.Data = false;
-                    resultado.Error = respuestaRepositorio.Error;
+
+                    resultado.Error =
+                        respuestaRepositorio.Error;
 
                     return resultado;
                 }
 
 
-                // Guarda el resultado devuelto por el repositorio.
-                resultado.Data = respuestaRepositorio.Data;
+                // Guarda el resultado.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
-                // Registra el IdPedido que produjo el problema.
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al eliminar el pedido con IdPedido {IdPedido}",
+                    "Error al eliminar el pedido {IdPedido}",
                     datos.IdPedido);
 
-                // Indica que la operación no se completó.
                 resultado.Data = false;
-
-                // Guarda el mensaje del error.
                 resultado.Error = ex.Message;
             }
 
-            // Devuelve el resultado de la eliminación.
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Este método permite buscar pedidos.
-        // En este caso utiliza el estado como criterio de búsqueda.
+        // Busca pedidos por estado.
         public async Task<Respuesta<IEnumerable<Pedido>>> BuscarAsync(
             Pedido datos)
         {
-            // Crea una respuesta capaz de contener varios pedidos.
+            // Crea la respuesta con varios pedidos.
             var resultado =
                 new Respuesta<IEnumerable<Pedido>>();
 
             try
             {
-                // Si el estado viene nulo, utiliza una cadena vacía.
-                // Esto evita errores al utilizar Contains.
-                var estado = datos.Estado ?? string.Empty;
+                // Evita errores si el estado viene nulo.
+                var estado =
+                    datos.Estado ?? string.Empty;
 
 
-                // Busca todos los pedidos cuyo estado contenga
-                // el texto recibido.
+                // Busca pedidos por estado.
                 var respuestaRepositorio =
                     await _unidadDeTrabajo.TPedido.BuscarAsync(
                         x => x.Estado.Contains(estado));
 
 
-                // Comprueba si hubo un error durante la búsqueda.
-                if (!string.IsNullOrEmpty(respuestaRepositorio.Error))
+                // Comprueba si ocurrió un error.
+                if (!string.IsNullOrEmpty(
+                    respuestaRepositorio.Error))
                 {
-                    resultado.Error = respuestaRepositorio.Error;
+                    resultado.Error =
+                        respuestaRepositorio.Error;
 
                     return resultado;
                 }
 
 
-                // Guarda en la respuesta todos los pedidos encontrados.
-                resultado.Data = respuestaRepositorio.Data;
+                // Guarda los pedidos encontrados.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
-                // Registra el error ocurrido durante la búsqueda.
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
                     "Error al buscar pedidos.");
 
-                // Guarda el mensaje del error.
                 resultado.Error = ex.Message;
             }
 
-            // Devuelve los pedidos encontrados o el error.
+            // Devuelve el resultado.
             return resultado;
         }
 
 
-        // Este método obtiene un pedido específico utilizando su IdPedido.
-        public async Task<Respuesta<Pedido>> ObtenerAsync(Pedido datos)
+        // Obtiene un pedido por su identificador.
+        public async Task<Respuesta<Pedido>> ObtenerAsync(
+            Pedido datos)
         {
-            // Crea una respuesta para devolver un único pedido.
+            // Crea la respuesta de la operación.
             var resultado = new Respuesta<Pedido>();
 
             try
             {
-                // Busca en la base de datos el pedido cuyo identificador
-                // coincida con el IdPedido recibido.
+                // Busca el pedido.
                 var respuestaRepositorio =
                     await _unidadDeTrabajo.TPedido.ObtenerEntidadAsync(
-                        x => x.IdPedido == datos.IdPedido);
+                        x => x.IdPedido ==
+                             datos.IdPedido);
 
 
-                // Comprueba si realmente se encontró el pedido.
+                // Comprueba que exista.
                 if (respuestaRepositorio.Data == null)
                 {
                     resultado.Error =
@@ -449,22 +457,22 @@ namespace TiendaOnline.LogicaNegocio.Implementaciones
                 }
 
 
-                // Guarda el pedido encontrado dentro de la respuesta.
-                resultado.Data = respuestaRepositorio.Data;
+                // Guarda el pedido encontrado.
+                resultado.Data =
+                    respuestaRepositorio.Data;
             }
             catch (Exception ex)
             {
-                // Registra cuál pedido produjo el error.
+                // Registra el error ocurrido.
                 _logger.LogError(
                     ex,
-                    "Error al obtener el pedido con IdPedido {IdPedido}",
+                    "Error al obtener el pedido {IdPedido}",
                     datos.IdPedido);
 
-                // Guarda el mensaje del error.
                 resultado.Error = ex.Message;
             }
 
-            // Devuelve el pedido encontrado o el error.
+            // Devuelve el resultado.
             return resultado;
         }
     }

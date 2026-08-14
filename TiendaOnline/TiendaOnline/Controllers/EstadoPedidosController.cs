@@ -1,44 +1,40 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TiendaOnline.AccesoDatos.Context;
 using Microsoft.AspNetCore.Authorization;
+using TiendaOnline.AccesoDatos.Context;
 using TiendaOnline.Dominio.Entidades;
 
 namespace TiendaOnline.API.Controllers;
-// Indica que solamente los usuarios que tengan el rol
-// "Administrador" pueden acceder a este controlador.
+
+// Solo usuarios con rol Administrador.
 [Authorize(Roles = "Administrador")]
 [ApiController]
 [Route("api/[controller]")]
 public class EstadoPedidosController : ControllerBase
-{   // Variable privada que permite acceder a la base de datos
-    // mediante Entity Framework Core.
+{
+    // Contexto de la base de datos.
     private readonly TiendaOnlineContext _context;
 
+    // Inyección del contexto.
     public EstadoPedidosController(TiendaOnlineContext context)
     {
         _context = context;
     }
 
     // GET: api/EstadoPedidos
+    // Consulta todos los estados.
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<EstadoPedido>>>
-        GetEstadoPedidos()
-    {    // Consulta todos los registros de la tabla EstadoPedidos.
-        // AsNoTracking() indica que los registros solamente serán
-        // consultados y no modificados.
-        // ToListAsync() ejecuta la consulta de forma asíncrona.
+    public async Task<ActionResult<IEnumerable<EstadoPedido>>> GetEstadoPedidos()
+    {
         return await _context.EstadoPedidos
             .AsNoTracking()
             .ToListAsync();
     }
 
-    
     // GET: api/EstadoPedidos/5
-    // Obtiene un estado de pedido específico utilizando su ID.
+    // Consulta un estado por ID.
     [HttpGet("{id}")]
-    public async Task<ActionResult<EstadoPedido>>
-        GetEstadoPedido(int id)
+    public async Task<ActionResult<EstadoPedido>> GetEstadoPedido(int id)
     {
         var estadoPedido =
             await _context.EstadoPedidos.FindAsync(id);
@@ -52,13 +48,15 @@ public class EstadoPedidosController : ControllerBase
     }
 
     // POST: api/EstadoPedidos
+    // Registra un nuevo estado.
     [HttpPost]
-    public async Task<ActionResult<EstadoPedido>>
-        PostEstadoPedido(EstadoPedido estadoPedido)
-    {   // Se establece el ID en 0 para que la base de datos
-        // genere automáticamente el identificador.
+    public async Task<ActionResult<EstadoPedido>> PostEstadoPedido(
+        EstadoPedido estadoPedido)
+    {
+        // La base de datos genera el ID.
         estadoPedido.IdEstadoPedido = 0;
 
+        // Evita nombres duplicados.
         var existe = await _context.EstadoPedidos
             .AnyAsync(e => e.Nombre == estadoPedido.Nombre);
 
@@ -70,6 +68,7 @@ public class EstadoPedidosController : ControllerBase
         }
 
         _context.EstadoPedidos.Add(estadoPedido);
+
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(
@@ -80,6 +79,7 @@ public class EstadoPedidosController : ControllerBase
     }
 
     // PUT: api/EstadoPedidos/5
+    // Actualiza un estado existente.
     [HttpPut("{id}")]
     public async Task<IActionResult> PutEstadoPedido(
         int id,
@@ -93,6 +93,7 @@ public class EstadoPedidosController : ControllerBase
             return NotFound();
         }
 
+        // Evita nombres repetidos.
         var nombreExiste = await _context.EstadoPedidos
             .AnyAsync(e =>
                 e.Nombre == estadoPedido.Nombre &&
@@ -104,22 +105,19 @@ public class EstadoPedidosController : ControllerBase
                 "Ya existe otro estado de pedido con ese nombre."
             );
         }
-        // Actualiza el nombre del estado del pedido.
+
+        // Actualiza los datos.
         estadoActual.Nombre = estadoPedido.Nombre;
-
-        // Actualiza la descripción del estado.
         estadoActual.Descripcion = estadoPedido.Descripcion;
-
-        // Actualiza el estado activo o inactivo.
         estadoActual.Estado = estadoPedido.Estado;
 
-        // Guarda los cambios realizados en la base de datos.
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
     // DELETE: api/EstadoPedidos/5
+    // Elimina un estado existente.
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEstadoPedido(int id)
     {
@@ -131,6 +129,7 @@ public class EstadoPedidosController : ControllerBase
             return NotFound();
         }
 
+        // Comprueba si el estado está siendo utilizado.
         var tienePedidos = await _context.Pedidos
             .AnyAsync(p => p.IdEstadoPedido == id);
 
@@ -142,8 +141,9 @@ public class EstadoPedidosController : ControllerBase
         }
 
         _context.EstadoPedidos.Remove(estadoPedido);
+
         await _context.SaveChangesAsync();
-        // que la eliminación se realizó correctamente.
+
         return NoContent();
     }
 }

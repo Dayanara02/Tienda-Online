@@ -3,8 +3,7 @@ using TiendaOnline.Utilidades;
 
 namespace TiendaOnline.Dominio.InterfacesLN
 {
-    // Esta interfaz define las operaciones de lógica de negocio
-    // que se pueden realizar con las categorías.
+    // Esta interfaz define las operaciones de las categorías.
     public interface ICategoriaLN
     {
         // Permite registrar una nueva categoría.

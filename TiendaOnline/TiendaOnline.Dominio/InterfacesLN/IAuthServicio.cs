@@ -1,10 +1,19 @@
-﻿using TiendaOnline.Dominio.DTO;
+﻿// Importa los DTO utilizados en autenticación.
+using TiendaOnline.Dominio.DTO;
 
-namespace TiendaOnline.Dominio.InterfacesLN;
-
-public interface IAuthServicio
+namespace TiendaOnline.Dominio.InterfacesLN
 {
-    Task<RespuestaLoginDto?> LoginAsync(LoginDto login);
+    // Define las operaciones principales de autenticación.
+    public interface IAuthServicio
+    {
+        // Permite iniciar sesión.
+        Task<RespuestaLoginDto?> LoginAsync(
+            LoginDto login
+        );
 
-    Task<bool> RegistrarAsync(RegistroUsuarioDto registro);
+        // Permite registrar un nuevo usuario.
+        Task<bool> RegistrarAsync(
+            RegistroUsuarioDto registro
+        );
+    }
 }

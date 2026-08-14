@@ -2,70 +2,70 @@
 import { Routes } from '@angular/router';
 
 // Importa la pantalla de registro.
-import { Registro } from './paginas/registro/registro';
+import { Registro } from './componentes/registro/registro';
 
 // Importa la pantalla de lista de deseos.
-import { ListaDeseos } from './paginas/lista-deseos/lista-deseos';
+import { ListaDeseos } from './componentes/lista-deseos/lista-deseos';
 
 // Importa la pantalla de inicio de sesión.
-import { Login } from './paginas/login/login';
+import { Login } from './componentes/login/login';
 
 // Importa el Dashboard del Cliente.
-import { Dashboard } from './paginas/dashboard/dashboard';
+import { Dashboard } from './componentes/dashboard/dashboard';
 
 // Importa la pantalla de productos.
-import { Productos } from './paginas/productos/productos';
+import { Productos } from './componentes/productos/productos';
 
 // Importa la pantalla del carrito.
-import { Carrito } from './paginas/carrito/carrito';
+import { Carrito } from './componentes//carrito/carrito';
 
 // Importa la pantalla para confirmar el pedido.
-import { ConfirmarPedido } from './paginas/confirmar-pedido/confirmar-pedido';
+import { ConfirmarPedido } from './componentes/confirmar-pedido/confirmar-pedido';
 
 // Importa el historial de pedidos.
-import { MisPedidos } from './paginas/mis-pedidos/mis-pedidos';
+import { MisPedidos } from './componentes/mis-pedidos/mis-pedidos';
 
 // Importa el detalle de un pedido.
-import { DetallePedido } from './paginas/detalle-pedido/detalle-pedido';
+import { DetallePedido } from './componentes/detalle-pedido/detalle-pedido';
 
 // Importa la pantalla para pagar un pedido.
-import { PagoPedido } from './paginas/pago-pedido/pago-pedido';
+import { PagoPedido } from './componentes/pago-pedido/pago-pedido';
 
 // Importa la nueva pantalla de seguimiento.
-import { SeguimientoPedido } from './paginas/seguimiento-pedido/seguimiento-pedido';
+import { SeguimientoPedido } from './componentes/seguimiento-pedido/seguimiento-pedido';
 
 // Importa el perfil del Cliente.
-import { Perfil } from './paginas/perfil/perfil';
+import { Perfil } from './componentes/perfil/perfil';
 
 // Importa la pantalla de descuentos.
-import { Descuentos } from './paginas/descuentos/descuentos';
+import { Descuentos } from './componentes/descuentos/descuentos';
 
 // Importa el Dashboard del Empleado.
-import { EmpleadoDashboard } from './paginas/empleado-dashboard/empleado-dashboard';
+import { EmpleadoDashboard } from './componentes/empleado-dashboard/empleado-dashboard';
 
 // Importa la pantalla de inventario.
-import { Inventario } from './paginas/inventario/inventario';
+import { Inventario } from './componentes/inventario/inventario';
 
 // Importa los movimientos de inventario.
-import { MovimientosInventario } from './paginas/movimientos-inventario/movimientos-inventario';
+import { MovimientosInventario } from './componentes/movimientos-inventario/movimientos-inventario';
 
 // Importa la gestión de pedidos.
-import { GestionPedidos } from './paginas/gestion-pedidos/gestion-pedidos';
+import { GestionPedidos } from './componentes/gestion-pedidos/gestion-pedidos';
 
 // Importa el Dashboard del Administrador.
-import { AdminDashboard } from './paginas/admin-dashboard/admin-dashboard';
+import { AdminDashboard } from './componentes/admin-dashboard/admin-dashboard';
 
 // Importa la gestión de productos.
-import { GestionProductos } from './paginas/gestion-productos/gestion-productos';
+import { GestionProductos } from './componentes/gestion-productos/gestion-productos';
 
 // Importa la gestión de categorías.
-import { GestionCategorias } from './paginas/gestion-categorias/gestion-categorias';
+import { GestionCategorias } from './componentes/gestion-categorias/gestion-categorias';
 
 // Importa la gestión de usuarios.
-import { GestionUsuarios } from './paginas/gestion-usuarios/gestion-usuarios';
+import { GestionUsuarios } from './componentes/gestion-usuarios/gestion-usuarios';
 
 // Importa la página de notificaciones.
-import { Notificaciones } from './paginas/notificaciones/notificaciones';
+import { Notificaciones } from './componentes/notificaciones/notificaciones';
 
 // Contiene todas las rutas disponibles de la aplicación.
 export const routes: Routes = [

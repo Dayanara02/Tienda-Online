@@ -1,187 +1,236 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using TiendaOnline.Dominio.InterfacesAD;
-using TiendaOnline.Utilidades;
+﻿using Microsoft.EntityFrameworkCore; // Permite utilizar Entity Framework Core para trabajar con la base de datos.
+using System.Linq.Expressions; // Permite utilizar expresiones para crear condiciones de búsqueda.
+using TiendaOnline.Dominio.InterfacesAD; // Contiene la interfaz que implementa este repositorio.
+using TiendaOnline.Utilidades; // Contiene la clase Respuesta utilizada para devolver resultados.
 
 namespace TiendaOnline.AccesoDatos.Implementaciones
 {
-    // Esta clase funciona como un repositorio genérico.
-    // Permite realizar operaciones básicas de base de datos con cualquier entidad.
+    // Clase que funciona como un repositorio genérico para trabajar con diferentes entidades.
     public class RepositorioAD<TEntity> : IRepositorioAD<TEntity>
+        // Indica que TEntity debe ser una clase.
         where TEntity : class
     {
         // Guarda una referencia al contexto de Entity Framework.
-        // Se utiliza para acceder a las tablas y realizar operaciones en la base de datos.
         protected readonly DbContext _context;
 
-        // Recibe el contexto desde la inyección de dependencias.
-        // Esto permite que el repositorio utilice la conexión configurada en el proyecto.
+        // Constructor que recibe el contexto de la base de datos.
         public RepositorioAD(DbContext context)
         {
-            // Asigna el contexto recibido a la variable interna de la clase.
+            // Guarda el contexto recibido para utilizarlo en los métodos del repositorio.
             _context = context;
         }
 
-        // Inserta una nueva entidad en la base de datos.
+        // Método que permite insertar una nueva entidad en la base de datos.
         public async Task<Respuesta<TEntity>> InsertarAsync(TEntity objEntidad)
         {
-            // Crea el objeto que se utilizará para devolver los datos o un error.
+            // Crea una respuesta que contendrá la entidad insertada o el error.
             Respuesta<TEntity> objRespuesta = new Respuesta<TEntity>();
 
+            // Inicia el bloque para controlar posibles errores.
             try
             {
-                // Obtiene la tabla correspondiente a TEntity y agrega la nueva entidad.
-                // AddAsync prepara el registro para ser insertado en la base de datos.
+                // Obtiene la tabla correspondiente a la entidad y agrega el nuevo registro.
                 await _context.Set<TEntity>().AddAsync(objEntidad);
 
-                // Guarda en la base de datos todos los cambios pendientes en el contexto.
+                // Guarda los cambios realizados en la base de datos.
                 await _context.SaveChangesAsync();
 
-                // Guarda la entidad insertada dentro de la respuesta.
+                // Guarda la entidad insertada en la respuesta.
                 objRespuesta.Data = objEntidad;
             }
+            // Captura cualquier error que ocurra durante la inserción.
             catch (Exception ex)
             {
-                // Guarda el mensaje del error ocurrido durante la inserción.
+                // Guarda el mensaje del error en la respuesta.
                 objRespuesta.Error = ex.Message;
 
-                // Indica que no se pudo obtener una entidad como resultado.
+                // Indica que no se obtuvo una entidad como resultado.
                 objRespuesta.Data = null;
             }
 
-            // Devuelve el resultado de la operación.
+            // Devuelve la respuesta de la operación.
             return objRespuesta;
         }
 
-        // Modifica una entidad que ya existe en la base de datos.
+        // Método que permite modificar una entidad existente.
         public async Task<Respuesta<TEntity>> ModificarAsync(TEntity objEntidad)
         {
-            // Crea el objeto que devolverá el resultado de la modificación.
+            // Crea una respuesta que contendrá la entidad modificada o el error.
             Respuesta<TEntity> objRespuesta = new Respuesta<TEntity>();
 
+            // Inicia el bloque para controlar posibles errores.
             try
             {
-                // Indica a Entity Framework que la entidad recibida contiene cambios.
-                // Update prepara esos cambios para enviarlos a la base de datos.
+                // Indica a Entity Framework que la entidad contiene cambios que deben guardarse.
                 _context.Set<TEntity>().Update(objEntidad);
 
                 // Guarda los cambios realizados en la base de datos.
                 await _context.SaveChangesAsync();
 
-                // Devuelve la entidad después de haber sido modificada.
+                // Guarda la entidad modificada en la respuesta.
                 objRespuesta.Data = objEntidad;
             }
+            // Captura cualquier error ocurrido durante la modificación.
             catch (Exception ex)
             {
-                // Guarda el mensaje del error si no se pudo modificar la entidad.
+                // Guarda el mensaje del error en la respuesta.
                 objRespuesta.Error = ex.Message;
 
-                // Deja los datos vacíos porque la operación no se completó.
+                // Indica que no se obtuvo una entidad modificada.
                 objRespuesta.Data = null;
             }
 
-            // Devuelve el resultado de la operación.
+            // Devuelve la respuesta de la operación.
             return objRespuesta;
         }
 
-        // Elimina una entidad de la base de datos.
+        // Método que permite eliminar una entidad de la base de datos.
         public async Task<Respuesta<bool>> EliminarAsync(TEntity objEntidad)
         {
-            // Crea una respuesta de tipo bool para indicar si se eliminó correctamente.
+            // Crea una respuesta que indicará si la eliminación fue exitosa.
             Respuesta<bool> objRespuesta = new Respuesta<bool>();
 
+            // Inicia el bloque para controlar posibles errores.
             try
             {
-                // Indica a Entity Framework que la entidad debe ser eliminada.
-                // La eliminación todavía no ocurre hasta ejecutar SaveChangesAsync.
+                // Marca la entidad como eliminada dentro del contexto de Entity Framework.
                 _context.Entry(objEntidad).State = EntityState.Deleted;
 
-                // Ejecuta la eliminación realmente en la base de datos.
+                // Guarda los cambios y ejecuta la eliminación en la base de datos.
                 await _context.SaveChangesAsync();
 
-                // Indica que la eliminación fue realizada correctamente.
+                // Indica que la eliminación se realizó correctamente.
                 objRespuesta.Data = true;
             }
+            // Captura cualquier error ocurrido durante la eliminación.
             catch (Exception ex)
             {
-                // Guarda el mensaje del error ocurrido al intentar eliminar.
+                // Guarda el mensaje del error en la respuesta.
                 objRespuesta.Error = ex.Message;
 
-                // Indica que la entidad no pudo ser eliminada.
+                // Indica que la eliminación no fue exitosa.
                 objRespuesta.Data = false;
             }
 
-            // Devuelve si la eliminación fue correcta o no.
+            // Devuelve el resultado de la eliminación.
             return objRespuesta;
         }
 
-        // Obtiene todos los registros de una entidad.
+        // Método que permite obtener todos los registros de una entidad.
         public async Task<Respuesta<IEnumerable<TEntity>>> ListarAsync(
             List<string>? objIncludes = null)
         {
-            // Crea una respuesta que puede contener una lista de entidades.
+            // Crea una respuesta que contendrá la lista de registros.
             Respuesta<IEnumerable<TEntity>> objRespuesta =
                 new Respuesta<IEnumerable<TEntity>>();
 
-            try
-            {
-                // Obtiene la tabla correspondiente a la entidad genérica TEntity.
-                // IQueryable permite seguir agregando condiciones antes de ejecutar la consulta.
-                IQueryable<TEntity> objPreconsulta =
-                    _context.Set<TEntity>();
-
-                // Verifica si se enviaron relaciones que también deben cargarse.
-                if (objIncludes != null)
-                {
-                    // Recorre cada relación indicada.
-                    objIncludes.ForEach(
-                        x =>
-                        {
-                            // Include permite traer también datos relacionados.
-                            // Por ejemplo, un producto junto con su categoría.
-                            objPreconsulta =
-                                objPreconsulta.Include(x);
-                        });
-                }
-
-                // Ejecuta la consulta y convierte los resultados en una lista.
-                objRespuesta.Data =
-                    await objPreconsulta.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                // Guarda el mensaje del error si la consulta falla.
-                objRespuesta.Error = ex.Message;
-
-                // Deja los datos vacíos porque no se pudo obtener la lista.
-                objRespuesta.Data = null;
-            }
-
-            // Devuelve la lista obtenida o el error.
-            return objRespuesta;
-        }
-
-        // Busca registros que cumplan con una condición específica.
-        public async Task<Respuesta<IEnumerable<TEntity>>> BuscarAsync(
-            Expression<Func<TEntity, bool>> objPredicado,
-            List<string>? objIncludes = null)
-        {
-            // Crea una respuesta que puede contener varios registros encontrados.
-            Respuesta<IEnumerable<TEntity>> objRespuesta =
-                new Respuesta<IEnumerable<TEntity>>();
-
+            // Inicia el bloque para controlar posibles errores.
             try
             {
                 // Obtiene la tabla correspondiente a la entidad.
                 IQueryable<TEntity> objPreconsulta =
                     _context.Set<TEntity>();
 
-                // Verifica si se deben incluir datos relacionados.
+                // Verifica si se enviaron relaciones que también deben consultarse.
                 if (objIncludes != null)
                 {
-                    // Recorre las relaciones enviadas.
+                    // Recorre cada relación recibida.
+                    objIncludes.ForEach(
+                        x =>
+                        {
+                            // Agrega la relación a la consulta utilizando Include.
+                            objPreconsulta =
+                                objPreconsulta.Include(x);
+                        });
+                }
+
+                // Ejecuta la consulta y obtiene todos los registros.
+                objRespuesta.Data =
+                    await objPreconsulta.ToListAsync();
+            }
+            // Captura cualquier error ocurrido durante la consulta.
+            catch (Exception ex)
+            {
+                // Guarda el mensaje del error en la respuesta.
+                objRespuesta.Error = ex.Message;
+
+                // Indica que no se pudo obtener la lista.
+                objRespuesta.Data = null;
+            }
+
+            // Devuelve la lista de registros o el error.
+            return objRespuesta;
+        }
+
+        // Método que permite buscar registros utilizando una condición.
+        public async Task<Respuesta<IEnumerable<TEntity>>> BuscarAsync(
+            Expression<Func<TEntity, bool>> objPredicado,
+            List<string>? objIncludes = null)
+        {
+            // Crea una respuesta que contendrá los registros encontrados.
+            Respuesta<IEnumerable<TEntity>> objRespuesta =
+                new Respuesta<IEnumerable<TEntity>>();
+
+            // Inicia el bloque para controlar posibles errores.
+            try
+            {
+                // Obtiene la tabla correspondiente a la entidad.
+                IQueryable<TEntity> objPreconsulta =
+                    _context.Set<TEntity>();
+
+                // Verifica si existen relaciones que deben ser incluidas.
+                if (objIncludes != null)
+                {
+                    // Recorre cada relación recibida.
+                    objIncludes.ForEach(
+                        x =>
+                        {
+                            // Agrega la relación a la consulta.
+                            objPreconsulta =
+                                objPreconsulta.Include(x);
+                        });
+                }
+
+                // Aplica la condición de búsqueda y obtiene los registros encontrados.
+                objRespuesta.Data =
+                    await objPreconsulta
+                        .Where(objPredicado)
+                        .ToListAsync();
+            }
+            // Captura cualquier error ocurrido durante la búsqueda.
+            catch (Exception ex)
+            {
+                // Guarda el mensaje del error en la respuesta.
+                objRespuesta.Error = ex.Message;
+
+                // Indica que no se pudieron obtener los registros.
+                objRespuesta.Data = null;
+            }
+
+            // Devuelve los registros encontrados o el error.
+            return objRespuesta;
+        }
+
+        // Método que permite obtener una sola entidad que cumpla una condición.
+        public async Task<Respuesta<TEntity>> ObtenerEntidadAsync(
+            Expression<Func<TEntity, bool>> objPredicado,
+            List<string>? objIncludes = null)
+        {
+            // Crea una respuesta que contendrá la entidad encontrada.
+            Respuesta<TEntity> objRespuesta =
+                new Respuesta<TEntity>();
+
+            // Inicia el bloque para controlar posibles errores.
+            try
+            {
+                // Obtiene la tabla correspondiente a la entidad.
+                IQueryable<TEntity> objPreconsulta =
+                    _context.Set<TEntity>();
+
+                // Verifica si se enviaron relaciones que deben ser incluidas.
+                if (objIncludes != null)
+                {
+                    // Recorre las relaciones recibidas.
                     objIncludes.ForEach(
                         x =>
                         {
@@ -191,67 +240,19 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
                         });
                 }
 
-                // Where aplica la condición recibida en objPredicado.
-                // ToListAsync ejecuta la consulta y devuelve todos los registros que cumplen.
-                objRespuesta.Data =
-                    await objPreconsulta
-                        .Where(objPredicado)
-                        .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                // Guarda el mensaje del error si la búsqueda falla.
-                objRespuesta.Error = ex.Message;
-
-                // Deja los datos vacíos al no poder completar la búsqueda.
-                objRespuesta.Data = null;
-            }
-
-            // Devuelve los registros encontrados o el error.
-            return objRespuesta;
-        }
-
-        // Obtiene una sola entidad que cumpla con una condición.
-        public async Task<Respuesta<TEntity>> ObtenerEntidadAsync(
-            Expression<Func<TEntity, bool>> objPredicado,
-            List<string>? objIncludes = null)
-        {
-            // Crea una respuesta para devolver una sola entidad.
-            Respuesta<TEntity> objRespuesta =
-                new Respuesta<TEntity>();
-
-            try
-            {
-                // Obtiene la tabla correspondiente a la entidad.
-                IQueryable<TEntity> objPreconsulta =
-                    _context.Set<TEntity>();
-
-                // Verifica si también deben cargarse relaciones.
-                if (objIncludes != null)
-                {
-                    // Agrega las relaciones solicitadas a la consulta.
-                    objIncludes.ForEach(
-                        x =>
-                        {
-                            // Include permite cargar datos relacionados con la entidad.
-                            objPreconsulta =
-                                objPreconsulta.Include(x);
-                        });
-                }
-
-                // Where aplica la condición enviada.
-                // FirstOrDefaultAsync obtiene el primer registro encontrado o null si no existe.
+                // Aplica la condición y obtiene el primer registro encontrado.
                 objRespuesta.Data =
                     await objPreconsulta
                         .Where(objPredicado)
                         .FirstOrDefaultAsync();
             }
+            // Captura cualquier error ocurrido durante la consulta.
             catch (Exception ex)
             {
-                // Guarda el mensaje del error ocurrido al consultar la entidad.
+                // Guarda el mensaje del error en la respuesta.
                 objRespuesta.Error = ex.Message;
 
-                // Deja los datos vacíos porque no se encontró un resultado válido.
+                // Indica que no se obtuvo una entidad.
                 objRespuesta.Data = null;
             }
 
@@ -259,15 +260,16 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
             return objRespuesta;
         }
 
-        // Cuenta cuántos registros cumplen con una condición.
+        // Método que permite contar los registros que cumplen una condición.
         public async Task<Respuesta<int?>> ContarAsync(
             Expression<Func<TEntity, bool>> objPredicado,
             List<string>? objIncludes = null)
         {
-            // Crea una respuesta que devolverá la cantidad de registros encontrados.
+            // Crea una respuesta que contendrá la cantidad de registros.
             Respuesta<int?> objRespuesta =
                 new Respuesta<int?>();
 
+            // Inicia el bloque para controlar posibles errores.
             try
             {
                 // Obtiene la tabla correspondiente a la entidad.
@@ -277,30 +279,31 @@ namespace TiendaOnline.AccesoDatos.Implementaciones
                 // Verifica si se enviaron relaciones para incluir.
                 if (objIncludes != null)
                 {
-                    // Agrega cada relación a la consulta.
+                    // Recorre cada relación recibida.
                     objIncludes.ForEach(
                         x =>
                         {
-                            // Include permite cargar relaciones antes de ejecutar la consulta.
+                            // Agrega la relación a la consulta.
                             objPreconsulta =
                                 objPreconsulta.Include(x);
                         });
                 }
 
-                // CountAsync cuenta únicamente los registros que cumplen con la condición recibida.
+                // Cuenta los registros que cumplen con la condición indicada.
                 objRespuesta.Data =
                     await objPreconsulta.CountAsync(objPredicado);
             }
+            // Captura cualquier error ocurrido durante el conteo.
             catch (Exception ex)
             {
-                // Guarda el mensaje del error si no se pudo realizar el conteo.
+                // Guarda el mensaje del error en la respuesta.
                 objRespuesta.Error = ex.Message;
 
-                // Deja el resultado vacío porque el conteo falló.
+                // Indica que no se pudo obtener el conteo.
                 objRespuesta.Data = null;
             }
 
-            // Devuelve la cantidad obtenida o el error.
+            // Devuelve la cantidad de registros o el error.
             return objRespuesta;
         }
     }

@@ -31,8 +31,17 @@ using TiendaOnline.Dominio.Configuracion;
 // Importa las interfaces de negocio.
 using TiendaOnline.Dominio.InterfacesLN;
 
+// Importa las implementaciones de lógica de negocio.
+using TiendaOnline.LogicaNegocio.Implementaciones;
+
 // Importa los servicios.
 using TiendaOnline.LogicaNegocio.Servicios;
+
+// Importa las interfaces de acceso a datos.
+using TiendaOnline.Dominio.InterfacesAD;
+
+// Importa las implementaciones de acceso a datos.
+using TiendaOnline.AccesoDatos.Implementaciones;
 
 public partial class Program
 {
@@ -42,13 +51,23 @@ public partial class Program
         var builder =
             WebApplication.CreateBuilder(args);
 
-        // Registra el manejador de errores.
+
+        // =====================================================
+        // MANEJO DE ERRORES
+        // =====================================================
+
+        // Registra el manejador global de errores.
         builder.Services
             .AddExceptionHandler<ManejadorGlobalExcepciones>();
 
         // Agrega respuestas estándar de error.
         builder.Services
             .AddProblemDetails();
+
+
+        // =====================================================
+        // CONFIGURACIONES
+        // =====================================================
 
         // Lee la configuración JWT.
         builder.Services
@@ -64,6 +83,11 @@ public partial class Program
                     .GetSection("Correo")
             );
 
+
+        // =====================================================
+        // SERVICIOS 
+        // =====================================================
+
         // Registra el servicio JWT.
         builder.Services.AddScoped<
             IJwtServicio,
@@ -76,7 +100,7 @@ public partial class Program
             AuthServicio
         >();
 
-        // Registra el servicio de pedidos.
+        // Registra el servicio especial de pedidos.
         builder.Services.AddScoped<
             IPedidoServicio,
             PedidoServicio
@@ -94,9 +118,96 @@ public partial class Program
             CorreoServicio
         >();
 
+
+        // =====================================================
+        // IMPLEMENTACIONES DE LÓGICA DE NEGOCIO
+        // =====================================================
+
+        // Registra la lógica de categorías.
+        builder.Services.AddScoped<
+            ICategoriaLN,
+            CategoriaLN
+        >();
+
+        // Registra la lógica de compras a proveedores.
+        builder.Services.AddScoped<
+            ICompraProveedorLN,
+            CompraProveedorLN
+        >();
+
+        // Registra la lógica de descuentos.
+        builder.Services.AddScoped<
+            IDescuentoLN,
+            DescuentoLN
+        >();
+
+        // Registra la lógica de evaluaciones de productos.
+        builder.Services.AddScoped<
+            IEvaluacionProductoLN,
+            EvaluacionProductoLN
+        >();
+
+        // Registra la lógica de inventario.
+        builder.Services.AddScoped<
+            IInventarioLN,
+            InventarioLN
+        >();
+
+        // Registra la lógica de listas de deseos.
+        builder.Services.AddScoped<
+            IListaDeseoLN,
+            ListaDeseoLN
+        >();
+
+        // Registra la lógica de movimientos de inventario.
+        builder.Services.AddScoped<
+            IMovimientoInventarioLN,
+            MovimientoInventarioLN
+        >();
+
+        // Registra la lógica de notificaciones.
+        builder.Services.AddScoped<
+            INotificacionLN,
+            NotificacionLN
+        >();
+
+        // Registra la lógica general de pedidos.
+        builder.Services.AddScoped<
+            IPedidoLN,
+            PedidoLN
+        >();
+
+        // Registra la lógica de productos.
+        builder.Services.AddScoped<
+            IProductoLN,
+            ProductoLN
+        >();
+
+        // Registra la lógica de proformas.
+        builder.Services.AddScoped<
+            IProformaLN,
+            ProformaLN
+        >();
+
+        // Registra la lógica de usuarios.
+        builder.Services.AddScoped<
+            IUsuarioLN,
+            UsuarioLN
+        >();
+
+
+        // =====================================================
+        // QUESTPDF
+        // =====================================================
+
         // Configura la licencia de QuestPDF.
         QuestPDF.Settings.License =
             LicenseType.Community;
+
+
+        // =====================================================
+        // JWT
+        // =====================================================
 
         // Obtiene la configuración JWT.
         var jwtConfiguracion =
@@ -122,6 +233,11 @@ public partial class Program
             Encoding.UTF8.GetBytes(
                 jwtConfiguracion.Clave
             );
+
+
+        // =====================================================
+        // AUTENTICACIÓN
+        // =====================================================
 
         // Configura autenticación JWT.
         builder.Services
@@ -175,7 +291,7 @@ public partial class Program
                                 clave
                             ),
 
-                        // Sin tiempo extra.
+                        // No agrega tiempo extra.
                         ClockSkew =
                             TimeSpan.Zero
                     };
@@ -195,7 +311,7 @@ public partial class Program
                                 return Task.CompletedTask;
                             },
 
-                        // Confirma token válido.
+                        // Confirma que el token es válido.
                         OnTokenValidated =
                             context =>
                             {
@@ -212,6 +328,11 @@ public partial class Program
         builder.Services
             .AddAuthorization();
 
+
+        // =====================================================
+        // BASE DE DATOS
+        // =====================================================
+
         // Configura SQL Server.
         builder.Services
             .AddDbContext<TiendaOnlineContext>(
@@ -224,7 +345,22 @@ public partial class Program
                     )
             );
 
-        // Registra controladores.
+        // =====================================================
+        // UNIDAD DE TRABAJO
+        // =====================================================
+
+        // Registra la unidad de trabajo.
+        builder.Services.AddScoped<
+            IUnidadTrabajoEF,
+
+            UnidadTrabajoEF
+        >();
+
+        // =====================================================
+        // CONTROLADORES
+        // =====================================================
+
+        // Registra los controladores.
         builder.Services
             .AddControllers(options =>
             {
@@ -241,6 +377,11 @@ public partial class Program
                     .ReferenceHandler =
                     ReferenceHandler.IgnoreCycles;
             });
+
+
+        // =====================================================
+        // SWAGGER
+        // =====================================================
 
         // Habilita Swagger.
         builder.Services
@@ -268,7 +409,7 @@ public partial class Program
                         // Formato JWT.
                         BearerFormat = "JWT",
 
-                        // Va en el header.
+                        // Se envía en el header.
                         In =
                             ParameterLocation.Header,
 
@@ -294,6 +435,11 @@ public partial class Program
                 );
             });
 
+
+        // =====================================================
+        // CORS
+        // =====================================================
+
         // Permite peticiones desde Angular.
         builder.Services
             .AddCors(options =>
@@ -313,9 +459,19 @@ public partial class Program
                 );
             });
 
+
+        // =====================================================
+        // CONSTRUCCIÓN DE LA APLICACIÓN
+        // =====================================================
+
         // Construye la aplicación.
         var app =
             builder.Build();
+
+
+        // =====================================================
+        // MIDDLEWARE
+        // =====================================================
 
         // Activa manejo de errores.
         app.UseExceptionHandler();
@@ -342,7 +498,7 @@ public partial class Program
         // Valida permisos.
         app.UseAuthorization();
 
-        // Mapea controladores.
+        // Mapea los controladores.
         app.MapControllers();
 
         // Inicia la API.

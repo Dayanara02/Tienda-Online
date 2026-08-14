@@ -1,42 +1,58 @@
-﻿using System;
+﻿// Permite utilizar tipos básicos de C#.
+using System;
+
+// Permite trabajar con listas y colecciones.
 using System.Collections.Generic;
+
+// Permite utilizar expresiones para filtros.
 using System.Linq.Expressions;
+
+// Importa la respuesta estándar del proyecto.
 using TiendaOnline.Utilidades;
+
 
 namespace TiendaOnline.Dominio.InterfacesAD
 {
-    // Esta interfaz define las operaciones básicas que debe tener
-    // cualquier repositorio que trabaje con una entidad de la base de datos.
-    public interface IRepositorioAD<TEntity> where TEntity : class
+    // Define las operaciones comunes para cualquier entidad.
+    public interface IRepositorioAD<TEntity>
+        where TEntity : class
     {
-        // Inserta una nueva entidad y devuelve la entidad guardada.
-        Task<Respuesta<TEntity>> InsertarAsync(TEntity objEntidad);
+        // Inserta una nueva entidad.
+        Task<Respuesta<TEntity>> InsertarAsync(
+            TEntity objEntidad
+        );
 
-        // Modifica una entidad existente y devuelve la entidad actualizada.
-        Task<Respuesta<TEntity>> ModificarAsync(TEntity objEntidad);
+        // Modifica una entidad existente.
+        Task<Respuesta<TEntity>> ModificarAsync(
+            TEntity objEntidad
+        );
 
-        // Elimina una entidad y devuelve true si la operación fue correcta.
-        Task<Respuesta<bool>> EliminarAsync(TEntity objEntidad);
+        // Elimina una entidad.
+        Task<Respuesta<bool>> EliminarAsync(
+            TEntity objEntidad
+        );
 
-        // Obtiene todos los registros de una entidad.
-        // objIncludes permite incluir relaciones con otras tablas si es necesario.
+        // Obtiene todos los registros.
         Task<Respuesta<IEnumerable<TEntity>>> ListarAsync(
-            List<string>? objIncludes = null);
+            List<string>? objIncludes = null
+        );
 
-        // Busca los registros que cumplan con la condición enviada.
-        // objPredicado representa la condición que se aplicará en la consulta.
+        // Busca registros por una condición.
         Task<Respuesta<IEnumerable<TEntity>>> BuscarAsync(
             Expression<Func<TEntity, bool>> objPredicado,
-            List<string>? objIncludes = null);
+            List<string>? objIncludes = null
+        );
 
-        // Obtiene una sola entidad que cumpla con la condición indicada.
+        // Obtiene un único registro.
         Task<Respuesta<TEntity>> ObtenerEntidadAsync(
             Expression<Func<TEntity, bool>> objPredicado,
-            List<string>? objIncludes = null);
+            List<string>? objIncludes = null
+        );
 
-        // Cuenta cuántos registros cumplen con la condición enviada.
+        // Cuenta los registros encontrados.
         Task<Respuesta<int?>> ContarAsync(
             Expression<Func<TEntity, bool>> objPredicado,
-            List<string>? objIncludes = null);
+            List<string>? objIncludes = null
+        );
     }
 }
