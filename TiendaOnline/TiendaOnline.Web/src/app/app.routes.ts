@@ -17,7 +17,7 @@ import { Dashboard } from './componentes/dashboard/dashboard';
 import { Productos } from './componentes/productos/productos';
 
 // Importa la pantalla del carrito.
-import { Carrito } from './componentes//carrito/carrito';
+import { Carrito } from './componentes/carrito/carrito';
 
 // Importa la pantalla para confirmar el pedido.
 import { ConfirmarPedido } from './componentes/confirmar-pedido/confirmar-pedido';
