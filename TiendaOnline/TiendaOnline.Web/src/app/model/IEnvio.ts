@@ -7,21 +7,33 @@ export interface IEnvio {
   // Pedido relacionado.
   idPedido: number;
 
-  // Dirección de entrega.
-  idDireccion?: number | null;
+  // Dirección relacionada.
+  idDireccion: number;
 
-  // Empresa encargada del envío.
+  // Empresa encargada.
   empresaEnvio: string | null;
 
-  // Número utilizado para seguimiento.
+  // Número de seguimiento.
   numeroSeguimiento: string | null;
 
-  // Estado actual del envío.
+  // Fecha de envío.
+  fechaEnvio: string | null;
+
+  // Fecha de entrega.
+  fechaEntrega: string | null;
+
+  // Estado actual.
   estado: string;
 
-  // Fecha en que fue enviado.
-  fechaEnvio?: string | null;
+  // Dirección del pedido.
+  direccion?: string | null;
 
-  // Fecha en que fue entregado.
-  fechaEntrega?: string | null;
+  // Provincia de entrega.
+  provincia?: string | null;
+
+  // Cantón de entrega.
+  canton?: string | null;
+
+  // Distrito de entrega.
+  distrito?: string | null;
 }
