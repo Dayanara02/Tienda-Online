@@ -9,7 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="public\productos\" />
-    <Folder Include="src\app\model\" />
     <Folder Include="src\app\icons\" />
     <Folder Include="src\app\utilitarios\" />
     <Folder Include="src\app\services\" />
