@@ -1,0 +1,176 @@
+/* Contenedor principal. */
+.pagina-categorias {
+  padding: 28px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  min-height: 100vh;
+}
+
+/* Encabezado de la página. */
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+  /* Título principal. */
+  .encabezado h1 {
+    margin: 0;
+    color: #1f4e79;
+  }
+
+  /* Texto del encabezado. */
+  .encabezado p {
+    margin-top: 6px;
+    color: #555;
+  }
+
+/* Formulario y listado. */
+.formulario,
+.listado {
+  background: white;
+  padding: 22px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border: 1px solid #ddd;
+}
+
+  /* Títulos internos. */
+  .formulario h2,
+  .listado h2 {
+    margin-top: 0;
+    color: #163a5c;
+  }
+
+/* Organización de campos. */
+.campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* Campo individual. */
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Descripción ocupa más espacio. */
+.campo-descripcion {
+  grid-column: 1 / -1;
+}
+
+/* Etiquetas. */
+.campo label {
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Inputs del formulario. */
+.campo input,
+.campo textarea,
+.campo select {
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  font: inherit;
+}
+
+/* Botones del formulario. */
+.acciones {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Botón principal. */
+.boton-principal {
+  background: #1f4e79;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Botón secundario. */
+.boton-secundario {
+  background: white;
+  color: #1f4e79;
+  border: 1px solid #1f4e79;
+  padding: 10px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Contenedor de tabla. */
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+/* Tabla. */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Celdas. */
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+/* Encabezados. */
+th {
+  background: #eaf2f8;
+  color: #163a5c;
+}
+
+/* Acciones de tabla. */
+.acciones-tabla {
+  display: flex;
+  gap: 8px;
+}
+
+/* Botón editar. */
+.boton-editar {
+  background: #1f4e79;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Botón eliminar. */
+.boton-eliminar {
+  background: #b42318;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Mensajes generales. */
+.mensaje {
+  padding: 12px;
+  margin-bottom: 18px;
+  border-radius: 5px;
+}
+
+/* Mensaje de error. */
+.error {
+  background: #fdecec;
+  color: #9b1c1c;
+}
+
+/* Mensaje exitoso. */
+.exito {
+  background: #edf7ed;
+  color: #276738;
+}

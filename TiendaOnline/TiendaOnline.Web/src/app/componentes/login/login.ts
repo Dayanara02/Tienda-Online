@@ -1,8 +1,8 @@
 // Permite usar directivas comunes de Angular.
 import { CommonModule } from '@angular/common';
 
-// Permite hacer peticiones HTTP.
-import { HttpClient } from '@angular/common/http';
+// Permite identificar errores HTTP.
+import { HttpErrorResponse } from '@angular/common/http';
 
 // Importa herramientas del componente.
 import {
@@ -19,10 +19,10 @@ import {
   RouterLink
 } from '@angular/router';
 
-// Permite usar campos de Angular Material.
+// Permite usar campos Material.
 import { MatFormFieldModule } from '@angular/material/form-field';
 
-// Permite usar inputs de Angular Material.
+// Permite usar inputs Material.
 import { MatInputModule } from '@angular/material/input';
 
 // Permite usar iconos.
@@ -31,8 +31,11 @@ import { MatIconModule } from '@angular/material/icon';
 // Permite usar botones Material.
 import { MatButtonModule } from '@angular/material/button';
 
-// Permite mostrar un spinner de carga.
+// Permite mostrar un spinner.
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+// Importa el servicio de autenticación.
+import { Auth } from '../../services/auth';
 
 // Configura el componente Login.
 @Component({
@@ -65,28 +68,30 @@ export class Login {
   // Guarda la contraseña.
   contrasena = '';
 
-  // Controla si se muestra la contraseña.
+  // Controla la contraseña visible.
   mostrarContrasena = false;
 
   // Indica si está cargando.
   cargando = false;
 
-  // Guarda el mensaje de error.
+  // Guarda mensajes de error.
   mensajeError = '';
-
-  // Endpoint del login.
-  private readonly urlLogin =
-    'https://localhost:7196/api/Auth/login';
 
   // Recibe los servicios necesarios.
   constructor(
-    private http: HttpClient,
+    // Servicio de autenticación.
+    private auth: Auth,
+
+    // Permite navegar.
     private router: Router,
+
+    // Actualiza la pantalla.
     private detectorCambios: ChangeDetectorRef
   ) { }
 
   // Muestra u oculta la contraseña.
   cambiarVisibilidadContrasena(): void {
+
     // Cambia el valor actual.
     this.mostrarContrasena =
       !this.mostrarContrasena;
@@ -98,7 +103,7 @@ export class Login {
     // Limpia errores anteriores.
     this.mensajeError = '';
 
-    // Valida que los campos tengan datos.
+    // Valida los campos.
     if (
       !this.correo.trim() ||
       !this.contrasena.trim()
@@ -114,37 +119,38 @@ export class Login {
       return;
     }
 
-    // Activa el estado de carga.
+    // Activa la carga.
     this.cargando = true;
 
     // Actualiza la pantalla.
     this.detectorCambios.detectChanges();
 
-    // Prepara los datos del login.
+    // Prepara los datos.
     const datosLogin = {
-      // Envía el correo sin espacios.
+
+      // Guarda el correo limpio.
       correo: this.correo.trim(),
 
-      // Envía la contraseña.
+      // Guarda la contraseña.
       contrasena: this.contrasena
     };
 
-    // Realiza la petición al backend.
-    this.http
-      .post<any>(
-        this.urlLogin,
+    // Utiliza el servicio Auth.
+    this.auth
+      .iniciarSesion(
         datosLogin
       )
       .subscribe({
 
-        // Se ejecuta si el login funciona.
+        // Se ejecuta si funciona.
         next: (respuesta) => {
 
           // Finaliza la carga.
           this.cargando = false;
 
-          // Verifica que exista token.
+          // Comprueba el token.
           if (!respuesta?.token) {
+
             // Muestra un error.
             this.mensajeError =
               'No se pudo iniciar sesión.';
@@ -157,29 +163,29 @@ export class Login {
           }
 
           // Guarda el token.
-          localStorage.setItem(
-            'token',
+          this.auth.guardarToken(
             respuesta.token
           );
 
           // Guarda el rol.
-          localStorage.setItem(
-            'rol',
+          this.auth.guardarRol(
             respuesta.rol
           );
 
-          // Verifica que exista IdUsuario.
+          // Comprueba el usuario.
           if (respuesta.idUsuario) {
-            // Guarda el identificador.
+
+            // Guarda su identificador.
             localStorage.setItem(
               'idUsuario',
               respuesta.idUsuario.toString()
             );
           }
 
-          // Guarda el nombre del usuario.
+          // Guarda el nombre.
           localStorage.setItem(
             'nombreUsuario',
+
             respuesta.nombreCompleto ||
             respuesta.nombre ||
             'Usuario'
@@ -191,46 +197,53 @@ export class Login {
             this.correo.trim()
           );
 
-          // Obtiene el rol recibido.
-          const rol = respuesta.rol;
+          // Obtiene el rol.
+          const rol =
+            respuesta.rol;
 
-          // Verifica si es Administrador.
-          if (rol === 'Administrador') {
-            // Abre el dashboard administrador.
+          // Verifica Administrador.
+          if (
+            rol === 'Administrador'
+          ) {
+            // Abre su dashboard.
             this.router.navigate([
               '/admin-dashboard'
             ]);
 
-            // Detiene el método.
+            // Detiene el proceso.
             return;
           }
 
-          // Verifica si es Empleado.
-          if (rol === 'Empleado') {
-            // Abre el dashboard empleado.
+          // Verifica Empleado.
+          if (
+            rol === 'Empleado'
+          ) {
+            // Abre su dashboard.
             this.router.navigate([
               '/empleado-dashboard'
             ]);
 
-            // Detiene el método.
+            // Detiene el proceso.
             return;
           }
 
-          // Verifica si es Cliente.
-          if (rol === 'Cliente') {
-            // Abre el dashboard cliente.
+          // Verifica Cliente.
+          if (
+            rol === 'Cliente'
+          ) {
+            // Abre su dashboard.
             this.router.navigate([
               '/dashboard'
             ]);
 
-            // Detiene el método.
+            // Detiene el proceso.
             return;
           }
 
-          // Limpia la sesión si el rol no sirve.
-          this.limpiarSesion();
+          // Limpia una sesión inválida.
+          this.auth.cerrarSesion();
 
-          // Muestra un error de rol.
+          // Muestra el error.
           this.mensajeError =
             'El rol de esta cuenta no es válido.';
 
@@ -238,8 +251,10 @@ export class Login {
           this.detectorCambios.detectChanges();
         },
 
-        // Se ejecuta si ocurre un error.
-        error: (error) => {
+        // Se ejecuta si falla.
+        error: (
+          error: HttpErrorResponse
+        ) => {
 
           // Muestra el error en consola.
           console.error(
@@ -250,32 +265,38 @@ export class Login {
           // Finaliza la carga.
           this.cargando = false;
 
-          // Error por credenciales incorrectas.
-          if (error.status === 401) {
-            // Usa el mensaje del backend si existe.
+          // Credenciales incorrectas.
+          if (
+            error.status === 401
+          ) {
+            // Usa el mensaje de la API.
             this.mensajeError =
               error.error?.mensaje ||
               'El correo o la contraseña son incorrectos.';
           }
 
-          // Error por datos inválidos.
-          else if (error.status === 400) {
-            // Usa el mensaje enviado por la API.
+          // Datos incorrectos.
+          else if (
+            error.status === 400
+          ) {
+            // Usa el mensaje recibido.
             this.mensajeError =
               error.error?.mensaje ||
               'Revise el correo y la contraseña.';
           }
 
-          // Error de conexión con la API.
-          else if (error.status === 0) {
-            // Informa que la API no responde.
+          // API sin conexión.
+          else if (
+            error.status === 0
+          ) {
+            // Informa el problema.
             this.mensajeError =
               'No se pudo conectar con la API. Verifique que esté ejecutándose.';
           }
 
           // Cualquier otro error.
           else {
-            // Usa el mensaje del backend o uno general.
+            // Usa un mensaje general.
             this.mensajeError =
               error.error?.mensaje ||
               'Ocurrió un error al iniciar sesión.';
@@ -285,24 +306,5 @@ export class Login {
           this.detectorCambios.detectChanges();
         }
       });
-  }
-
-  // Limpia los datos de sesión.
-  private limpiarSesion(): void {
-
-    // Elimina el token.
-    localStorage.removeItem('token');
-
-    // Elimina el rol.
-    localStorage.removeItem('rol');
-
-    // Elimina el IdUsuario.
-    localStorage.removeItem('idUsuario');
-
-    // Elimina el nombre.
-    localStorage.removeItem('nombreUsuario');
-
-    // Elimina el correo.
-    localStorage.removeItem('correoUsuario');
   }
 }
